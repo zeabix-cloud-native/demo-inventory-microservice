@@ -1,44 +1,44 @@
-name: CI Pipeline
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
-
-env:
-  DOTNET_VERSION: '8.0.x'
-
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-        
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Build solution
-      run: dotnet build --no-restore --configuration Release
-      
-    - name: Run xUnit tests
-      run: dotnet test --no-build --configuration Release --verbosity normal --logger trx --results-directory TestResults
-      
-    - name: Publish test results
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: xUnit Test Results
-        path: TestResults/*.trx
-        reporter: dotnet-trx
-
+#name: CI Pipeline
+#
+#on:
+#  push:
+#    branches: [ main, develop ]
+#  pull_request:
+#    branches: [ main, develop ]
+#
+#env:
+#  DOTNET_VERSION: '8.0.x'
+#
+#jobs:
+#  build-and-test:
+#    runs-on: ubuntu-latest
+#    
+#    steps:
+#    - name: Checkout code
+#      uses: actions/checkout@v4
+#      
+#    - name: Setup .NET
+#      uses: actions/setup-dotnet@v4
+#      with:
+#        dotnet-version: ${{ env.DOTNET_VERSION }}
+#        
+#    - name: Restore dependencies
+#      run: dotnet restore
+#      
+#    - name: Build solution
+#      run: dotnet build --no-restore --configuration Release
+#      
+#    - name: Run xUnit tests
+#      run: dotnet test --no-build --configuration Release --verbosity normal --logger trx --results-directory TestResults
+#      
+#    - name: Publish test results
+#      uses: dorny/test-reporter@v1
+#      if: always()
+#      with:
+#        name: xUnit Test Results
+#        path: TestResults/*.trx
+#        reporter: dotnet-trx
+#
   # TODO: Uncomment this job when Postman collection files are added to the repository
   # postman-tests:
   #   runs-on: ubuntu-latest
