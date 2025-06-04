@@ -77,6 +77,13 @@ public class InMemoryProductService : IProductService
         return Task.FromResult(productDtos);
     }
 
+    public Task<IEnumerable<ProductDto>> GetProductsByPriceRangeAsync(PriceRangeDto priceRange)
+    {
+        var products = _products.Where(p => p.Price >= priceRange.MinPrice && p.Price <= priceRange.MaxPrice);
+        var productDtos = products.Select(MapToDto);
+        return Task.FromResult(productDtos);
+    }
+
     private static ProductDto MapToDto(Product product)
     {
         return new ProductDto
