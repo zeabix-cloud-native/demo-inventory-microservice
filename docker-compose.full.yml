@@ -1,0 +1,41 @@
+services:
+  # Backend API Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demo-inventory-api
+    ports:
+      - "5000:8080"  # Map host port 5000 to container port 8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Frontend/UI Service (Swagger UI)
+  # The API already includes Swagger UI at /swagger endpoint
+  # This provides an additional standalone Swagger UI interface
+  frontend:
+    image: swaggerapi/swagger-ui:latest
+    container_name: demo-inventory-swagger-ui
+    ports:
+      - "8080:8080"  # Swagger UI standalone interface
+    environment:
+      - SWAGGER_JSON_URL=http://host.docker.internal:5000/swagger/v1/swagger.json
+      - BASE_URL=/
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  # Volume for any persistent data if needed in the future
+  app-data:
+    driver: local
