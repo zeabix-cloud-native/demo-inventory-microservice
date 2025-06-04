@@ -40,7 +40,8 @@ src/
 
 tests/
 ├── DemoInventory.Domain.Tests/     # Domain layer unit tests
-└── DemoInventory.Application.Tests/ # Application layer unit tests
+├── DemoInventory.Application.Tests/ # Application layer unit tests
+└── e2e/                           # End-to-end tests with Cypress
 ```
 
 ## Getting Started
@@ -48,6 +49,7 @@ tests/
 ### Prerequisites
 - .NET 8 SDK
 - Visual Studio 2022 or VS Code
+- Node.js (v18 or higher) - for E2E tests
 
 ### Building the Solution
 ```bash
@@ -55,8 +57,21 @@ dotnet build
 ```
 
 ### Running Tests
+
+#### Unit Tests
 ```bash
 dotnet test
+```
+
+#### End-to-End Tests
+```bash
+# Start the API first
+dotnet run --project src/DemoInventory.API
+
+# In another terminal, run E2E tests
+cd tests/e2e
+npm install
+npm run test:e2e
 ```
 
 ### Running the API
@@ -84,6 +99,7 @@ The API will be available at `https://localhost:5001` or `http://localhost:5000`
 - RESTful API design
 - Swagger/OpenAPI documentation
 - Unit tests with mocking
+- End-to-end tests with Cypress
 - Dependency injection
 - CRUD operations for products
 
@@ -93,6 +109,7 @@ The API will be available at `https://localhost:5001` or `http://localhost:5000`
 - ASP.NET Core Web API
 - xUnit for testing
 - Moq for mocking
+- Cypress for E2E testing
 - Swagger/OpenAPI
 
 ## Future Enhancements
@@ -101,5 +118,4 @@ The API will be available at `https://localhost:5001` or `http://localhost:5000`
 - Authentication and authorization
 - Logging and monitoring
 - Docker containerization
-- Integration tests
 - API versioning
