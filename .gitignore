@@ -50,6 +50,11 @@ Thumbs.db
 # Application specific
 appsettings.local.json
 
+# Test results
+TestResults/
+cypress/screenshots/
+cypress/videos/
+
 # Node.js dependencies and Cypress
 node_modules/
 cypress/videos/
@@ -68,3 +73,4 @@ yarn-error.log*
 # OpenAPI exports
 openapi-spec.json
 validate-openapi.sh
+

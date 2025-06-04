@@ -1,0 +1,165 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Run xUnit tests
+      run: dotnet test --no-build --configuration Release --verbosity normal --logger trx --results-directory TestResults
+      
+    - name: Publish test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: xUnit Test Results
+        path: TestResults/*.trx
+        reporter: dotnet-trx
+
+  # TODO: Uncomment this job when Postman collection files are added to the repository
+  # postman-tests:
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-test
+  #   if: false  # Set to true when Postman tests are ready
+  #   
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #     
+  #   - name: Setup .NET
+  #     uses: actions/setup-dotnet@v4
+  #     with:
+  #       dotnet-version: ${{ env.DOTNET_VERSION }}
+  #       
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v4
+  #     with:
+  #       node-version: '18'
+  #       
+  #   - name: Install Newman (Postman CLI)
+  #     run: npm install -g newman newman-reporter-htmlextra
+  #     
+  #   - name: Restore and build solution
+  #     run: |
+  #       dotnet restore
+  #       dotnet build --no-restore --configuration Release
+  #       
+  #   - name: Start API server
+  #     run: |
+  #       dotnet run --project src/DemoInventory.API --configuration Release &
+  #       echo $! > api.pid
+  #       sleep 15
+  #       curl -f http://localhost:5000/swagger/index.html || curl -f http://localhost:5126/swagger/index.html
+  #     
+  #   - name: Run Postman tests
+  #     run: |
+  #       newman run tests/postman/collection.json \
+  #         --environment tests/postman/environment.json \
+  #         --reporters cli,htmlextra \
+  #         --reporter-htmlextra-export TestResults/postman-report.html
+  #         
+  #   - name: Stop API server
+  #     if: always()
+  #     run: |
+  #       if [ -f api.pid ]; then
+  #         kill $(cat api.pid) || true
+  #       fi
+  #       
+  #   - name: Upload Postman test results
+  #     uses: actions/upload-artifact@v4
+  #     if: always()
+  #     with:
+  #       name: postman-test-results
+  #       path: TestResults/postman-report.html
+
+  # TODO: Uncomment this job when Cypress test files are added to the repository
+  # cypress-tests:
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-test
+  #   if: false  # Set to true when Cypress tests are ready
+  #   
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #     
+  #   - name: Setup .NET
+  #     uses: actions/setup-dotnet@v4
+  #     with:
+  #       dotnet-version: ${{ env.DOTNET_VERSION }}
+  #       
+  #   - name: Setup Node.js
+  #     uses: actions/setup-node@v4
+  #     with:
+  #       node-version: '18'
+  #       cache: 'npm'
+  #       
+  #   - name: Install Cypress dependencies
+  #     run: npm ci
+  #     
+  #   - name: Restore and build solution
+  #     run: |
+  #       dotnet restore
+  #       dotnet build --no-restore --configuration Release
+  #       
+  #   - name: Start API server
+  #     run: |
+  #       dotnet run --project src/DemoInventory.API --configuration Release &
+  #       echo $! > api.pid
+  #       sleep 15
+  #       curl -f http://localhost:5000/swagger/index.html || curl -f http://localhost:5126/swagger/index.html
+  #       
+  #   - name: Run Cypress tests
+  #     uses: cypress-io/github-action@v6
+  #     with:
+  #       build: npm run build
+  #       start: echo "API already running"
+  #       wait-on: 'http://localhost:5000, http://localhost:5126'
+  #       wait-on-timeout: 60
+  #       record: true
+  #     env:
+  #       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       
+  #   - name: Stop API server
+  #     if: always()
+  #     run: |
+  #       if [ -f api.pid ]; then
+  #         kill $(cat api.pid) || true
+  #       fi
+  #       
+  #   - name: Upload Cypress screenshots
+  #     uses: actions/upload-artifact@v4
+  #     if: failure()
+  #     with:
+  #       name: cypress-screenshots
+  #       path: cypress/screenshots
+  #       
+  #   - name: Upload Cypress videos
+  #     uses: actions/upload-artifact@v4
+  #     if: always()
+  #     with:
+  #       name: cypress-videos
+  #       path: cypress/videos
