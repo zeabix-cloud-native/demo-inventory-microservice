@@ -14,10 +14,22 @@ services:
     networks:
       - app-network
 
-  # Frontend/UI Service (Swagger UI)
-  # The API already includes Swagger UI at /swagger endpoint
-  # This provides an additional standalone Swagger UI interface
+  # Frontend React Application (Main UI)
   frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: demo-inventory-frontend
+    ports:
+      - "3000:80"  # Map host port 3000 to container nginx port 80
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Additional Swagger UI Frontend (for API documentation)
+  swagger-ui:
     image: swaggerapi/swagger-ui:latest
     container_name: demo-inventory-swagger-ui
     ports:

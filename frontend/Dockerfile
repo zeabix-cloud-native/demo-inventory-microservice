@@ -14,7 +14,7 @@ RUN npm ci
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN npx tsc -b && npx vite build
 
 # Use nginx for serving the built app
 FROM nginx:alpine AS runtime
