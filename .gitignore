@@ -50,6 +50,14 @@ Thumbs.db
 # Application specific
 appsettings.local.json
 
+# Node.js dependencies and Cypress
+node_modules/
+cypress/videos/
+cypress/screenshots/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Frontend specific
 .env
 .env.local

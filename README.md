@@ -54,7 +54,8 @@ src/
 
 tests/
 ├── DemoInventory.Domain.Tests/     # Domain layer unit tests
-└── DemoInventory.Application.Tests/ # Application layer unit tests
+├── DemoInventory.Application.Tests/ # Application layer unit tests
+└── e2e/                           # End-to-end tests with Cypress
 ```
 
 ## Getting Started
@@ -63,6 +64,7 @@ tests/
 - .NET 8 SDK
 - Node.js 18+ and npm
 - Visual Studio 2022 or VS Code
+- Node.js (v18 or higher) - for E2E tests
 
 ### Building the Backend Solution
 ```bash
@@ -75,10 +77,21 @@ npm install
 ```
 
 ### Running Backend Tests
+
 ```bash
 dotnet test
 ```
 
+#### End-to-End Tests
+```bash
+# Start the API first
+dotnet run --project src/DemoInventory.API
+
+# In another terminal, run E2E tests
+cd tests/e2e
+npm install
+npm run test:e2e
+```
 ### Running the Application
 
 #### Start the API
@@ -193,6 +206,7 @@ See `frontend-html-demo/README.md` for detailed demo frontend setup instructions
 - RESTful API design
 - Swagger/OpenAPI documentation
 - Unit tests with mocking
+- End-to-end tests with Cypress
 - Dependency injection
 - CRUD operations for products
 - React frontend with TypeScript
@@ -206,6 +220,7 @@ See `frontend-html-demo/README.md` for detailed demo frontend setup instructions
 - ASP.NET Core Web API
 - xUnit for testing
 - Moq for mocking
+- Cypress for E2E testing
 - Swagger/OpenAPI
 - Docker containerization
 
@@ -253,9 +268,9 @@ See [Docker.README.md](Docker.README.md) for detailed Docker usage instructions.
 - Entity Framework Core integration
 - Authentication and authorization
 - Logging and monitoring
-- Integration tests
+- Docker containerization
 - API versioning
+- Integration tests
 - State management (Redux/Zustand)
 - End-to-end testing
 - Progressive Web App features
-
