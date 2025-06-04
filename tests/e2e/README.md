@@ -53,7 +53,7 @@ npm run cypress:open
 
 ## Test Structure
 
-The E2E tests are organized into two main test suites:
+The E2E tests are organized into three comprehensive test suites:
 
 ### 1. Product View Tests (`cypress/e2e/products-view.cy.js`)
 
@@ -75,6 +75,15 @@ Tests for creating products:
 - Create product with high price
 - Handle decimal prices correctly
 - End-to-end validation flow
+
+### 3. Complete E2E Flow Tests (`cypress/e2e/products-e2e-flow.cy.js`)
+
+Comprehensive end-to-end flow tests that combine create and view operations:
+- Complete product lifecycle (create → view → search → validate)
+- Data integrity validation across all operations
+- Multiple product creation with various data types
+- Cross-operation data consistency verification
+- Full workflow testing (create multiple products, retrieve by different methods, search, handle edge cases)
 
 ## Test Data
 
