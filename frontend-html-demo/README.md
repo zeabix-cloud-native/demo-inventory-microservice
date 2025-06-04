@@ -1,6 +1,6 @@
-# Frontend Demo for Inventory Management
+# Frontend HTML/JS Demo for Inventory Management
 
-This is a simple HTML/JavaScript frontend that demonstrates connecting to the Demo Inventory Microservice backend using Axios.
+This is a simple HTML/JavaScript frontend that demonstrates connecting to the Demo Inventory Microservice backend using Axios. This is an additional demo frontend alongside the main React frontend located at `src/frontend/`.
 
 ## Features
 
