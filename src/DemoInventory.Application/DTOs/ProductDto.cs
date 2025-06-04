@@ -28,3 +28,9 @@ public class UpdateProductDto
     public decimal Price { get; set; }
     public int QuantityInStock { get; set; }
 }
+
+public class PriceRangeDto
+{
+    public decimal MinPrice { get; set; }
+    public decimal MaxPrice { get; set; }
+}
