@@ -51,10 +51,6 @@ src/
     │   └── ...
     └── ...
 
-frontend-html-demo/                 # Additional demo frontend (HTML/JS with Axios)
-├── index.html                     # Main HTML page
-├── app.js                        # JavaScript with Axios integration
-└── README.md                     # Frontend setup instructions
 
 tests/
 ├── DemoInventory.Domain.Tests/     # Domain layer unit tests
@@ -146,6 +142,7 @@ npm run build
 - `npm run lint` - Type check with TypeScript
 - `npm run preview` - Preview production build
 
+
 ### Alternative Demo Frontend
 
 For a simple demonstration of Axios integration, there's also an HTML/JS demo:
@@ -159,7 +156,6 @@ cd frontend-html-demo
 python -m http.server 8080
 # Then open http://localhost:8080 in your browser
 ```
-
 See `frontend-html-demo/README.md` for detailed demo frontend setup instructions.
 
 ## API Endpoints
@@ -211,6 +207,37 @@ See `frontend-html-demo/README.md` for detailed demo frontend setup instructions
 - xUnit for testing
 - Moq for mocking
 - Swagger/OpenAPI
+- Docker containerization
+
+## Docker Support
+
+The application includes Docker containerization with:
+
+- **Dockerfile** - Multi-stage build for optimized production image
+- **docker-compose.yml** - Basic backend service composition
+- **docker-compose.full.yml** - Backend + standalone Swagger UI frontend
+
+### Quick Docker Start
+
+```bash
+# Build and run with docker-compose
+docker compose up -d
+
+# Access the API
+# API: http://localhost:5000
+# Swagger: http://localhost:5000/swagger
+```
+
+See [Docker.README.md](Docker.README.md) for detailed Docker usage instructions.
+
+### Frontend
+- React 18
+- TypeScript
+- Vite (build tool)
+- Axios (HTTP client)
+- React Router (navigation)
+- CSS3 (responsive styling)
+
 
 ### Frontend
 - React 18
@@ -226,9 +253,9 @@ See `frontend-html-demo/README.md` for detailed demo frontend setup instructions
 - Entity Framework Core integration
 - Authentication and authorization
 - Logging and monitoring
-- Docker containerization
 - Integration tests
 - API versioning
 - State management (Redux/Zustand)
 - End-to-end testing
 - Progressive Web App features
+

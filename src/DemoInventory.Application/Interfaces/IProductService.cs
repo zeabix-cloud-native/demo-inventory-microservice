@@ -11,4 +11,5 @@ public interface IProductService
     Task DeleteProductAsync(int id);
     Task<ProductDto?> GetProductBySkuAsync(string sku);
     Task<IEnumerable<ProductDto>> SearchProductsAsync(string searchTerm);
+    Task<IEnumerable<ProductDto>> GetProductsByPriceRangeAsync(PriceRangeDto priceRange);
 }

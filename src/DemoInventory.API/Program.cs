@@ -16,6 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
+
         policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:5126", "file://") // Vite default port, CRA port, API port, and file protocol for local HTML
               .AllowAnyHeader()
               .AllowAnyMethod();
@@ -60,6 +61,11 @@ builder.Services.AddSwaggerGen(c =>
     {
         c.IncludeXmlComments(applicationXmlPath);
     }
+
+
+    // Enable annotations for better documentation
+    c.EnableAnnotations();
+
     
     // Configure schema IDs to avoid conflicts
     c.CustomSchemaIds(type => type.FullName);
