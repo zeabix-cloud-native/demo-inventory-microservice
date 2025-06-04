@@ -6,30 +6,30 @@ A .NET 8 Clean Architecture implementation for an inventory management microserv
 
 This project follows Clean Architecture principles with the following layers:
 
-### Domain Layer (`DemoInventory.Domain`)
+### Domain Layer (`backend/src/DemoInventory.Domain`)
 - **Entities**: Core business entities (e.g., `Product`)
 - **Interfaces**: Repository contracts and domain services
 - **Value Objects**: Immutable objects representing concepts
 - **Enums**: Domain-specific enumerations
 - **Events**: Domain events
 
-### Application Layer (`DemoInventory.Application`)
+### Application Layer (`backend/src/DemoInventory.Application`)
 - **Services**: Application business logic
 - **DTOs**: Data Transfer Objects for API communication
 - **Interfaces**: Service contracts
 - **Use Cases**: Specific business operations
 - **Common**: Shared application utilities
 
-### Infrastructure Layer (`DemoInventory.Infrastructure`)
+### Infrastructure Layer (`backend/src/DemoInventory.Infrastructure`)
 - **Repositories**: Data access implementations
 - **Data**: Database context and configurations
 - **Services**: External service implementations
 
-### Presentation Layer (`DemoInventory.API`)
+### Presentation Layer (`backend/src/DemoInventory.API`)
 - **Controllers**: Web API endpoints
 - **Program.cs**: Application configuration and dependency injection
 
-### Frontend Layer (`src/frontend`)
+### Frontend Layer (`frontend/`)
 - **Components**: React components for UI
 - **Services**: API communication layer
 - **Types**: TypeScript type definitions
@@ -38,24 +38,30 @@ This project follows Clean Architecture principles with the following layers:
 ## Project Structure
 
 ```
-src/
-├── DemoInventory.Domain/           # Core business logic
-├── DemoInventory.Application/      # Use cases and application services
-├── DemoInventory.Infrastructure/   # Data access and external services
-├── DemoInventory.API/             # Web API controllers and configuration
-└── frontend/                      # React frontend application
-    ├── src/
-    │   ├── components/            # React components
-    │   ├── services/              # API service layer
-    │   ├── types/                 # TypeScript type definitions
-    │   └── ...
-    └── ...
+backend/
+├── src/
+│   ├── DemoInventory.Domain/           # Core business logic
+│   ├── DemoInventory.Application/      # Use cases and application services
+│   ├── DemoInventory.Infrastructure/   # Data access and external services
+│   └── DemoInventory.API/             # Web API controllers and configuration
+└── tests/
+    ├── DemoInventory.Domain.Tests/     # Domain layer unit tests
+    ├── DemoInventory.Application.Tests/ # Application layer unit tests
+    ├── DemoInventory.Infrastructure.Tests/ # Infrastructure layer unit tests
+    └── DemoInventory.API.Tests/        # API layer unit tests
 
+frontend/                              # React frontend application
+├── src/
+│   ├── components/                    # React components
+│   ├── services/                      # API service layer
+│   ├── types/                         # TypeScript type definitions
+│   └── ...
+└── ...
 
 tests/
-├── DemoInventory.Domain.Tests/     # Domain layer unit tests
-├── DemoInventory.Application.Tests/ # Application layer unit tests
-└── e2e/                           # End-to-end tests with Cypress
+└── e2e/                               # End-to-end tests with Cypress
+
+frontend-html-demo/                    # Alternative HTML/JS demo frontend
 ```
 
 ## Getting Started
@@ -96,14 +102,14 @@ npm run test:e2e
 
 #### Start the API
 ```bash
-dotnet run --project src/DemoInventory.API
+dotnet run --project backend/src/DemoInventory.API
 ```
 
 The API will be available at `http://localhost:5126` with Swagger documentation at `/swagger`.
 
 #### Start the Frontend (in a separate terminal)
 ```bash
-cd src/frontend
+cd frontend
 npm run dev
 ```
 
@@ -113,22 +119,22 @@ The frontend will be available at `http://localhost:5173`.
 
 #### Build the API
 ```bash
-dotnet publish src/DemoInventory.API -c Release -o ./publish
+dotnet publish backend/src/DemoInventory.API -c Release -o ./publish
 ```
 
 #### Build the Frontend
 ```bash
-cd src/frontend
+cd frontend
 npm run build
 ```
 
-The built frontend files will be in `src/frontend/dist/`.
+The built frontend files will be in `frontend/dist/`.
 
 ### Setting up the Frontend
 
 Navigate to the frontend directory:
 ```bash
-cd src/DemoInventory.Frontend
+cd frontend
 ```
 
 Install dependencies:
@@ -145,7 +151,7 @@ The frontend will be available at `http://localhost:5173/`.
 
 ### Building the Frontend for Production
 ```bash
-cd src/DemoInventory.Frontend
+cd frontend
 npm run build
 ```
 

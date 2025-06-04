@@ -6,8 +6,8 @@ WORKDIR /app
 COPY . .
 
 # Restore dependencies and build (only for the API project to avoid missing test projects)
-RUN dotnet restore src/DemoInventory.API/DemoInventory.API.csproj
-RUN dotnet publish src/DemoInventory.API/DemoInventory.API.csproj -c Release -o /app/publish
+RUN dotnet restore backend/src/DemoInventory.API/DemoInventory.API.csproj
+RUN dotnet publish backend/src/DemoInventory.API/DemoInventory.API.csproj -c Release -o /app/publish
 
 # Use the official .NET 8 runtime image for the final stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime

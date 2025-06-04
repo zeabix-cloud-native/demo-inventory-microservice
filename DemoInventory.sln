@@ -2,25 +2,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4A9B4053-EA82-49AE-B03A-F6CD88F09A5F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{4A9B4053-EA82-49AE-B03A-F6CD88F09A5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Domain", "src\DemoInventory.Domain\DemoInventory.Domain.csproj", "{584405D5-ECCB-45B8-9066-6CCB02760E3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Domain", "backend\src\DemoInventory.Domain\DemoInventory.Domain.csproj", "{584405D5-ECCB-45B8-9066-6CCB02760E3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Application", "src\DemoInventory.Application\DemoInventory.Application.csproj", "{4FB03145-F4DE-47E0-8383-AB4BE24A1ECB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Application", "backend\src\DemoInventory.Application\DemoInventory.Application.csproj", "{4FB03145-F4DE-47E0-8383-AB4BE24A1ECB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Infrastructure", "src\DemoInventory.Infrastructure\DemoInventory.Infrastructure.csproj", "{C00FB69A-0048-48A5-BDCB-F14B8263DBAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Infrastructure", "backend\src\DemoInventory.Infrastructure\DemoInventory.Infrastructure.csproj", "{C00FB69A-0048-48A5-BDCB-F14B8263DBAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.API", "src\DemoInventory.API\DemoInventory.API.csproj", "{0534F034-14B8-46AB-A38B-27B1DB248F54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.API", "backend\src\DemoInventory.API\DemoInventory.API.csproj", "{0534F034-14B8-46AB-A38B-27B1DB248F54}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{170E0091-C712-4813-BCC9-AA28536B531C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend-tests", "backend-tests", "{170E0091-C712-4813-BCC9-AA28536B531C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Domain.Tests", "tests\DemoInventory.Domain.Tests\DemoInventory.Domain.Tests.csproj", "{FD91B411-60C4-457C-B199-1F8BCB456996}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Domain.Tests", "backend\tests\DemoInventory.Domain.Tests\DemoInventory.Domain.Tests.csproj", "{FD91B411-60C4-457C-B199-1F8BCB456996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Application.Tests", "tests\DemoInventory.Application.Tests\DemoInventory.Application.Tests.csproj", "{3E8AF075-A2B9-45CF-A508-11C2359892C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Application.Tests", "backend\tests\DemoInventory.Application.Tests\DemoInventory.Application.Tests.csproj", "{3E8AF075-A2B9-45CF-A508-11C2359892C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.API.Tests", "tests\DemoInventory.API.Tests\DemoInventory.API.Tests.csproj", "{277285E0-7F1C-4886-A1DE-00F9CA205F50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.API.Tests", "backend\tests\DemoInventory.API.Tests\DemoInventory.API.Tests.csproj", "{277285E0-7F1C-4886-A1DE-00F9CA205F50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Infrastructure.Tests", "tests\DemoInventory.Infrastructure.Tests\DemoInventory.Infrastructure.Tests.csproj", "{E7087E5E-5EE3-403A-A0EF-B59B77CD04AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInventory.Infrastructure.Tests", "backend\tests\DemoInventory.Infrastructure.Tests\DemoInventory.Infrastructure.Tests.csproj", "{E7087E5E-5EE3-403A-A0EF-B59B77CD04AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

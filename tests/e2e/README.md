@@ -28,7 +28,7 @@ Before running the E2E tests, make sure the Demo Inventory API is running:
 
 ```bash
 # From the project root directory
-dotnet run --project src/DemoInventory.API
+dotnet run --project backend/src/DemoInventory.API
 ```
 
 The API should be available at `http://localhost:5126`.
