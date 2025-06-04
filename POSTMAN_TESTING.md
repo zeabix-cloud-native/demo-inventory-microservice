@@ -4,8 +4,10 @@ This directory contains Postman collection and environment files for testing all
 
 ## Files
 
-- `Demo-Inventory-API.postman_collection.json` - Main Postman collection with all Product endpoints
-- `Demo-Inventory-Environment.postman_environment.json` - Environment configuration for the collection
+- `tests/postman/collection.json` - Main Postman collection with all Product endpoints
+- `tests/postman/environment.json` - Environment configuration for the collection
+
+Note: Legacy files `Demo-Inventory-API.postman_collection.json` and `Demo-Inventory-Environment.postman_environment.json` are also available in the root directory for backwards compatibility.
 
 ## How to Use
 
@@ -13,7 +15,9 @@ This directory contains Postman collection and environment files for testing all
 
 1. Open Postman
 2. Click "Import" 
-3. Drag and drop both JSON files or browse to select them
+3. Drag and drop both JSON files from `tests/postman/` directory or browse to select them:
+   - `tests/postman/collection.json`
+   - `tests/postman/environment.json`
 4. The collection "Demo Inventory API" and environment "Demo Inventory Environment" will be imported
 
 ### 2. Set the Environment
