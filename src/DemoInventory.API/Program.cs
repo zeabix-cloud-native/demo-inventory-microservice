@@ -2,6 +2,9 @@ using DemoInventory.Application.Interfaces;
 using DemoInventory.Application.Services;
 using DemoInventory.Domain.Interfaces;
 using DemoInventory.Infrastructure.Repositories;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +28,45 @@ builder.Services.AddScoped<IProductService, ProductService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Demo Inventory Microservice API",
+        Version = "v1",
+        Description = "A .NET 8 Clean Architecture implementation for an inventory management microservice",
+        Contact = new OpenApiContact
+        {
+            Name = "Zeabix Cloud Native Team",
+            Email = "support@zeabix.com",
+            Url = new Uri("https://github.com/zeabix-cloud-native")
+        },
+        License = new OpenApiLicense
+        {
+            Name = "MIT License",
+            Url = new Uri("https://opensource.org/licenses/MIT")
+        }
+    });
+
+    // Set the comments path for the Swagger JSON and UI
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+    
+    // Include XML comments from Application layer for DTOs
+    var applicationXmlFile = "DemoInventory.Application.xml";
+    var applicationXmlPath = Path.Combine(AppContext.BaseDirectory, applicationXmlFile);
+    if (File.Exists(applicationXmlPath))
+    {
+        c.IncludeXmlComments(applicationXmlPath);
+    }
+
+    // Enable annotations for better documentation
+    c.EnableAnnotations();
+    
+    // Configure schema IDs to avoid conflicts
+    c.CustomSchemaIds(type => type.FullName);
+});
 
 var app = builder.Build();
 
@@ -35,6 +76,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Make Swagger available in all environments for OpenAPI spec export
+app.UseSwagger();
+
+// Add endpoint to export OpenAPI spec
+app.MapGet("/openapi.json", (IServiceProvider serviceProvider) =>
+{
+    var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
+    var swagger = swaggerProvider.GetSwagger("v1");
+    return Results.Json(swagger);
+})
+.WithName("ExportOpenApiSpec")
+.WithTags("OpenAPI")
+.WithSummary("Export OpenAPI specification")
+.WithDescription("Exports the OpenAPI specification as JSON");
 
 app.UseHttpsRedirection();
 

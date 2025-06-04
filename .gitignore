@@ -2,10 +2,12 @@
 bin/
 obj/
 out/
+dist/
 
 # Dependencies
 packages/
 .nuget/
+node_modules/
 
 # Node.js Dependencies
 node_modules/
@@ -47,3 +49,14 @@ Thumbs.db
 
 # Application specific
 appsettings.local.json
+
+# Frontend specific
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OpenAPI exports
+openapi-spec.json
+validate-openapi.sh

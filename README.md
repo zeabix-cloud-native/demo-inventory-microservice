@@ -35,6 +35,7 @@ This project follows Clean Architecture principles with the following layers:
 - **Types**: TypeScript type definitions
 - **Styles**: CSS styling for components
 
+
 ## Project Structure
 
 ```
@@ -51,6 +52,7 @@ src/
     │   └── ...
     └── ...
 
+
 tests/
 ├── DemoInventory.Domain.Tests/     # Domain layer unit tests
 └── DemoInventory.Application.Tests/ # Application layer unit tests
@@ -63,7 +65,7 @@ tests/
 - Node.js 18+ and npm
 - Visual Studio 2022 or VS Code
 
-### Building the Solution
+### Building the Backend Solution
 ```bash
 # Build the .NET solution
 dotnet build
@@ -73,7 +75,7 @@ cd src/frontend
 npm install
 ```
 
-### Running Tests
+### Running Backend Tests
 ```bash
 dotnet test
 ```
@@ -109,6 +111,37 @@ npm run build
 ```
 
 The built frontend files will be in `src/frontend/dist/`.
+
+### Setting up the Frontend
+
+Navigate to the frontend directory:
+```bash
+cd src/DemoInventory.Frontend
+```
+
+Install dependencies:
+```bash
+npm install
+```
+
+Start the development server:
+```bash
+npm run dev
+```
+
+The frontend will be available at `http://localhost:5173/`.
+
+### Building the Frontend for Production
+```bash
+cd src/DemoInventory.Frontend
+npm run build
+```
+
+### Frontend Scripts
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Type check with TypeScript
+- `npm run preview` - Preview production build
 
 ## API Endpoints
 
@@ -167,6 +200,7 @@ The built frontend files will be in `src/frontend/dist/`.
 - Axios (HTTP client)
 - React Router (navigation)
 - CSS3 (responsive styling)
+
 
 ## Future Enhancements
 
