@@ -103,4 +103,54 @@ public class ProductServiceTests
         Assert.Equal(15.99m, result.Price);
         Assert.Equal(50, result.QuantityInStock);
     }
+
+    [Fact]
+    public async Task GetProductsByPriceRangeAsync_Should_Return_Products_In_Range()
+    {
+        // Arrange
+        var products = new List<Product>
+        {
+            new Product
+            {
+                Id = 1,
+                Name = "Cheap Product",
+                Description = "Low price",
+                SKU = "CHEAP-001",
+                Price = 5.99m,
+                QuantityInStock = 10,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            },
+            new Product
+            {
+                Id = 2,
+                Name = "Mid Product",
+                Description = "Mid price",
+                SKU = "MID-001",
+                Price = 15.99m,
+                QuantityInStock = 20,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            }
+        };
+
+        var priceRange = new PriceRangeDto
+        {
+            MinPrice = 5.00m,
+            MaxPrice = 20.00m
+        };
+
+        _mockRepository.Setup(r => r.GetByPriceRangeAsync(5.00m, 20.00m))
+                      .ReturnsAsync(products);
+
+        // Act
+        var result = await _service.GetProductsByPriceRangeAsync(priceRange);
+
+        // Assert
+        Assert.NotNull(result);
+        var resultList = result.ToList();
+        Assert.Equal(2, resultList.Count);
+        Assert.Equal("Cheap Product", resultList[0].Name);
+        Assert.Equal("Mid Product", resultList[1].Name);
+    }
 }

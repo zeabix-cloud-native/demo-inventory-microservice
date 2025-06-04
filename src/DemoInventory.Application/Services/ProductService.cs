@@ -76,6 +76,12 @@ public class ProductService : IProductService
         return products.Select(MapToDto);
     }
 
+    public async Task<IEnumerable<ProductDto>> GetProductsByPriceRangeAsync(PriceRangeDto priceRange)
+    {
+        var products = await _productRepository.GetByPriceRangeAsync(priceRange.MinPrice, priceRange.MaxPrice);
+        return products.Select(MapToDto);
+    }
+
     private static ProductDto MapToDto(Product product)
     {
         return new ProductDto

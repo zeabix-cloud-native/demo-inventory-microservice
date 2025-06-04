@@ -1,0 +1,24 @@
+{
+  "name": "demo-inventory-e2e-tests",
+  "version": "1.0.0",
+  "description": "End-to-end tests for Demo Inventory Microservice",
+  "main": "index.js",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test:e2e": "cypress run",
+    "test:e2e:headed": "cypress run --headed",
+    "postinstall": "echo 'Cypress E2E tests configured. Run npm run cypress:open to start testing.'"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.2"
+  },
+  "keywords": [
+    "cypress",
+    "e2e",
+    "testing",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC"
+}
