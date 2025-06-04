@@ -35,7 +35,6 @@ This project follows Clean Architecture principles with the following layers:
 - **Types**: TypeScript type definitions
 - **Styles**: CSS styling for components
 
-
 ## Project Structure
 
 ```
@@ -143,6 +142,22 @@ npm run build
 - `npm run lint` - Type check with TypeScript
 - `npm run preview` - Preview production build
 
+
+### Alternative Demo Frontend
+
+For a simple demonstration of Axios integration, there's also an HTML/JS demo:
+
+#### Running the HTML Demo Frontend
+```bash
+# Navigate to the demo frontend directory
+cd frontend-html-demo
+
+# Open index.html in your browser, or serve it with a simple HTTP server:
+python -m http.server 8080
+# Then open http://localhost:8080 in your browser
+```
+See `frontend-html-demo/README.md` for detailed demo frontend setup instructions.
+
 ## API Endpoints
 
 ### Products
@@ -224,6 +239,15 @@ See [Docker.README.md](Docker.README.md) for detailed Docker usage instructions.
 - CSS3 (responsive styling)
 
 
+### Frontend
+- React 18
+- TypeScript
+- Vite (build tool)
+- Axios (HTTP client)
+- React Router (navigation)
+- CSS3 (responsive styling)
+
+
 ## Future Enhancements
 
 - Entity Framework Core integration
@@ -234,3 +258,4 @@ See [Docker.README.md](Docker.README.md) for detailed Docker usage instructions.
 - State management (Redux/Zustand)
 - End-to-end testing
 - Progressive Web App features
+
