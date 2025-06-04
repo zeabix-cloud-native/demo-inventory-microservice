@@ -38,6 +38,11 @@ src/
 ├── DemoInventory.Infrastructure/   # Data access and external services
 └── DemoInventory.API/             # Web API controllers and configuration
 
+frontend/                          # Frontend demo application
+├── index.html                     # Main HTML page
+├── app.js                        # JavaScript with Axios integration
+└── README.md                     # Frontend setup instructions
+
 tests/
 ├── DemoInventory.Domain.Tests/     # Domain layer unit tests
 └── DemoInventory.Application.Tests/ # Application layer unit tests
@@ -64,7 +69,19 @@ dotnet test
 dotnet run --project src/DemoInventory.API
 ```
 
-The API will be available at `https://localhost:5001` or `http://localhost:5000` with Swagger documentation at `/swagger`.
+The API will be available at `http://localhost:[port]` with Swagger documentation at `/swagger`.
+
+### Running the Frontend Demo
+```bash
+# Navigate to the frontend directory
+cd frontend
+
+# Open index.html in your browser, or serve it with a simple HTTP server:
+python -m http.server 8080
+# Then open http://localhost:8080 in your browser
+```
+
+See `frontend/README.md` for detailed frontend setup instructions.
 
 ## API Endpoints
 
@@ -79,6 +96,7 @@ The API will be available at `https://localhost:5001` or `http://localhost:5000`
 
 ## Features
 
+### Backend
 - Clean Architecture implementation
 - In-memory repository (easily replaceable with database)
 - RESTful API design
@@ -86,14 +104,30 @@ The API will be available at `https://localhost:5001` or `http://localhost:5000`
 - Unit tests with mocking
 - Dependency injection
 - CRUD operations for products
+- CORS enabled for frontend connections
+
+### Frontend
+- HTML/JavaScript frontend with Axios integration
+- Complete product management UI (Create, Read, Update, Delete)
+- Product search functionality
+- Real-time API communication
+- Responsive design
+- Error handling and user feedback
 
 ## Technologies Used
 
+### Backend
 - .NET 8
 - ASP.NET Core Web API
 - xUnit for testing
 - Moq for mocking
 - Swagger/OpenAPI
+
+### Frontend
+- HTML5
+- Vanilla JavaScript (ES6+)
+- Axios for HTTP requests
+- CSS3 for styling
 
 ## Future Enhancements
 
