@@ -1,0 +1,24 @@
+services:
+  # Backend API Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: demo-inventory-api
+    ports:
+      - "5000:8080"  # Map host port 5000 to container port 8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  # Volume for any persistent data if needed in the future
+  app-data:
+    driver: local
