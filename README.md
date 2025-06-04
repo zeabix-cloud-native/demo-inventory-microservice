@@ -94,12 +94,33 @@ The API will be available at `https://localhost:5001` or `http://localhost:5000`
 - xUnit for testing
 - Moq for mocking
 - Swagger/OpenAPI
+- Docker containerization
+
+## Docker Support
+
+The application includes Docker containerization with:
+
+- **Dockerfile** - Multi-stage build for optimized production image
+- **docker-compose.yml** - Basic backend service composition
+- **docker-compose.full.yml** - Backend + standalone Swagger UI frontend
+
+### Quick Docker Start
+
+```bash
+# Build and run with docker-compose
+docker compose up -d
+
+# Access the API
+# API: http://localhost:5000
+# Swagger: http://localhost:5000/swagger
+```
+
+See [Docker.README.md](Docker.README.md) for detailed Docker usage instructions.
 
 ## Future Enhancements
 
 - Entity Framework Core integration
 - Authentication and authorization
 - Logging and monitoring
-- Docker containerization
 - Integration tests
 - API versioning
