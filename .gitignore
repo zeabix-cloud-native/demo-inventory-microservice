@@ -1,0 +1,39 @@
+# Build Outputs
+bin/
+obj/
+out/
+
+# Dependencies
+packages/
+.nuget/
+
+# IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+
+# Cache files
+*.cache
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+~*
+
+# Application specific
+appsettings.local.json
