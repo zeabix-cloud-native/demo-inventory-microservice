@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "29g/axV2EYYQMB1P/PKMF3BqY63GF1Gd83GGz0zCVIRgc+J1UuQwGmxxWriitl6MRhUNG4c7LAQgQjIg90sibw==",
+  "success": true,
+  "projectFilePath": "/home/runner/work/demo-inventory-microservice/demo-inventory-microservice/src/DemoInventory.API/DemoInventory.API.csproj",
+  "expectedPackageFiles": [
+    "/home/runner/.nuget/packages/microsoft.aspnetcore.openapi/8.0.16/microsoft.aspnetcore.openapi.8.0.16.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "/home/runner/.nuget/packages/microsoft.openapi/1.6.14/microsoft.openapi.1.6.14.nupkg.sha512",
+    "/home/runner/.nuget/packages/swashbuckle.aspnetcore/6.6.2/swashbuckle.aspnetcore.6.6.2.nupkg.sha512",
+    "/home/runner/.nuget/packages/swashbuckle.aspnetcore.swagger/6.6.2/swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",
+    "/home/runner/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.6.2/swashbuckle.aspnetcore.swaggergen.6.6.2.nupkg.sha512",
+    "/home/runner/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.6.2/swashbuckle.aspnetcore.swaggerui.6.6.2.nupkg.sha512"
+  ],
+  "logs": []
+}

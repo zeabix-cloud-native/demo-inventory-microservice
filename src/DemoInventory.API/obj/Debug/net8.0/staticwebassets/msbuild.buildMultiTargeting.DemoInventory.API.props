@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/DemoInventory.API.props" />
+</Project>
