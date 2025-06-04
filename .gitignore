@@ -37,3 +37,7 @@ Thumbs.db
 
 # Application specific
 appsettings.local.json
+
+# OpenAPI exports
+openapi-spec.json
+validate-openapi.sh
