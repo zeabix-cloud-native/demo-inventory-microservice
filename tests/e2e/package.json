@@ -20,5 +20,8 @@
     "api"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "cypress-ctrf-json-reporter": "^0.0.12"
+  }
 }
