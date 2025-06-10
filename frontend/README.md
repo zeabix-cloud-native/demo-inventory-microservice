@@ -1,4 +1,62 @@
-# React + TypeScript + Vite
+# Demo Inventory Frontend
+
+React + TypeScript + Vite frontend for the Demo Inventory Microservice.
+
+## Getting Started
+
+### Prerequisites
+- Node.js 20 or higher
+- npm
+
+### Setup
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Configure API URL:
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env if needed (default is http://localhost:5126/api)
+```
+
+3. Start development server:
+```bash
+npm run dev
+```
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Type check with TypeScript
+- `npm run preview` - Preview production build
+
+### Environment Configuration
+
+The frontend connects to the backend API using a configurable URL:
+
+- **Local Development**: Uses `http://localhost:5126/api` (set in `.env`)
+- **Docker Environment**: Uses `http://localhost:5000/api` (set via build args)
+
+To change the API URL, modify the `VITE_API_BASE_URL` environment variable.
+
+## Docker Support
+
+The frontend includes Docker support with multi-stage builds:
+
+```bash
+# Build with custom API URL
+docker build --build-arg VITE_API_BASE_URL=http://localhost:5000/api -t frontend .
+
+# Or use docker-compose (automatically sets correct URL)
+docker-compose up
+```
+
+## Technical Details
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
