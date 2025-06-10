@@ -54,6 +54,10 @@ appsettings.local.json
 TestResults/
 cypress/screenshots/
 cypress/videos/
+ctrf/
+ctrf-reports/
+*ctrf-report*.json
+cypress/reports/
 
 # Node.js dependencies and Cypress
 node_modules/

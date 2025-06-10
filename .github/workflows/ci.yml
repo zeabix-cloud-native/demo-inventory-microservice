@@ -175,9 +175,13 @@ jobs:
       run: |
         cd tests/e2e
         mkdir -p ../../TestResults
-        npm run cypress:run -- --reporter cypress-ctrf-json-reporter --reporter-options "outputDir=../../TestResults,outputFile=ctrf-e2e-tests.json" || true
-        # Ensure CTRF file exists even if tests fail
-        if [ ! -f ../../TestResults/ctrf-e2e-tests.json ]; then
+        # Run Cypress tests with CTRF reporter, output will go to cypress/reports/
+        npm run cypress:run || true
+        # Move CTRF report to TestResults if it exists
+        if [ -f cypress/reports/ctrf-report.json ]; then
+          cp cypress/reports/ctrf-report.json ../../TestResults/ctrf-e2e-tests.json
+        else
+          # Create empty CTRF report if no tests ran or reporter failed
           echo '{"results":{"tool":{"name":"cypress"},"summary":{"tests":0,"passed":0,"failed":0,"skipped":0,"pending":0,"other":0},"tests":[]}}' > ../../TestResults/ctrf-e2e-tests.json
         fi
         
