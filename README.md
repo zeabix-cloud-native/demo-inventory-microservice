@@ -208,7 +208,7 @@ See `frontend-html-demo/README.md` for detailed demo frontend setup instructions
 ## Features
 
 - Clean Architecture implementation
-- In-memory repository (easily replaceable with database)
+- PostgreSQL database with Entity Framework Core
 - RESTful API design
 - Swagger/OpenAPI documentation
 - Unit tests with mocking
@@ -224,6 +224,8 @@ See `frontend-html-demo/README.md` for detailed demo frontend setup instructions
 ### Backend
 - .NET 8
 - ASP.NET Core Web API
+- Entity Framework Core
+- PostgreSQL database
 - xUnit for testing
 - Moq for mocking
 - Cypress for E2E testing
@@ -235,18 +237,20 @@ See `frontend-html-demo/README.md` for detailed demo frontend setup instructions
 The application includes Docker containerization with:
 
 - **Dockerfile** - Multi-stage build for optimized production image
-- **docker-compose.yml** - Basic backend service composition
-- **docker-compose.full.yml** - Backend + standalone Swagger UI frontend
+- **docker-compose.yml** - Complete stack with PostgreSQL database, backend API, and React frontend
+- **docker-compose.full.yml** - Complete stack + standalone Swagger UI frontend
 
 ### Quick Docker Start
 
 ```bash
-# Build and run with docker-compose
+# Build and run the complete stack (PostgreSQL + Backend + Frontend)
 docker compose up -d
 
-# Access the API
+# Access the services
 # API: http://localhost:5000
 # Swagger: http://localhost:5000/swagger
+# Frontend: http://localhost:3000
+# PostgreSQL: localhost:5432
 ```
 
 See [Docker.README.md](Docker.README.md) for detailed Docker usage instructions.
@@ -271,10 +275,9 @@ See [Docker.README.md](Docker.README.md) for detailed Docker usage instructions.
 
 ## Future Enhancements
 
-- Entity Framework Core integration
 - Authentication and authorization
 - Logging and monitoring
-- Docker containerization
+- Database migrations and seeding
 - API versioning
 - Integration tests
 - State management (Redux/Zustand)

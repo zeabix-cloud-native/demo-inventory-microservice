@@ -92,19 +92,21 @@ The collection is designed to run in sequence:
 
 ## Important Notes
 
-### Repository Limitation
+### Database Persistence
 
-The current implementation uses an in-memory repository with **scoped** dependency injection, which means data doesn't persist between separate HTTP requests. This has the following implications:
+The application now uses PostgreSQL database for data persistence. When running with Docker, data will persist between requests and application restarts. The following features are available:
 
-- Products created in one request may not be available in subsequent separate requests
-- For best results, run the collection as a complete sequence using Postman's collection runner
-- Individual requests may need to be run in quick succession
+- Products persist between requests
+- Data is stored in PostgreSQL database
+- Full CRUD operations are available
+- Search and filtering work across persisted data
 
 ### Recommended Usage
 
-1. Use Postman's **Collection Runner** to execute all requests in sequence
-2. Or run requests individually but in quick succession
-3. If testing individual endpoints, you may need to create test data first within the same test session
+1. Use Docker Compose to run the complete stack: `docker compose up -d`
+2. Individual requests can be run in any order
+3. Data will persist between test sessions
+4. Use the collection runner for comprehensive testing
 
 ## Example Request Bodies
 
