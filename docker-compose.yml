@@ -1,4 +1,20 @@
 services:
+  # PostgreSQL Database Service
+  postgres:
+    image: postgres:15
+    container_name: demo-inventory-postgres
+    environment:
+      - POSTGRES_DB=demo_inventory
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: unless-stopped
+
   # Backend API Service
   backend:
     build:
@@ -10,6 +26,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=demo_inventory;Username=postgres;Password=postgres
+    depends_on:
+      - postgres
     restart: unless-stopped
     networks:
       - app-network
@@ -35,6 +54,9 @@ networks:
     driver: bridge
 
 volumes:
+  # Volume for PostgreSQL data
+  postgres_data:
+    driver: local
   # Volume for any persistent data if needed in the future
   app-data:
     driver: local

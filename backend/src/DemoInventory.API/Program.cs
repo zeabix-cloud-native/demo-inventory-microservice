@@ -1,7 +1,9 @@
 using DemoInventory.Application.Interfaces;
 using DemoInventory.Application.Services;
 using DemoInventory.Domain.Interfaces;
+using DemoInventory.Infrastructure.Data;
 using DemoInventory.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
@@ -23,8 +25,12 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Add DbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Register dependencies
-builder.Services.AddSingleton<IProductRepository, InMemoryProductRepository>();
+builder.Services.AddScoped<IProductRepository, PostgreSqlProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -72,6 +78,21 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Initialize database
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    try
+    {
+        context.Database.EnsureCreated();
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning("Could not initialize database: {Message}", ex.Message);
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
