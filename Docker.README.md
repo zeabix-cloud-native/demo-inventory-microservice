@@ -5,9 +5,11 @@ This directory contains Docker configuration files for the Demo Inventory Micros
 ## Files
 
 - `Dockerfile` - Multi-stage Docker build file for the .NET 8 API
-- `docker-compose.yml` - Basic composition with just the backend API
-- `docker-compose.full.yml` - Full composition including a standalone Swagger UI frontend
+- `frontend/Dockerfile` - Multi-stage Docker build file for the React frontend
+- `docker-compose.yml` - Basic composition with backend API and React frontend
+- `docker-compose.full.yml` - Full composition including backend, React frontend, and standalone Swagger UI
 - `.dockerignore` - Files to exclude from Docker build context
+- `frontend/.dockerignore` - Files to exclude from frontend Docker build context
 
 ## Quick Start
 
@@ -17,25 +19,27 @@ This directory contains Docker configuration files for the Demo Inventory Micros
 docker build -t demo-inventory-api .
 ```
 
-### Running with Docker Compose (Backend Only)
+### Running with Docker Compose (Backend + Frontend)
 
 ```bash
 docker-compose up -d
 ```
 
-The API will be available at:
-- http://localhost:5000 - API endpoints
-- http://localhost:5000/swagger - Built-in Swagger UI
+This setup provides:
+- http://localhost:5000 - Backend API endpoints
+- http://localhost:5000/swagger - Built-in Swagger UI (backend)
+- http://localhost:3000 - React Frontend Application
 
-### Running with Docker Compose (Backend + Frontend)
+### Running with Docker Compose (Full Setup with Standalone Swagger UI)
 
 ```bash
 docker-compose -f docker-compose.full.yml up -d
 ```
 
 This setup provides:
-- http://localhost:5000 - API endpoints
-- http://localhost:5000/swagger - Built-in Swagger UI
+- http://localhost:5000 - Backend API endpoints
+- http://localhost:5000/swagger - Built-in Swagger UI (backend)
+- http://localhost:3000 - React Frontend Application  
 - http://localhost:8080 - Standalone Swagger UI frontend
 
 ### Stopping Services
@@ -58,7 +62,8 @@ The backend service supports these environment variables:
 ### Ports
 
 - Backend API: 8080 (container) → 5000 (host)
-- Frontend UI: 8080 (container) → 8080 (host) - only in full setup
+- React Frontend: 80 (container) → 3000 (host)
+- Standalone Swagger UI: 8080 (container) → 8080 (host) - only in full setup
 
 ## Architecture
 
