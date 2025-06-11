@@ -158,6 +158,8 @@ jobs:
         echo $! > api.pid
         sleep 15
         curl -f http://localhost:5126/api/products
+      env:
+        USE_IN_MEMORY_DB: true
         
     - name: Run Cypress tests
       uses: cypress-io/github-action@v6
