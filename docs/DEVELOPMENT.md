@@ -5,7 +5,7 @@
 ### Required Software
 
 - **[.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)** - Backend development
-- **[Node.js 18+](https://nodejs.org/)** - Frontend development and testing tools
+- **[Node.js 24+](https://nodejs.org/)** - Frontend development and testing tools
 - **[PostgreSQL 13+](https://www.postgresql.org/)** - Database (or use Docker)
 - **[Docker Desktop](https://www.docker.com/products/docker-desktop)** - Containerization (optional)
 
@@ -455,7 +455,7 @@ dotnet run --project backend/src/DemoInventory.API
 
 #### Frontend Issues
 
-- **Node version**: Ensure Node.js 18+ is installed
+- **Node version**: Ensure Node.js 24+ is installed
 - **Dependency conflicts**: Delete `node_modules` and run `npm install`
 - **CORS errors**: Verify API CORS configuration
 - **Environment variables**: Check `.env` file configuration
