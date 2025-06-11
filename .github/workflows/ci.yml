@@ -146,18 +146,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: tests/e2e/package-lock.json
-        
-    - name: Install Cypress dependencies
-      run: |
-        cd tests/e2e
-        npm ci
       
     - name: Restore and build solution
       run: |
@@ -172,11 +160,19 @@ jobs:
         curl -f http://localhost:5126/api/products
         
     - name: Run Cypress tests
+      uses: cypress-io/github-action@v6
+      with:
+        working-directory: tests/e2e
+        wait-on: 'http://localhost:5126/api/products'
+        wait-on-timeout: 120
+        browser: chrome
+        headless: true
+      continue-on-error: true
+        
+    - name: Generate CTRF report from Cypress results
       run: |
         cd tests/e2e
         mkdir -p ../../TestResults
-        # Run Cypress tests with CTRF reporter, output will go to cypress/reports/
-        npm run cypress:run || true
         # Move CTRF report to TestResults if it exists
         if [ -f cypress/reports/ctrf-report.json ]; then
           cp cypress/reports/ctrf-report.json ../../TestResults/ctrf-e2e-tests.json
