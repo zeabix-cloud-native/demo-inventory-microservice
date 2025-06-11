@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 env:
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: '9.0.x'
 
 jobs:
   build-and-test:
@@ -34,7 +34,7 @@ jobs:
     - name: Setup Node.js for CTRF conversion
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '24'
       
     - name: Install CTRF tools
       run: npm install -g junit-to-ctrf ctrf
@@ -82,7 +82,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '24'
         
     - name: Install Newman (Postman CLI)
       run: npm install -g newman newman-reporter-htmlextra newman-reporter-ctrf-json
@@ -245,7 +245,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '24'
         
     - name: Install CTRF tools
       run: npm install -g ctrf
