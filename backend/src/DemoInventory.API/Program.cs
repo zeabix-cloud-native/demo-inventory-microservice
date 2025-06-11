@@ -26,8 +26,17 @@ builder.Services.AddCors(options =>
 });
 
 // Add DbContext
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+var useInMemoryDb = builder.Configuration.GetValue<bool>("USE_IN_MEMORY_DB", false);
+if (useInMemoryDb)
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseInMemoryDatabase("DemoInventoryDb"));
+}
+else
+{
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+}
 
 // Register dependencies
 builder.Services.AddScoped<IProductRepository, PostgreSqlProductRepository>();
