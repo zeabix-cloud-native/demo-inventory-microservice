@@ -6,7 +6,8 @@ WORKDIR /app
 COPY . .
 
 # Restore dependencies and build (only for the API project to avoid missing test projects)
-RUN dotnet restore backend/src/DemoInventory.API/DemoInventory.API.csproj
+# Add --disable-parallel to avoid certificate issues in some environments
+RUN dotnet restore backend/src/DemoInventory.API/DemoInventory.API.csproj --disable-parallel
 RUN dotnet publish backend/src/DemoInventory.API/DemoInventory.API.csproj -c Release -o /app/publish
 
 # Use the official .NET 9 runtime image for the final stage
