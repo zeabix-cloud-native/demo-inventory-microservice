@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp", policy =>
     {
 
-        policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:5126", "file://") // Vite default port, CRA port, API port, and file protocol for local HTML
+        policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:5126", "http://localhost:8080", "http://host.docker.internal:8080", "file://") // Vite default port, CRA port, API port, Swagger UI port, Docker internal Swagger UI, and file protocol for local HTML
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
