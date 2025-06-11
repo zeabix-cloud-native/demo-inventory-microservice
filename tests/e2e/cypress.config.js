@@ -1,4 +1,5 @@
 const { defineConfig } = require('cypress')
+const { GenerateCtrfReport } = require('cypress-ctrf-json-reporter')
 
 module.exports = defineConfig({
   e2e: {
@@ -11,8 +12,10 @@ module.exports = defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     setupNodeEvents(on, config) {
       // implement node event listeners here
-      require('cypress-ctrf-json-reporter')(on, {
-        outputFile: 'cypress/reports/ctrf-report.json'
+      new GenerateCtrfReport({
+        on,
+        outputFile: 'ctrf-report.json',
+        outputDir: 'cypress/reports'
       })
     },
   },
