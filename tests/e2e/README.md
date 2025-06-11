@@ -1,12 +1,13 @@
 # Demo Inventory Microservice - E2E Tests
 
-This directory contains end-to-end tests for the Demo Inventory Microservice using Cypress.
+This directory contains end-to-end tests for the Demo Inventory Microservice frontend using Cypress.
 
 ## Prerequisites
 
 - Node.js (v18 or higher)
 - npm (v8 or higher)
-- Demo Inventory API running on the appropriate port (see Running Tests section)
+- Demo Inventory API running
+- Demo Inventory frontend application running
 
 ## Setup
 
@@ -22,10 +23,11 @@ This directory contains end-to-end tests for the Demo Inventory Microservice usi
 
 ## Running Tests
 
-### Option 1: With Local API (CI Environment)
+### Option 1: With Local Development Stack (Default)
 
-Prerequisites - Start the API Server locally:
+Prerequisites - Start both the API server and frontend application locally:
 
+**Start the API Server:**
 ```bash
 # From the project root directory
 dotnet run --project backend/src/DemoInventory.API
@@ -33,7 +35,17 @@ dotnet run --project backend/src/DemoInventory.API
 
 The API should be available at `http://localhost:5126`.
 
-**Run Tests in Headless Mode**
+**Start the Frontend Application:**
+```bash
+# From the project root directory
+cd frontend
+npm install
+npm run dev
+```
+
+The frontend should be available at `http://localhost:5173`.
+
+**Run Frontend E2E Tests:**
 
 ```bash
 npm run test:e2e
@@ -53,43 +65,46 @@ npm run cypress:open
 
 ### Option 2: With Docker Stack
 
-This approach runs tests against the Docker-based API (port 5000).
-
-**Prerequisites - Start the Docker Stack**
+Prerequisites - Start the full Docker stack:
 
 ```bash
 # From the project root directory
 docker compose up -d
 ```
 
-The API will be available at `http://localhost:5000`.
+This starts:
+- Backend API at `http://localhost:5000`
+- Frontend at `http://localhost:8080`
+- Database (PostgreSQL)
 
-**Run Tests Against Docker Stack**
+**Run E2E Tests against Docker stack:**
 
 ```bash
-# Headless mode
 npm run test:e2e:docker
+```
 
-# Headed mode
+**Run Tests in Headed Mode against Docker**
+
+```bash
 npm run test:e2e:docker:headed
+```
 
-# Open Cypress GUI against Docker
+**Open Cypress GUI against Docker**
+
+```bash
 npm run cypress:open:docker
 ```
 
 ### Option 3: Fully Containerized Testing
 
-Run Cypress tests completely within Docker containers:
-
 ```bash
-# From the project root directory
-# Start the main stack first
+# Start main services
 docker compose up -d
 
-# Run Cypress tests in container (one-time)
+# Run Cypress in container (one-time)
 docker compose run --rm cypress
 
-# Or start services with test profile to include Cypress
+# Or include Cypress service in the stack
 docker compose --profile test up -d
 ```
 
@@ -100,12 +115,12 @@ The tests are organized as follows:
 ```
 cypress/
 ├── e2e/
-│   ├── products-create.cy.js      # Product creation tests
-│   ├── products-view.cy.js        # Product retrieval tests
-│   └── products-e2e-flow.cy.js    # Complete workflow tests
+│   ├── products-create.cy.js      # Product creation UI tests
+│   ├── products-view.cy.js        # Product listing and viewing UI tests
+│   └── products-e2e-flow.cy.js    # Complete frontend workflow tests
 ├── support/
-│   ├── e2e.js                     # Global configuration
-│   └── commands.js                # Custom Cypress commands
+│   ├── e2e.js                     # Global configuration and setup
+│   └── commands.js                # Custom Cypress commands for UI interactions
 └── reports/                       # Test reports (CTRF format)
 ```
 
@@ -125,37 +140,44 @@ The tests use the following sample data structure:
 
 ## Custom Commands
 
-The tests include several custom Cypress commands defined in `cypress/support/commands.js`:
+The tests include custom Cypress commands for common UI operations:
 
-- `cy.createProduct(productData)` - Create a product via API
-- `cy.getAllProducts()` - Get all products
-- `cy.getProductById(id)` - Get product by ID
-- `cy.deleteProduct(id)` - Delete product by ID
-- `cy.waitForApi()` - Wait for API to be ready
-- `cy.clearDatabase()` - Clear database (logs message for in-memory repo)
+- `cy.createProductViaUI(productData)` - Creates a product through the UI form
+- `cy.searchProductsViaUI(searchTerm)` - Searches for products using the search box
+- `cy.clearSearchViaUI()` - Clears the search input
+- `cy.visitProductList()` - Navigates to the product list page
+- `cy.waitForFrontend()` - Waits for the frontend to be ready
+
+Legacy API commands are also available for setup/teardown operations:
+- `cy.createProduct(productData)` - Creates a product via API (for test setup)
+- `cy.getAllProducts()` - Gets all products via API
+- `cy.deleteProduct(id)` - Deletes a product via API (for cleanup)
 
 ## Configuration
 
 The Cypress configuration is defined in `cypress.config.js` and supports flexible environments:
 
-### Default Configuration (CI Environment)
-- Base URL: `http://localhost:5126`
+### Default Configuration (Local Development)
+- Frontend Base URL: `http://localhost:5173`
 - API URL: `http://localhost:5126/api`
 
 ### Docker Environment Configuration
 Set via environment variables:
+- `CYPRESS_FRONTEND_BASE_URL=http://localhost:8080`
 - `CYPRESS_API_BASE_URL=http://localhost:5000`
 - `CYPRESS_API_URL=http://localhost:5000/api`
 
 ### Environment Variables
 
-- `CYPRESS_API_BASE_URL` - Override the base URL for the application
-- `CYPRESS_API_URL` - Override the API endpoint URL
+- `CYPRESS_FRONTEND_BASE_URL` - Override the frontend application URL
+- `CYPRESS_API_BASE_URL` - Override the backend API base URL  
+- `CYPRESS_API_URL` - Override the API endpoint URL (used for setup/teardown)
 
 ## Notes
 
 - The Demo Inventory Microservice uses an in-memory repository, so data is reset when the API is restarted
 - Tests are designed to be independent and can run in any order
-- The tests focus on API endpoints rather than UI interactions since this is a microservice
-- Each test suite can be run independently
-- Configuration automatically adapts to different environments (CI vs Docker)
+- The tests focus on frontend UI interactions and user workflows
+- Each test suite includes proper setup and cleanup
+- Configuration automatically adapts to different environments (local vs Docker)
+- Data attributes (`data-testid`) are used for reliable element selection

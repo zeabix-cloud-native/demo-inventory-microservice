@@ -19,11 +19,24 @@ import './commands'
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 
-// Custom commands for API testing
+// Custom commands for frontend E2E testing
 Cypress.Commands.add('clearDatabase', () => {
-  // In a real scenario, you might want to clear the database
-  // For this demo with in-memory repository, we'll restart the API
-  cy.log('Database cleared - in-memory repository resets on API restart')
+  // Clear database by making API call to delete all products
+  cy.request({
+    method: 'GET',
+    url: `${Cypress.env('apiUrl')}/products`,
+    failOnStatusCode: false
+  }).then((response) => {
+    if (response.status === 200 && response.body.length > 0) {
+      response.body.forEach((product) => {
+        cy.request({
+          method: 'DELETE',
+          url: `${Cypress.env('apiUrl')}/products/${product.id}`,
+          failOnStatusCode: false
+        })
+      })
+    }
+  })
 })
 
 Cypress.Commands.add('waitForApi', () => {
@@ -34,4 +47,13 @@ Cypress.Commands.add('waitForApi', () => {
   }).then((response) => {
     expect(response.status).to.be.oneOf([200, 404])
   })
+})
+
+// Setup to run before each test
+beforeEach(() => {
+  // Ensure API is ready before running frontend tests
+  cy.waitForApi()
+  
+  // Clear any existing data to ensure clean state
+  cy.clearDatabase()
 })

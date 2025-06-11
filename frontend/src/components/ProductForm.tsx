@@ -142,14 +142,14 @@ const ProductForm: React.FC = () => {
   }
 
   return (
-    <div className="product-form">
+    <div className="product-form" data-testid="product-form">
       <div className="form-header">
-        <h1>{isEditing ? 'Edit Product' : 'Create New Product'}</h1>
+        <h1 data-testid="form-title">{isEditing ? 'Edit Product' : 'Create New Product'}</h1>
       </div>
 
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error" data-testid="form-error">{error}</div>}
 
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={handleSubmit} className="form" data-testid="product-form-element">
         <div className="form-group">
           <label htmlFor="name">Product Name *</label>
           <input
@@ -160,8 +160,9 @@ const ProductForm: React.FC = () => {
             onChange={handleInputChange}
             className={validationErrors.name ? 'error' : ''}
             placeholder="Enter product name"
+            data-testid="product-name-input"
           />
-          {validationErrors.name && <span className="field-error">{validationErrors.name}</span>}
+          {validationErrors.name && <span className="field-error" data-testid="name-error">{validationErrors.name}</span>}
         </div>
 
         <div className="form-group">
@@ -175,8 +176,9 @@ const ProductForm: React.FC = () => {
             disabled={isEditing} // SKU should not be editable
             className={validationErrors.sku ? 'error' : ''}
             placeholder="Enter SKU"
+            data-testid="product-sku-input"
           />
-          {validationErrors.sku && <span className="field-error">{validationErrors.sku}</span>}
+          {validationErrors.sku && <span className="field-error" data-testid="sku-error">{validationErrors.sku}</span>}
           {isEditing && <span className="field-note">SKU cannot be changed</span>}
         </div>
 
@@ -190,8 +192,9 @@ const ProductForm: React.FC = () => {
             className={validationErrors.description ? 'error' : ''}
             placeholder="Enter product description"
             rows={4}
+            data-testid="product-description-input"
           />
-          {validationErrors.description && <span className="field-error">{validationErrors.description}</span>}
+          {validationErrors.description && <span className="field-error" data-testid="description-error">{validationErrors.description}</span>}
         </div>
 
         <div className="form-row">
@@ -207,8 +210,9 @@ const ProductForm: React.FC = () => {
               placeholder="0.00"
               step="0.01"
               min="0"
+              data-testid="product-price-input"
             />
-            {validationErrors.price && <span className="field-error">{validationErrors.price}</span>}
+            {validationErrors.price && <span className="field-error" data-testid="price-error">{validationErrors.price}</span>}
           </div>
 
           <div className="form-group">
@@ -222,8 +226,9 @@ const ProductForm: React.FC = () => {
               className={validationErrors.quantityInStock ? 'error' : ''}
               placeholder="0"
               min="0"
+              data-testid="product-quantity-input"
             />
-            {validationErrors.quantityInStock && <span className="field-error">{validationErrors.quantityInStock}</span>}
+            {validationErrors.quantityInStock && <span className="field-error" data-testid="quantity-error">{validationErrors.quantityInStock}</span>}
           </div>
         </div>
 
@@ -233,6 +238,7 @@ const ProductForm: React.FC = () => {
             onClick={handleCancel}
             className="btn btn-secondary"
             disabled={loading}
+            data-testid="cancel-btn"
           >
             Cancel
           </button>
@@ -240,6 +246,7 @@ const ProductForm: React.FC = () => {
             type="submit"
             className="btn btn-primary"
             disabled={loading}
+            data-testid="submit-btn"
           >
             {loading ? 'Saving...' : (isEditing ? 'Update Product' : 'Create Product')}
           </button>
