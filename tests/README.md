@@ -95,3 +95,55 @@ npx cypress run
 # Or open Cypress GUI
 npx cypress open
 ```
+
+## CTRF Test Result Reporting
+
+The project now includes **Common Test Report Format (CTRF)** integration for unified test result reporting across all test types. CTRF provides a standardized JSON schema for test results that can be aggregated and displayed in GitHub Actions.
+
+### What is CTRF?
+
+CTRF (Common Test Report Format) is a standardized JSON schema for test results that enables:
+- Unified reporting across different testing frameworks
+- Aggregation of results from multiple test suites
+- Rich GitHub Actions integration with summaries and PR comments
+- Consistent test result visualization
+
+### CTRF Integration Features
+
+The CI pipeline automatically generates CTRF reports for:
+- **xUnit Tests**: Converted from JUnit XML using `junit-to-ctrf`
+- **Postman API Tests**: Generated directly using `newman-reporter-ctrf-json`
+- **Cypress E2E Tests**: Generated using `cypress-ctrf-json-reporter`
+
+### GitHub Actions Integration
+
+The CI pipeline includes a dedicated `test-results` job that:
+1. Downloads CTRF reports from all test jobs
+2. Merges them into a single aggregated report using `ctrf merge`
+3. Publishes the results using `github-actions-ctrf`
+4. Displays test summaries in workflow runs and PR comments
+
+### Local CTRF Generation
+
+To generate CTRF reports locally:
+
+```bash
+# Install CTRF tools
+npm install -g ctrf junit-to-ctrf newman-reporter-ctrf-json
+
+# Run xUnit tests and generate CTRF
+dotnet test --logger junit --results-directory TestResults
+junit-to-ctrf "TestResults/*.xml" -o ctrf-unit-tests.json
+
+# Run Postman tests with CTRF reporter
+newman run tests/postman/collection.json \
+  --environment tests/postman/environment.json \
+  --reporters ctrf-json \
+  --reporter-ctrf-json-export ctrf-api-tests.json
+
+# Run Cypress tests (CTRF report generated automatically to cypress/reports/)
+cd tests/e2e && npm run cypress:run
+
+# Merge all CTRF reports
+ctrf merge . --output merged-ctrf-report.json
+```
