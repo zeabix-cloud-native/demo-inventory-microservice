@@ -4,7 +4,7 @@ This directory contains Docker configuration files for the Demo Inventory Micros
 
 ## Files
 
-- `Dockerfile` - Multi-stage Docker build file for the .NET 8 API
+- `Dockerfile` - Multi-stage Docker build file for the .NET 9 API
 - `frontend/Dockerfile` - Multi-stage Docker build file for the React frontend
 - `docker-compose.yml` - Basic composition with backend API and React frontend
 - `docker-compose.full.yml` - Full composition including backend, React frontend, and standalone Swagger UI
