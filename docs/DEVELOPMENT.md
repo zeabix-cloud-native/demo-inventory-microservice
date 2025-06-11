@@ -314,10 +314,20 @@ newman run tests/postman/collection.json --environment tests/postman/environment
 
 ### End-to-End Testing
 
-#### Local Testing (CI Environment)
+#### Local Testing (Default Development Environment)
+
+Prerequisites - Start both backend API and frontend application:
 
 ```bash
-# Install Cypress dependencies
+# Start the API Server
+dotnet run --project backend/src/DemoInventory.API
+
+# Start the Frontend (in another terminal)
+cd frontend
+npm install
+npm run dev
+
+# Install and run Cypress tests
 cd tests/e2e
 npm install
 
@@ -331,16 +341,14 @@ npm run cypress:open
 #### Docker-based Testing
 
 ```bash
+# Start full Docker stack (includes frontend and backend)
+docker compose up -d
+
 # Install Cypress dependencies
 cd tests/e2e
 npm install
 
-# Start Docker stack
-cd ../..
-docker compose up -d
-
 # Run Cypress tests against Docker stack
-cd tests/e2e
 npm run test:e2e:docker
 
 # Open Cypress GUI against Docker

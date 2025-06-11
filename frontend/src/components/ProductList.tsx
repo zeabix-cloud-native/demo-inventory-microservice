@@ -79,8 +79,8 @@ const ProductList: React.FC = () => {
   return (
     <div className="product-list">
       <div className="header">
-        <h1>Product Inventory</h1>
-        <Link to="/product/new" className="btn btn-primary">
+        <h1 data-testid="product-inventory-title">Product Inventory</h1>
+        <Link to="/product/new" className="btn btn-primary" data-testid="add-new-product-btn">
           Add New Product
         </Link>
       </div>
@@ -94,28 +94,29 @@ const ProductList: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
             className="search-input"
+            data-testid="search-input"
           />
-          <button onClick={handleSearch} className="btn btn-secondary">
+          <button onClick={handleSearch} className="btn btn-secondary" data-testid="search-btn">
             Search
           </button>
-          <button onClick={loadProducts} className="btn btn-secondary">
+          <button onClick={loadProducts} className="btn btn-secondary" data-testid="clear-search-btn">
             Clear
           </button>
         </div>
       </div>
 
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error" data-testid="error-message">{error}</div>}
 
       {products.length === 0 ? (
-        <div className="no-products">
+        <div className="no-products" data-testid="no-products">
           <p>No products found.</p>
-          <Link to="/product/new" className="btn btn-primary">
+          <Link to="/product/new" className="btn btn-primary" data-testid="create-first-product-btn">
             Create your first product
           </Link>
         </div>
       ) : (
         <div className="products-table-container">
-          <table className="products-table">
+          <table className="products-table" data-testid="products-table">
             <thead>
               <tr>
                 <th>ID</th>
@@ -130,31 +131,33 @@ const ProductList: React.FC = () => {
             </thead>
             <tbody>
               {products.map((product) => (
-                <tr key={product.id}>
-                  <td>{product.id}</td>
-                  <td>{product.name}</td>
-                  <td>{product.sku}</td>
-                  <td title={product.description}>
+                <tr key={product.id} data-testid={`product-row-${product.id}`}>
+                  <td data-testid={`product-id-${product.id}`}>{product.id}</td>
+                  <td data-testid={`product-name-${product.id}`}>{product.name}</td>
+                  <td data-testid={`product-sku-${product.id}`}>{product.sku}</td>
+                  <td title={product.description} data-testid={`product-description-${product.id}`}>
                     {product.description.length > 50
                       ? `${product.description.substring(0, 50)}...`
                       : product.description}
                   </td>
-                  <td>{formatPrice(product.price)}</td>
-                  <td className={product.quantityInStock < 10 ? 'low-stock' : ''}>
+                  <td data-testid={`product-price-${product.id}`}>{formatPrice(product.price)}</td>
+                  <td className={product.quantityInStock < 10 ? 'low-stock' : ''} data-testid={`product-stock-${product.id}`}>
                     {product.quantityInStock}
                   </td>
-                  <td>{formatDate(product.createdAt)}</td>
+                  <td data-testid={`product-created-${product.id}`}>{formatDate(product.createdAt)}</td>
                   <td>
                     <div className="actions">
                       <Link
                         to={`/product/${product.id}`}
                         className="btn btn-small btn-secondary"
+                        data-testid={`edit-product-${product.id}`}
                       >
                         Edit
                       </Link>
                       <button
                         onClick={() => handleDelete(product.id)}
                         className="btn btn-small btn-danger"
+                        data-testid={`delete-product-${product.id}`}
                       >
                         Delete
                       </button>
