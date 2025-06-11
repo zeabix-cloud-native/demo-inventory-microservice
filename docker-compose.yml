@@ -49,6 +49,24 @@ services:
     networks:
       - app-network
 
+  # Cypress E2E Tests Service (for Docker-based testing)
+  cypress:
+    image: cypress/included:13.6.2
+    container_name: demo-inventory-cypress
+    working_dir: /e2e
+    volumes:
+      - ./tests/e2e:/e2e
+    environment:
+      - CYPRESS_API_BASE_URL=http://backend:8080
+      - CYPRESS_API_URL=http://backend:8080/api
+    networks:
+      - app-network
+    depends_on:
+      - backend
+    # Don't run by default - use profiles or explicit service names
+    profiles:
+      - test
+
 networks:
   app-network:
     driver: bridge
