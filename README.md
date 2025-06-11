@@ -1,6 +1,6 @@
 # Demo Inventory Microservice
 
-A .NET 8 Clean Architecture implementation for an inventory management microservice with a React frontend.
+A .NET 9 Clean Architecture implementation for an inventory management microservice with a React frontend.
 
 ## Architecture
 
@@ -67,7 +67,7 @@ frontend-html-demo/                    # Alternative HTML/JS demo frontend
 ## Getting Started
 
 ### Prerequisites
-- .NET 8 SDK
+- .NET 9 SDK
 - Node.js 18+ and npm
 - Visual Studio 2022 or VS Code
 - Node.js (v18 or higher) - for E2E tests

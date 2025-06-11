@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Demo Inventory Microservice API",
         Version = "v1",
-        Description = "A .NET 8 Clean Architecture implementation for an inventory management microservice",
+        Description = "A .NET 9 Clean Architecture implementation for an inventory management microservice",
         Contact = new OpenApiContact
         {
             Name = "Zeabix Cloud Native Team",
