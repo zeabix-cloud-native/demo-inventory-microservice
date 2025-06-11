@@ -314,6 +314,8 @@ newman run tests/postman/collection.json --environment tests/postman/environment
 
 ### End-to-End Testing
 
+#### Local Testing (CI Environment)
+
 ```bash
 # Install Cypress dependencies
 cd tests/e2e
@@ -324,6 +326,38 @@ npm run test:e2e
 
 # Open Cypress GUI
 npm run cypress:open
+```
+
+#### Docker-based Testing
+
+```bash
+# Install Cypress dependencies
+cd tests/e2e
+npm install
+
+# Start Docker stack
+cd ../..
+docker compose up -d
+
+# Run Cypress tests against Docker stack
+cd tests/e2e
+npm run test:e2e:docker
+
+# Open Cypress GUI against Docker
+npm run cypress:open:docker
+```
+
+#### Fully Containerized Testing
+
+```bash
+# Start main services
+docker compose up -d
+
+# Run Cypress in container (one-time)
+docker compose run --rm cypress
+
+# Or include Cypress service in the stack
+docker compose --profile test up -d
 ```
 
 ## Debugging

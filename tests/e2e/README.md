@@ -6,7 +6,7 @@ This directory contains end-to-end tests for the Demo Inventory Microservice usi
 
 - Node.js (v18 or higher)
 - npm (v8 or higher)
-- Demo Inventory API running on `http://localhost:5126`
+- Demo Inventory API running on the appropriate port (see Running Tests section)
 
 ## Setup
 
@@ -22,9 +22,9 @@ This directory contains end-to-end tests for the Demo Inventory Microservice usi
 
 ## Running Tests
 
-### Prerequisites - Start the API Server
+### Option 1: With Local API (CI Environment)
 
-Before running the E2E tests, make sure the Demo Inventory API is running:
+Prerequisites - Start the API Server locally:
 
 ```bash
 # From the project root directory
@@ -33,57 +33,81 @@ dotnet run --project backend/src/DemoInventory.API
 
 The API should be available at `http://localhost:5126`.
 
-### Run Tests in Headless Mode
+**Run Tests in Headless Mode**
 
 ```bash
 npm run test:e2e
 ```
 
-### Run Tests in Headed Mode (with browser UI)
+**Run Tests in Headed Mode (with browser UI)**
 
 ```bash
 npm run test:e2e:headed
 ```
 
-### Open Cypress Test Runner
+**Open Cypress Test Runner**
 
 ```bash
 npm run cypress:open
 ```
 
+### Option 2: With Docker Stack
+
+This approach runs tests against the Docker-based API (port 5000).
+
+**Prerequisites - Start the Docker Stack**
+
+```bash
+# From the project root directory
+docker compose up -d
+```
+
+The API will be available at `http://localhost:5000`.
+
+**Run Tests Against Docker Stack**
+
+```bash
+# Headless mode
+npm run test:e2e:docker
+
+# Headed mode
+npm run test:e2e:docker:headed
+
+# Open Cypress GUI against Docker
+npm run cypress:open:docker
+```
+
+### Option 3: Fully Containerized Testing
+
+Run Cypress tests completely within Docker containers:
+
+```bash
+# From the project root directory
+# Start the main stack first
+docker compose up -d
+
+# Run Cypress tests in container (one-time)
+docker compose run --rm cypress
+
+# Or start services with test profile to include Cypress
+docker compose --profile test up -d
+```
+
 ## Test Structure
 
-The E2E tests are organized into three comprehensive test suites:
+The tests are organized as follows:
 
-### 1. Product View Tests (`cypress/e2e/products-view.cy.js`)
-
-Tests for viewing and retrieving products:
-- Get all products (empty list initially)
-- Get all products after creating some
-- Get product by ID
-- Handle 404 for non-existent products
-- Get product by SKU
-- Search products by name
-
-### 2. Product Create Tests (`cypress/e2e/products-create.cy.js`)
-
-Tests for creating products:
-- Create product with valid data
-- Create multiple products successfully
-- Create product with minimum required fields
-- Create product with zero quantity
-- Create product with high price
-- Handle decimal prices correctly
-- End-to-end validation flow
-
-### 3. Complete E2E Flow Tests (`cypress/e2e/products-e2e-flow.cy.js`)
-
-Comprehensive end-to-end flow tests that combine create and view operations:
-- Complete product lifecycle (create → view → search → validate)
-- Data integrity validation across all operations
-- Multiple product creation with various data types
-- Cross-operation data consistency verification
-- Full workflow testing (create multiple products, retrieve by different methods, search, handle edge cases)
+```
+cypress/
+├── e2e/
+│   ├── products-create.cy.js      # Product creation tests
+│   ├── products-view.cy.js        # Product retrieval tests
+│   └── products-e2e-flow.cy.js    # Complete workflow tests
+├── support/
+│   ├── e2e.js                     # Global configuration
+│   └── commands.js                # Custom Cypress commands
+└── reports/                       # Test reports (CTRF format)
+```
 
 ## Test Data
 
@@ -112,13 +136,21 @@ The tests include several custom Cypress commands defined in `cypress/support/co
 
 ## Configuration
 
-The Cypress configuration is defined in `cypress.config.js`:
+The Cypress configuration is defined in `cypress.config.js` and supports flexible environments:
 
+### Default Configuration (CI Environment)
 - Base URL: `http://localhost:5126`
-- API URL: `http://localhost:5126/api` (via environment variable)
-- Viewport: 1280x720
-- Screenshots on failure: enabled
-- Video recording: disabled
+- API URL: `http://localhost:5126/api`
+
+### Docker Environment Configuration
+Set via environment variables:
+- `CYPRESS_API_BASE_URL=http://localhost:5000`
+- `CYPRESS_API_URL=http://localhost:5000/api`
+
+### Environment Variables
+
+- `CYPRESS_API_BASE_URL` - Override the base URL for the application
+- `CYPRESS_API_URL` - Override the API endpoint URL
 
 ## Notes
 
@@ -126,3 +158,4 @@ The Cypress configuration is defined in `cypress.config.js`:
 - Tests are designed to be independent and can run in any order
 - The tests focus on API endpoints rather than UI interactions since this is a microservice
 - Each test suite can be run independently
+- Configuration automatically adapts to different environments (CI vs Docker)

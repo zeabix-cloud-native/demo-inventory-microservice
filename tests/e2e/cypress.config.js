@@ -1,9 +1,13 @@
 const { defineConfig } = require('cypress')
 const { GenerateCtrfReport } = require('cypress-ctrf-json-reporter')
 
+// Default to CI environment (port 5126), but allow override via environment variables
+const apiBaseUrl = process.env.CYPRESS_API_BASE_URL || 'http://localhost:5126'
+const apiUrl = process.env.CYPRESS_API_URL || `${apiBaseUrl}/api`
+
 module.exports = defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:5126',
+    baseUrl: apiBaseUrl,
     viewportWidth: 1280,
     viewportHeight: 720,
     video: false,
@@ -20,6 +24,6 @@ module.exports = defineConfig({
     },
   },
   env: {
-    apiUrl: 'http://localhost:5126/api'
+    apiUrl: apiUrl
   }
 })
