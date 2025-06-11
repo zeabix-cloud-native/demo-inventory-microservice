@@ -1,285 +1,415 @@
 # Demo Inventory Microservice
 
-A .NET 9 Clean Architecture implementation for an inventory management microservice with a React frontend.
+A modern, full-stack inventory management microservice demonstrating Clean Architecture principles with .NET 9 backend and React frontend. Features comprehensive testing, Docker containerization, and CI/CD pipeline integration.
 
-## Architecture
+[![CI Pipeline](https://github.com/zeabix-cloud-native/demo-inventory-microservice/actions/workflows/ci.yml/badge.svg)](https://github.com/zeabix-cloud-native/demo-inventory-microservice/actions/workflows/ci.yml)
 
-This project follows Clean Architecture principles with the following layers:
+## ✨ Features
 
-### Domain Layer (`backend/src/DemoInventory.Domain`)
-- **Entities**: Core business entities (e.g., `Product`)
-- **Interfaces**: Repository contracts and domain services
-- **Value Objects**: Immutable objects representing concepts
-- **Enums**: Domain-specific enumerations
-- **Events**: Domain events
+- **Clean Architecture**: Well-structured, maintainable codebase following SOLID principles
+- **Full-Stack Application**: .NET 9 Web API with React TypeScript frontend
+- **Comprehensive Testing**: Unit, integration, API, and E2E tests with CTRF reporting
+- **Docker Ready**: Complete containerization with Docker Compose
+- **Production Ready**: CI/CD pipeline, health checks, and monitoring capabilities
+- **Developer Friendly**: Hot reload, comprehensive documentation, and development tools
 
-### Application Layer (`backend/src/DemoInventory.Application`)
-- **Services**: Application business logic
-- **DTOs**: Data Transfer Objects for API communication
-- **Interfaces**: Service contracts
-- **Use Cases**: Specific business operations
-- **Common**: Shared application utilities
+## 🚀 Quick Start
 
-### Infrastructure Layer (`backend/src/DemoInventory.Infrastructure`)
-- **Repositories**: Data access implementations
-- **Data**: Database context and configurations
-- **Services**: External service implementations
+### Using Docker (Recommended)
 
-### Presentation Layer (`backend/src/DemoInventory.API`)
-- **Controllers**: Web API endpoints
-- **Program.cs**: Application configuration and dependency injection
+```bash
+# Clone the repository
+git clone https://github.com/zeabix-cloud-native/demo-inventory-microservice.git
+cd demo-inventory-microservice
 
-### Frontend Layer (`frontend/`)
-- **Components**: React components for UI
-- **Services**: API communication layer
-- **Types**: TypeScript type definitions
-- **Styles**: CSS styling for components
+# Start the complete stack
+docker-compose up -d
 
-## Project Structure
-
-```
-backend/
-├── src/
-│   ├── DemoInventory.Domain/           # Core business logic
-│   ├── DemoInventory.Application/      # Use cases and application services
-│   ├── DemoInventory.Infrastructure/   # Data access and external services
-│   └── DemoInventory.API/             # Web API controllers and configuration
-└── tests/
-    ├── DemoInventory.Domain.Tests/     # Domain layer unit tests
-    ├── DemoInventory.Application.Tests/ # Application layer unit tests
-    ├── DemoInventory.Infrastructure.Tests/ # Infrastructure layer unit tests
-    └── DemoInventory.API.Tests/        # API layer unit tests
-
-frontend/                              # React frontend application
-├── src/
-│   ├── components/                    # React components
-│   ├── services/                      # API service layer
-│   ├── types/                         # TypeScript type definitions
-│   └── ...
-└── ...
-
-tests/
-└── e2e/                               # End-to-end tests with Cypress
-
-frontend-html-demo/                    # Alternative HTML/JS demo frontend
+# Access the application
+# - API: http://localhost:5000
+# - Swagger UI: http://localhost:5000/swagger  
+# - Frontend: http://localhost:3000
+# - Database: localhost:5432
 ```
 
-## Getting Started
+### Local Development
+
+**Prerequisites**: .NET 9 SDK, Node.js 18+, PostgreSQL
+
+```bash
+# Backend setup
+dotnet restore
+dotnet run --project backend/src/DemoInventory.API
+
+# Frontend setup (in new terminal)
+cd frontend
+npm install
+npm run dev
+
+# Access: API at http://localhost:5126, Frontend at http://localhost:5173
+```
+
+## 📋 Table of Contents
+
+- [Architecture Overview](#architecture-overview)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
+- [Docker & Deployment](#docker--deployment)
+- [Contributing](#contributing)
+- [Documentation](#documentation)
+
+## 🏗️ Architecture Overview
+
+This project implements **Clean Architecture** with clear separation of concerns:
+
+- **Domain Layer**: Core business logic and entities
+- **Application Layer**: Use cases and business workflows  
+- **Infrastructure Layer**: Data access and external integrations
+- **Presentation Layer**: API controllers and user interfaces
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Presentation Layer                        │
+│  ┌─────────────────────┐  ┌─────────────────────────────────┐│
+│  │   React Frontend    │  │      Web API Controllers       ││
+│  │   (TypeScript)      │  │        (.NET 9)               ││
+│  └─────────────────────┘  └─────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                   Application Layer                         │
+│           Services, DTOs, Use Cases                         │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                     Domain Layer                            │
+│        Entities, Value Objects, Business Rules              │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                 Infrastructure Layer                        │
+│       Data Access, External Services, Persistence           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 🛠️ Technology Stack
+
+### Backend
+- **.NET 9** - Runtime and framework
+- **ASP.NET Core** - Web API framework  
+- **Entity Framework Core** - ORM and data access
+- **PostgreSQL** - Primary database
+- **Swagger/OpenAPI** - API documentation
+
+### Frontend  
+- **React 18** - UI library
+- **TypeScript** - Type-safe JavaScript
+- **Vite** - Build tool and dev server
+- **Axios** - HTTP client
+
+### Testing & Quality
+- **xUnit** - Unit testing framework
+- **Postman/Newman** - API testing  
+- **Cypress** - End-to-end testing
+- **CTRF** - Unified test reporting
+
+### DevOps
+- **Docker** - Containerization
+- **GitHub Actions** - CI/CD pipeline
+- **Docker Compose** - Multi-container orchestration
+
+## 📁 Project Structure
+
+```
+├── backend/
+│   ├── src/
+│   │   ├── DemoInventory.Domain/           # Business logic & entities
+│   │   ├── DemoInventory.Application/      # Use cases & services
+│   │   ├── DemoInventory.Infrastructure/   # Data access & external services
+│   │   └── DemoInventory.API/             # Web API controllers
+│   └── tests/                             # Unit & integration tests
+├── frontend/                              # React TypeScript application
+├── tests/
+│   ├── postman/                          # API test collections
+│   └── e2e/                              # Cypress end-to-end tests
+├── docs/                                 # Comprehensive documentation
+├── docker-compose.yml                    # Multi-container setup
+└── README.md
+```
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- .NET 9 SDK
-- Node.js 18+ and npm
-- Visual Studio 2022 or VS Code
-- Node.js (v18 or higher) - for E2E tests
 
-### Building the Backend Solution
+- **[.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)** (for local development)
+- **[Node.js 18+](https://nodejs.org/)** and npm  
+- **[Docker Desktop](https://www.docker.com/products/docker-desktop)** (recommended)
+- **[PostgreSQL 13+](https://www.postgresql.org/)** (if not using Docker)
+
+### Option 1: Docker Compose (Recommended)
+
 ```bash
-# Build the .NET solution
+# Clone the repository
+git clone https://github.com/zeabix-cloud-native/demo-inventory-microservice.git
+cd demo-inventory-microservice
+
+# Start all services
+docker-compose up -d
+
+# Verify services are running
+docker-compose ps
+
+# View logs
+docker-compose logs -f
+```
+
+**Services Available:**
+- **Backend API**: http://localhost:5000
+- **Swagger Documentation**: http://localhost:5000/swagger
+- **React Frontend**: http://localhost:3000  
+- **PostgreSQL Database**: localhost:5432
+
+### Option 2: Local Development
+
+#### Backend Setup
+
+```bash
+# Restore dependencies
+dotnet restore
+
+# Build the solution
 dotnet build
 
-# Install frontend dependencies
-cd src/frontend
-npm install
-```
-
-### Running Backend Tests
-
-```bash
+# Run tests
 dotnet test
-```
 
-#### End-to-End Tests
-```bash
-# Start the API first
-dotnet run --project src/DemoInventory.API
-
-# In another terminal, run E2E tests
-cd tests/e2e
-npm install
-npm run test:e2e
-```
-### Running the Application
-
-#### Start the API
-```bash
+# Start the API
 dotnet run --project backend/src/DemoInventory.API
 ```
 
-The API will be available at `http://localhost:5126` with Swagger documentation at `/swagger`.
+The API will be available at `http://localhost:5126` with Swagger at `/swagger`.
 
-#### Start the Frontend (in a separate terminal)
+#### Frontend Setup
+
 ```bash
+# Navigate to frontend directory
 cd frontend
+
+# Install dependencies
+npm install
+
+# Configure environment (optional)
+cp .env.example .env
+
+# Start development server
 npm run dev
 ```
 
 The frontend will be available at `http://localhost:5173`.
 
-### Building for Production
+#### Database Setup
 
-#### Build the API
+**Using Docker:**
 ```bash
-dotnet publish backend/src/DemoInventory.API -c Release -o ./publish
+docker run --name demo-inventory-db \
+  -e POSTGRES_PASSWORD=password \
+  -e POSTGRES_DB=demo_inventory \
+  -p 5432:5432 -d postgres:13
 ```
 
-#### Build the Frontend
-```bash
-cd frontend
-npm run build
+**Local PostgreSQL:**
+1. Install PostgreSQL
+2. Create database: `demo_inventory`
+3. Update connection string in `appsettings.json`
+
+## 📚 API Documentation
+
+### Core Endpoints
+
+The API provides RESTful endpoints for product management:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/products` | Get all products |
+| `GET` | `/api/products/{id}` | Get product by ID |
+| `GET` | `/api/products/sku/{sku}` | Get product by SKU |
+| `GET` | `/api/products/search?searchTerm={term}` | Search products |
+| `POST` | `/api/products` | Create new product |
+| `PUT` | `/api/products/{id}` | Update product |
+| `DELETE` | `/api/products/{id}` | Delete product |
+
+### Interactive Documentation
+
+- **Swagger UI**: http://localhost:5126/swagger (local) or http://localhost:5000/swagger (Docker)
+- **OpenAPI Specification**: Available at `/swagger/v1/swagger.json`
+
+### Example Usage
+
+```javascript
+// Get all products
+const response = await fetch('http://localhost:5126/api/products');
+const products = await response.json();
+
+// Create a new product
+const newProduct = {
+  name: "Laptop Computer",
+  sku: "LAP001", 
+  price: 999.99,
+  stockQuantity: 15
+};
+
+const response = await fetch('http://localhost:5126/api/products', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(newProduct)
+});
 ```
 
-The built frontend files will be in `frontend/dist/`.
+For detailed API documentation, see [docs/API.md](docs/API.md).
 
-### Setting up the Frontend
+## 🧪 Testing
 
-Navigate to the frontend directory:
-```bash
-cd frontend
-```
+The project implements a comprehensive testing strategy:
 
-Install dependencies:
-```bash
-npm install
-```
+### Test Types
 
-Start the development server:
-```bash
-npm run dev
-```
+- **Unit Tests**: Domain and application logic (xUnit)
+- **API Tests**: REST endpoint validation (Postman/Newman)  
+- **End-to-End Tests**: Complete user workflows (Cypress)
+- **Integration Tests**: Database and external service integration
 
-The frontend will be available at `http://localhost:5173/`.
-
-### Building the Frontend for Production
-```bash
-cd frontend
-npm run build
-```
-
-### Frontend Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Type check with TypeScript
-- `npm run preview` - Preview production build
-
-
-### Alternative Demo Frontend
-
-For a simple demonstration of Axios integration, there's also an HTML/JS demo:
-
-#### Running the HTML Demo Frontend
-```bash
-# Navigate to the demo frontend directory
-cd frontend-html-demo
-
-# Open index.html in your browser, or serve it with a simple HTTP server:
-python -m http.server 8080
-# Then open http://localhost:8080 in your browser
-```
-See `frontend-html-demo/README.md` for detailed demo frontend setup instructions.
-
-## API Endpoints
-
-### Products
-- `GET /api/products` - Get all products
-- `GET /api/products/{id}` - Get product by ID
-- `GET /api/products/sku/{sku}` - Get product by SKU
-- `GET /api/products/search?searchTerm={term}` - Search products by name
-- `POST /api/products` - Create a new product
-- `PUT /api/products/{id}` - Update a product
-- `DELETE /api/products/{id}` - Delete a product
-
-## Frontend Features
-
-### Product List Page
-- Display all products in a responsive table
-- Search functionality by product name
-- View product details including stock levels
-- Edit and delete product actions
-- Navigation to create new products
-- Low stock warning indicators
-
-### Product Form Page
-- Create new products with validation
-- Edit existing products (SKU field disabled for edits)
-- Form validation with error messages
-- Responsive design for mobile devices
-- Cancel functionality with navigation back to list
-
-## Features
-
-- Clean Architecture implementation
-- PostgreSQL database with Entity Framework Core
-- RESTful API design
-- Swagger/OpenAPI documentation
-- Unit tests with mocking
-- End-to-end tests with Cypress
-- Dependency injection
-- CRUD operations for products
-- React frontend with TypeScript
-- Responsive web design
-- CORS enabled for frontend communication
-
-## Technologies Used
-
-### Backend
-- .NET 8
-- ASP.NET Core Web API
-- Entity Framework Core
-- PostgreSQL database
-- xUnit for testing
-- Moq for mocking
-- Cypress for E2E testing
-- Swagger/OpenAPI
-- Docker containerization
-
-## Docker Support
-
-The application includes Docker containerization with:
-
-- **Dockerfile** - Multi-stage build for optimized production image
-- **docker-compose.yml** - Complete stack with PostgreSQL database, backend API, and React frontend
-- **docker-compose.full.yml** - Complete stack + standalone Swagger UI frontend
-
-### Quick Docker Start
+### Running Tests
 
 ```bash
-# Build and run the complete stack (PostgreSQL + Backend + Frontend)
-docker compose up -d
+# Run all unit tests
+dotnet test
 
-# Access the services
-# API: http://localhost:5000
-# Swagger: http://localhost:5000/swagger
-# Frontend: http://localhost:3000
-# PostgreSQL: localhost:5432
+# Run API tests (requires running API)
+newman run tests/postman/collection.json \
+  --environment tests/postman/environment.json
+
+# Run E2E tests (requires running application)
+cd tests/e2e && npm run test:e2e
 ```
 
-See [Docker.README.md](Docker.README.md) for detailed Docker usage instructions.
+### Test Reporting
 
-### Frontend
-- React 18
-- TypeScript
-- Vite (build tool)
-- Axios (HTTP client)
-- React Router (navigation)
-- CSS3 (responsive styling)
+The project uses **CTRF (Common Test Report Format)** for unified test reporting:
+
+- Automated test result aggregation
+- GitHub Actions integration
+- Rich test summaries and PR comments
+- Comprehensive test metrics
+
+For detailed testing information, see [docs/TESTING.md](docs/TESTING.md).
+
+## 🐳 Docker & Deployment
+
+### Docker Compose Configurations
+
+- **`docker-compose.yml`**: Complete stack (API + Frontend + Database)
+- **`docker-compose.full.yml`**: Full stack + standalone Swagger UI
+
+### Quick Commands
+
+```bash
+# Start complete stack
+docker-compose up -d
+
+# Start with standalone Swagger UI
+docker-compose -f docker-compose.full.yml up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+### Production Deployment
+
+The application supports various deployment strategies:
+
+- **Container Registry**: Docker Hub, AWS ECR, Azure ACR
+- **Orchestration**: Docker Swarm, Kubernetes
+- **Cloud Platforms**: Azure Container Apps, AWS ECS, Google Cloud Run
+
+For detailed deployment guides, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 
-### Frontend
-- React 18
-- TypeScript
-- Vite (build tool)
-- Axios (HTTP client)
-- React Router (navigation)
-- CSS3 (responsive styling)
+## 🤝 Contributing
 
+We welcome contributions! Please see our [Contributing Guidelines](docs/CONTRIBUTING.md) for detailed information on:
 
-## Future Enhancements
+- Setting up the development environment
+- Coding standards and best practices  
+- Pull request process
+- Issue reporting guidelines
 
-- Authentication and authorization
-- Logging and monitoring
-- Database migrations and seeding
-- API versioning
-- Integration tests
-- State management (Redux/Zustand)
-- End-to-end testing
-- Progressive Web App features
+### Quick Contribution Steps
+
+1. **Fork** the repository
+2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
+3. **Commit** your changes: `git commit -m 'Add amazing feature'`
+4. **Push** to the branch: `git push origin feature/amazing-feature`
+5. **Open** a Pull Request
+
+## 📖 Documentation
+
+Comprehensive documentation is available in the `/docs` directory:
+
+| Document | Description |
+|----------|-------------|
+| [Architecture Guide](docs/ARCHITECTURE.md) | Detailed system architecture and design patterns |
+| [Development Guide](docs/DEVELOPMENT.md) | Setup, coding standards, and development workflow |
+| [API Documentation](docs/API.md) | Complete API reference and examples |
+| [Testing Guide](docs/TESTING.md) | Testing strategy, tools, and best practices |
+| [Deployment Guide](docs/DEPLOYMENT.md) | Docker, cloud deployment, and production setup |
+| [Contributing Guidelines](docs/CONTRIBUTING.md) | How to contribute to the project |
+
+## 🎯 Key Features Showcase
+
+### Clean Architecture Implementation
+- **Domain-Driven Design**: Pure business logic in Domain layer
+- **Dependency Inversion**: Abstractions don't depend on concretions
+- **Separation of Concerns**: Clear layer responsibilities
+- **Testability**: Comprehensive unit test coverage
+
+### Modern Development Practices
+- **CI/CD Pipeline**: Automated testing and deployment
+- **Code Quality**: Linting, formatting, and static analysis
+- **Documentation**: Auto-generated API docs and comprehensive guides
+- **Monitoring**: Health checks and application metrics
+
+### Production-Ready Features
+- **Containerization**: Docker support with multi-stage builds
+- **Database Management**: EF Core migrations and seeding
+- **Error Handling**: Structured error responses and logging
+- **Security**: CORS, input validation, and secure defaults
+
+## 🚀 Future Roadmap
+
+- **Authentication & Authorization**: JWT-based security
+- **Advanced Search**: Elasticsearch integration
+- **Caching**: Redis for performance optimization
+- **Event Sourcing**: Audit trails and state reconstruction
+- **API Versioning**: Backward compatibility support
+- **Monitoring**: Application insights and metrics
+- **Mobile App**: React Native companion app
+
+## 📜 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Clean Architecture** pattern by Robert C. Martin
+- **.NET Community** for excellent frameworks and tools
+- **React Community** for modern frontend development
+- **Open Source Contributors** who make projects like this possible
+
+---
+
+**Demo Inventory Microservice** - Showcasing modern full-stack development with Clean Architecture principles.
+
+For questions, issues, or contributions, please visit our [GitHub repository](https://github.com/zeabix-cloud-native/demo-inventory-microservice).
