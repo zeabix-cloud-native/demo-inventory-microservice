@@ -67,11 +67,15 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     cy.contains('$1,399.99').should('be.visible')
 
     // Step 6: Delete a product
+    // Mock the confirm dialog first
     cy.window().then((win) => {
       cy.stub(win, 'confirm').returns(true)
     })
     
     cy.get('[data-testid^="delete-product-"]').first().click()
+    
+    // Wait for deletion to complete by waiting for the products table to update
+    cy.get('[data-testid="products-table"]').should('be.visible')
     
     // Verify product is deleted
     cy.contains('Updated E2E Test Laptop').should('not.exist')
@@ -153,6 +157,9 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
       }
       cy.createProductViaUI(productData)
     })
+
+    // Wait for products table to be fully rendered
+    cy.get('[data-testid="products-table"]').should('be.visible')
 
     // Verify all products are displayed
     testProducts.forEach((productData) => {

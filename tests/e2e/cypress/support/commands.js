@@ -11,6 +11,15 @@
 // Custom command to create a product via UI
 Cypress.Commands.add('createProductViaUI', (productData) => {
   cy.visit('/product/new')
+  cy.get('[data-testid="form-title"]').should('contain.text', 'Create New Product')
+  
+  // Wait for form to be ready and inputs to be enabled
+  cy.get('[data-testid="product-name-input"]').should('be.visible').should('not.be.disabled')
+  cy.get('[data-testid="product-sku-input"]').should('be.visible').should('not.be.disabled')
+  cy.get('[data-testid="product-description-input"]').should('be.visible').should('not.be.disabled')
+  cy.get('[data-testid="product-price-input"]').should('be.visible').should('not.be.disabled')
+  cy.get('[data-testid="product-quantity-input"]').should('be.visible').should('not.be.disabled')
+  
   cy.get('[data-testid="product-name-input"]').type(productData.name)
   cy.get('[data-testid="product-sku-input"]').type(productData.sku)
   cy.get('[data-testid="product-description-input"]').type(productData.description)

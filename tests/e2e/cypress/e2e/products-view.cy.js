@@ -198,6 +198,9 @@ describe('Product View Frontend E2E Tests', () => {
     cy.get('[data-testid="add-new-product-btn"]').click()
     cy.createProductViaUI(normalStockProduct)
     
+    // Wait for products table to be fully rendered
+    cy.get('[data-testid="products-table"]').should('be.visible')
+    
     // Low stock product should have low-stock class
     cy.get('[data-testid^="product-stock-"]').contains('5').should('have.class', 'low-stock')
     
