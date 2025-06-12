@@ -4,7 +4,7 @@ This directory contains end-to-end tests for the Demo Inventory Microservice fro
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20 or higher)
 - npm (v8 or higher)
 - Demo Inventory API running
 - Demo Inventory frontend application running
@@ -69,12 +69,12 @@ Prerequisites - Start the full Docker stack:
 
 ```bash
 # From the project root directory
-docker compose up -d
+docker-compose up -d
 ```
 
 This starts:
 - Backend API at `http://localhost:5000`
-- Frontend at `http://localhost:8080`
+- Frontend at `http://localhost:3000`
 - Database (PostgreSQL)
 
 **Run E2E Tests against Docker stack:**
@@ -99,13 +99,13 @@ npm run cypress:open:docker
 
 ```bash
 # Start main services
-docker compose up -d
+docker-compose up -d
 
 # Run Cypress in container (one-time)
-docker compose run --rm cypress
+docker-compose run --rm cypress
 
 # Or include Cypress service in the stack
-docker compose --profile test up -d
+docker-compose --profile test up -d
 ```
 
 ## Test Structure
@@ -163,7 +163,7 @@ The Cypress configuration is defined in `cypress.config.js` and supports flexibl
 
 ### Docker Environment Configuration
 Set via environment variables:
-- `CYPRESS_FRONTEND_BASE_URL=http://localhost:8080`
+- `CYPRESS_FRONTEND_BASE_URL=http://localhost:3000`
 - `CYPRESS_API_BASE_URL=http://localhost:5000`
 - `CYPRESS_API_URL=http://localhost:5000/api`
 

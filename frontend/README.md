@@ -5,7 +5,7 @@ React + TypeScript + Vite frontend for the Demo Inventory Microservice.
 ## Getting Started
 
 ### Prerequisites
-- Node.js 24 or higher
+- Node.js 20 or higher
 - npm
 
 ### Setup

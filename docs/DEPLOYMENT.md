@@ -112,7 +112,7 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:13
+    image: postgres:15
     environment:
       POSTGRES_DB: demo_inventory
       POSTGRES_USER: postgres
@@ -239,7 +239,7 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:13
+    image: postgres:15
     environment:
       POSTGRES_DB: demo_inventory
       POSTGRES_USER: postgres
@@ -490,7 +490,7 @@ spec:
     spec:
       containers:
       - name: postgresql
-        image: postgres:13
+        image: postgres:15
         env:
         - name: POSTGRES_DB
           value: demo_inventory

@@ -126,7 +126,7 @@ The user interface layer containing:
 
 ### Frontend Technologies
 
-- **React 18**: UI library
+- **React 19**: UI library
 - **TypeScript**: Type-safe JavaScript
 - **Vite**: Build tool and development server
 - **Axios**: HTTP client for API communication
