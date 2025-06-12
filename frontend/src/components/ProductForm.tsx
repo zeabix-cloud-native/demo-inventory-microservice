@@ -13,8 +13,8 @@ const ProductForm: React.FC = () => {
     name: '',
     description: '',
     sku: '',
-    price: 0,
-    quantityInStock: 0,
+    price: '',
+    quantityInStock: '',
   });
   
   const [loading, setLoading] = useState(false);
@@ -35,8 +35,8 @@ const ProductForm: React.FC = () => {
         name: product.name,
         description: product.description,
         sku: product.sku,
-        price: product.price,
-        quantityInStock: product.quantityInStock,
+        price: product.price.toString(),
+        quantityInStock: product.quantityInStock.toString(),
       });
       setError(null);
     } catch (err) {
@@ -62,11 +62,13 @@ const ProductForm: React.FC = () => {
       errors.description = 'Description is required';
     }
 
-    if (formData.price <= 0) {
+    const price = parseFloat(formData.price);
+    if (isNaN(price) || price <= 0) {
       errors.price = 'Price must be greater than 0';
     }
 
-    if (formData.quantityInStock < 0) {
+    const quantity = parseInt(formData.quantityInStock);
+    if (isNaN(quantity) || quantity < 0) {
       errors.quantityInStock = 'Quantity cannot be negative';
     }
 
@@ -78,7 +80,7 @@ const ProductForm: React.FC = () => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'quantityInStock' ? parseFloat(value) || 0 : value,
+      [name]: value,
     }));
     
     // Clear validation error for this field
@@ -105,8 +107,8 @@ const ProductForm: React.FC = () => {
         const updateData: UpdateProductDto = {
           name: formData.name,
           description: formData.description,
-          price: formData.price,
-          quantityInStock: formData.quantityInStock,
+          price: parseFloat(formData.price),
+          quantityInStock: parseInt(formData.quantityInStock),
         };
         await productService.updateProduct(parseInt(id), updateData);
       } else {
@@ -114,15 +116,17 @@ const ProductForm: React.FC = () => {
           name: formData.name,
           description: formData.description,
           sku: formData.sku,
-          price: formData.price,
-          quantityInStock: formData.quantityInStock,
+          price: parseFloat(formData.price),
+          quantityInStock: parseInt(formData.quantityInStock),
         };
         await productService.createProduct(createData);
       }
       
       navigate('/');
-    } catch (err: any) {
-      if (err.response?.status === 400) {
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err && 
+          err.response && typeof err.response === 'object' && 'status' in err.response && 
+          err.response.status === 400) {
         setError('Invalid data. Please check your input.');
       } else {
         setError(`Failed to ${isEditing ? 'update' : 'create'} product.`);

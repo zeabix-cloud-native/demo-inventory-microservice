@@ -165,4 +165,34 @@ describe('ProductForm', () => {
       expect(screen.queryByTestId('price-error')).not.toBeInTheDocument()
     })
   })
+
+  it('should not auto-append 0 when clearing price and quantity fields', async () => {
+    renderProductForm()
+    
+    const priceInput = screen.getByTestId('product-price-input') as HTMLInputElement
+    const quantityInput = screen.getByTestId('product-quantity-input') as HTMLInputElement
+    
+    // Type a value then clear it
+    fireEvent.change(priceInput, { target: { value: '25.99' } })
+    expect(priceInput.value).toBe('25.99')
+    
+    // Clear the price field
+    fireEvent.change(priceInput, { target: { value: '' } })
+    expect(priceInput.value).toBe('')
+    
+    // Type a value in quantity then clear it
+    fireEvent.change(quantityInput, { target: { value: '100' } })
+    expect(quantityInput.value).toBe('100')
+    
+    // Clear the quantity field
+    fireEvent.change(quantityInput, { target: { value: '' } })
+    expect(quantityInput.value).toBe('')
+    
+    // Start typing new values - should not auto-append 0
+    fireEvent.change(priceInput, { target: { value: '1' } })
+    expect(priceInput.value).toBe('1')
+    
+    fireEvent.change(quantityInput, { target: { value: '5' } })
+    expect(quantityInput.value).toBe('5')
+  })
 })
