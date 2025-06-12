@@ -269,6 +269,33 @@ npm run cypress:open
 npx cypress run --spec "cypress/e2e/products.cy.js"
 ```
 
+#### Recording Test Results
+
+Cypress tests can be run with recording capabilities for better debugging and reporting:
+
+```bash
+# Run tests with video recording
+npm run test:e2e:video
+
+# Run tests with video recording (headed mode)
+npm run test:e2e:video:headed
+
+# Run tests with Cypress Dashboard recording (requires setup)
+export CYPRESS_PROJECT_ID=your-project-id
+export CYPRESS_RECORD_KEY=your-record-key
+npm run test:e2e:record
+
+# Docker environment with recording
+npm run test:e2e:docker:video
+npm run test:e2e:docker:record
+```
+
+**Recording Features:**
+- **Video Recording**: Captures test execution videos for debugging failed tests
+- **Screenshots**: Automatically captures screenshots on test failures
+- **Cypress Dashboard**: Uploads results to Cypress Dashboard for analytics and reporting
+- **CTRF Reports**: Generates standardized test result reports for CI/CD integration
+
 #### Current E2E Test Suite
 
 The test suite includes three main test files:
