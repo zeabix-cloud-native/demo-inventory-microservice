@@ -21,6 +21,16 @@ This directory contains end-to-end tests for the Demo Inventory Microservice fro
    npm install
    ```
 
+3. (Optional) Configure recording settings:
+   ```bash
+   # Copy the example environment file
+   cp .env.example .env
+   
+   # Edit .env file to add your Cypress Dashboard credentials (if using recording)
+   # CYPRESS_PROJECT_ID=your-project-id
+   # CYPRESS_RECORD_KEY=your-record-key
+   ```
+
 ## Running Tests
 
 ### Option 1: With Local Development Stack (Default)
@@ -63,6 +73,38 @@ npm run test:e2e:headed
 npm run cypress:open
 ```
 
+### Recording Test Results
+
+The test suite supports recording test results for better debugging and reporting:
+
+**Run Tests with Video Recording**
+
+```bash
+npm run test:e2e:video
+```
+
+**Run Tests with Video Recording (Headed Mode)**
+
+```bash
+npm run test:e2e:video:headed
+```
+
+**Run Tests with Cypress Dashboard Recording**
+
+```bash
+# Set up Cypress Dashboard project and record key first
+export CYPRESS_PROJECT_ID=your-project-id
+export CYPRESS_RECORD_KEY=your-record-key
+
+npm run test:e2e:record
+```
+
+**Run Tests with Cypress Dashboard Recording (Headed Mode)**
+
+```bash
+npm run test:e2e:record:headed
+```
+
 ### Option 2: With Docker Stack
 
 Prerequisites - Start the full Docker stack:
@@ -87,6 +129,16 @@ npm run test:e2e:docker
 
 ```bash
 npm run test:e2e:docker:headed
+```
+
+**Run Tests with Recording against Docker**
+
+```bash
+# Video recording
+npm run test:e2e:docker:video
+
+# Cypress Dashboard recording (requires CYPRESS_PROJECT_ID and CYPRESS_RECORD_KEY)
+npm run test:e2e:docker:record
 ```
 
 **Open Cypress GUI against Docker**
@@ -172,6 +224,28 @@ Set via environment variables:
 - `CYPRESS_FRONTEND_BASE_URL` - Override the frontend application URL
 - `CYPRESS_API_BASE_URL` - Override the backend API base URL  
 - `CYPRESS_API_URL` - Override the API endpoint URL (used for setup/teardown)
+- `CYPRESS_VIDEO` - Set to 'true' to enable video recording (alternative to --config video=true)
+- `CYPRESS_PROJECT_ID` - Cypress Dashboard project ID for recording test results
+- `CYPRESS_RECORD_KEY` - Cypress Dashboard record key for uploading test results
+
+### Recording Configuration
+
+The configuration supports multiple recording modes:
+
+**Video Recording:**
+- Videos are saved to `cypress/videos/` directory
+- Configurable compression level (set to 32 for balance of quality/size)
+- Can be enabled via `CYPRESS_VIDEO=true` environment variable or `--config video=true` flag
+
+**Screenshots:**
+- Screenshots on test failure are always enabled
+- Saved to `cypress/screenshots/` directory
+
+**Cypress Dashboard Recording:**
+- Requires setup of `CYPRESS_PROJECT_ID` and `CYPRESS_RECORD_KEY`
+- Automatically uploads test results, videos, and screenshots to Cypress Dashboard
+- Provides test result history and analytics
+- Enables parallel test execution across multiple machines
 
 ## Notes
 

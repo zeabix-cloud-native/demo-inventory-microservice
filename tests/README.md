@@ -141,14 +141,25 @@ newman run tests/postman/collection.json --environment tests/postman/environment
 
 ### Cypress Tests (when available)
 ```bash
+# Navigate to E2E test directory
+cd tests/e2e
+
 # Install dependencies
 npm install
 
-# Run Cypress
-npx cypress run
+# Run Cypress tests
+npm run test:e2e
 
-# Or open Cypress GUI
-npx cypress open
+# Run with video recording
+npm run test:e2e:video
+
+# Run with Cypress Dashboard recording (requires setup)
+export CYPRESS_PROJECT_ID=your-project-id
+export CYPRESS_RECORD_KEY=your-record-key
+npm run test:e2e:record
+
+# Open Cypress GUI
+npm run cypress:open
 ```
 
 ## CTRF Test Result Reporting
@@ -197,7 +208,13 @@ newman run tests/postman/collection.json \
   --reporter-ctrf-json-export ctrf-api-tests.json
 
 # Run Cypress tests (CTRF report generated automatically to cypress/reports/)
-cd tests/e2e && npm run cypress:run
+cd tests/e2e && npm run test:e2e
+
+# Run Cypress tests with video recording
+cd tests/e2e && npm run test:e2e:video
+
+# Run Cypress tests with Dashboard recording
+cd tests/e2e && npm run test:e2e:record
 
 # Merge all CTRF reports
 ctrf merge . --output merged-ctrf-report.json
