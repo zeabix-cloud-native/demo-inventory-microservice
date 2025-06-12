@@ -52,8 +52,8 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     cy.contains(product1.name).should('be.visible')
     cy.contains(product2.name).should('be.visible')
 
-    // Step 5: Edit a product
-    cy.get('[data-testid^="edit-product-"]').first().click()
+    // Step 5: Edit a product - edit the specific product we want to edit
+    cy.editProductBySku(product1.sku)
     cy.url().should('include', '/product/')
     cy.get('[data-testid="form-title"]').should('contain.text', 'Edit Product')
     
@@ -67,18 +67,13 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     cy.contains('Updated E2E Test Laptop').should('be.visible')
     cy.contains('$1,399.99').should('be.visible')
 
-    // Step 6: Delete a product
-    // Mock the confirm dialog first
-    cy.window().then((win) => {
-      cy.stub(win, 'confirm').returns(true)
-    })
-    
-    cy.get('[data-testid^="delete-product-"]').first().click()
+    // Step 6: Delete the specific product we want to delete
+    cy.deleteProductByName('Updated E2E Test Laptop')
     
     // Wait for deletion to complete by waiting for the products table to update
     cy.get('[data-testid="products-table"]').should('be.visible')
     
-    // Verify product is deleted
+    // Verify the correct product is deleted
     cy.contains('Updated E2E Test Laptop').should('not.exist')
     cy.contains(product2.name).should('be.visible') // Second product should still be there
   })
@@ -107,8 +102,8 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     cy.url().should('eq', Cypress.config().baseUrl + '/')
     cy.contains('Validation Test Product').should('be.visible')
     
-    // Step 5: Edit product and try invalid data
-    cy.get('[data-testid^="edit-product-"]').first().click()
+    // Step 5: Edit product and try invalid data - edit the specific validation test product
+    cy.editProductByName('Validation Test Product')
     cy.get('[data-testid="product-name-input"]').clear()
     cy.get('[data-testid="product-price-input"]').clear().type('-50')
     cy.get('[data-testid="submit-btn"]').click()
@@ -217,8 +212,8 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     cy.get('[data-testid="search-input"]').should('have.value', 'State')
     cy.contains(productData.name).should('be.visible')
     
-    // Navigate to edit form
-    cy.get('[data-testid^="edit-product-"]').first().click()
+    // Navigate to edit form - edit the specific State Test Product
+    cy.editProductBySku(productData.sku)
     cy.url().should('include', '/product/')
     
     // Cancel edit and return to list

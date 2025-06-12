@@ -51,14 +51,78 @@ Cypress.Commands.add('visitProductList', () => {
   cy.get('[data-testid="product-inventory-title"]').should('be.visible')
 })
 
-// Custom command to delete a product via UI
+// Custom command to get product ID by SKU from the DOM
+Cypress.Commands.add('getProductIdBySku', (sku) => {
+  return cy.get('[data-testid="products-table"]').then($table => {
+    return cy.wrap($table).find(`[data-testid*="product-sku-"]:contains("${sku}")`)
+      .first()
+      .should('be.visible')
+      .invoke('attr', 'data-testid')
+      .then(testId => {
+        // Extract ID from data-testid="product-sku-{id}"
+        const id = testId.split('-')[2]
+        return cy.wrap(id)
+      })
+  })
+})
+
+// Custom command to get product ID by name from the DOM
+Cypress.Commands.add('getProductIdByName', (name) => {
+  return cy.get('[data-testid="products-table"]').then($table => {
+    return cy.wrap($table).find(`[data-testid*="product-name-"]:contains("${name}")`)
+      .first()
+      .should('be.visible')
+      .invoke('attr', 'data-testid')
+      .then(testId => {
+        // Extract ID from data-testid="product-name-{id}"
+        const id = testId.split('-')[2]
+        return cy.wrap(id)
+      })
+  })
+})
+
+// Custom command to delete a product via UI by product ID
 Cypress.Commands.add('deleteProductViaUI', (productId) => {
-  cy.get(`[data-testid="delete-product-${productId}"]`).click()
-  // Handle confirmation dialog
+  // Mock the confirm dialog first
   cy.window().then((win) => {
     cy.stub(win, 'confirm').returns(true)
   })
-  cy.get(`[data-testid="delete-product-${productId}"]`).click()
+  
+  // Click delete button for specific product
+  cy.get(`[data-testid="delete-product-${productId}"]`).should('be.visible').click()
+})
+
+// Custom command to delete a product via UI by SKU
+Cypress.Commands.add('deleteProductBySku', (sku) => {
+  cy.getProductIdBySku(sku).then(productId => {
+    cy.deleteProductViaUI(productId)
+  })
+})
+
+// Custom command to delete a product via UI by name
+Cypress.Commands.add('deleteProductByName', (name) => {
+  cy.getProductIdByName(name).then(productId => {
+    cy.deleteProductViaUI(productId)
+  })
+})
+
+// Custom command to edit a product via UI by product ID
+Cypress.Commands.add('editProductViaUI', (productId) => {
+  cy.get(`[data-testid="edit-product-${productId}"]`).should('be.visible').click()
+})
+
+// Custom command to edit a product via UI by SKU
+Cypress.Commands.add('editProductBySku', (sku) => {
+  cy.getProductIdBySku(sku).then(productId => {
+    cy.editProductViaUI(productId)
+  })
+})
+
+// Custom command to edit a product via UI by name
+Cypress.Commands.add('editProductByName', (name) => {
+  cy.getProductIdByName(name).then(productId => {
+    cy.editProductViaUI(productId)
+  })
 })
 
 // Legacy API commands for backward compatibility (if needed for setup/teardown)
