@@ -17,6 +17,10 @@ Cypress.Commands.add('createProductViaUI', (productData) => {
   cy.get('[data-testid="product-price-input"]').clear().type(productData.price.toString())
   cy.get('[data-testid="product-quantity-input"]').clear().type(productData.quantityInStock.toString())
   cy.get('[data-testid="submit-btn"]').click()
+  
+  // Wait for successful creation - should redirect to main page and product should be visible
+  cy.url().should('eq', Cypress.config().baseUrl + '/')
+  cy.contains(productData.name).should('be.visible')
 })
 
 // Custom command to search for products via UI

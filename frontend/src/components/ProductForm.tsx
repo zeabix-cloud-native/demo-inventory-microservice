@@ -209,7 +209,6 @@ const ProductForm: React.FC = () => {
               className={validationErrors.price ? 'error' : ''}
               placeholder="0.00"
               step="0.01"
-              min="0"
               data-testid="product-price-input"
             />
             {validationErrors.price && <span className="field-error" data-testid="price-error">{validationErrors.price}</span>}

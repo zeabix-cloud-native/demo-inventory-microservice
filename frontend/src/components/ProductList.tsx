@@ -47,6 +47,11 @@ const ProductList: React.FC = () => {
     }
   };
 
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    loadProducts();
+  };
+
   const handleDelete = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this product?')) {
       return;
@@ -99,7 +104,7 @@ const ProductList: React.FC = () => {
           <button onClick={handleSearch} className="btn btn-secondary" data-testid="search-btn">
             Search
           </button>
-          <button onClick={loadProducts} className="btn btn-secondary" data-testid="clear-search-btn">
+          <button onClick={handleClearSearch} className="btn btn-secondary" data-testid="clear-search-btn">
             Clear
           </button>
         </div>

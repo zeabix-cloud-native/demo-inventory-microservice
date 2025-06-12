@@ -21,12 +21,8 @@ describe('Product Create Frontend E2E Tests', () => {
 
     cy.createProductViaUI(productData)
     
-    // Should redirect to product list after successful creation
-    cy.url().should('eq', Cypress.config().baseUrl + '/')
-    
-    // Verify product appears in the list
+    // Verify product appears in the list (additional checks beyond the command)
     cy.get('[data-testid="products-table"]').should('be.visible')
-    cy.contains(productData.name).should('be.visible')
     cy.contains(productData.sku).should('be.visible')
     cy.contains('$29.99').should('be.visible')
   })
@@ -71,11 +67,7 @@ describe('Product Create Frontend E2E Tests', () => {
 
     cy.createProductViaUI(productData)
     
-    // Should redirect to product list
-    cy.url().should('eq', Cypress.config().baseUrl + '/')
-    
-    // Verify product appears with 0 quantity
-    cy.contains(productData.name).should('be.visible')
+    // Verify product appears with 0 quantity (additional check beyond the command)
     cy.get('[data-testid^="product-stock-"]').contains('0').should('be.visible')
   })
 
