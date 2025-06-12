@@ -174,7 +174,63 @@ if (pm.response.code === 201) {
 }
 ```
 
-### 3. End-to-End Tests (Cypress)
+### 3. Frontend Component Tests (Vitest + React Testing Library)
+
+#### Coverage
+- **Component Logic**: Individual component validation
+- **Form Validation**: Price validation, required fields, error clearing
+- **UI State**: Low stock warnings, price formatting, description truncation
+- **User Interactions**: Form submission, input handling
+
+#### Location
+```
+frontend/src/test/
+├── ProductForm.test.tsx      # Form validation tests
+├── ProductList.test.tsx      # List display and formatting tests
+└── setup.ts                  # Test configuration
+```
+
+#### Running Component Tests
+
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Run tests with UI
+npm run test:ui
+
+# Run with coverage
+npm run test:coverage
+```
+
+#### Example Component Test
+
+```typescript
+describe('ProductForm', () => {
+  it('should show price validation error for negative values', async () => {
+    renderProductForm()
+    
+    fireEvent.change(screen.getByTestId('product-price-input'), {
+      target: { value: '-10' }
+    })
+    
+    fireEvent.click(screen.getByTestId('submit-btn'))
+    
+    await waitFor(() => {
+      expect(screen.getByTestId('price-error')).toBeVisible()
+      expect(screen.getByTestId('price-error')).toHaveTextContent('Price must be greater than 0')
+    })
+  })
+})
+```
+
+### 4. End-to-End Tests (Cypress)
 
 #### Coverage
 - **User Workflows**: Complete user journeys

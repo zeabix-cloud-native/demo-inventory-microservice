@@ -69,6 +69,29 @@ npm run cypress:open  # Interactive mode
 npm run cypress:run   # Headless mode
 ```
 
+### Frontend Component Tests
+
+✅ **Available and Ready** - Frontend component tests using Vitest and React Testing Library:
+
+- Test files: `frontend/src/test/*.test.tsx`
+- Configuration: `frontend/vitest.config.ts`
+- Test setup: `frontend/src/test/setup.ts`
+
+The component test suite includes:
+- ProductForm validation logic testing
+- ProductList low stock warning functionality
+- Price formatting and display logic
+- Form error handling and clearing
+
+To run locally:
+```bash
+cd frontend
+npm install
+npm test          # Run tests
+npm run test:ui   # Interactive test UI
+npm run test:coverage  # Run with coverage
+```
+
 To enable in CI pipeline:
 1. In `.github/workflows/ci.yml`, change `if: false` to `if: true` for the `cypress-tests` job
 
@@ -84,6 +107,19 @@ tests/e2e/
 │       ├── commands.js
 │       └── e2e.js
 ├── cypress.config.js
+└── package.json
+```
+
+Example Frontend component test structure:
+```
+frontend/
+├── src/
+│   ├── test/
+│   │   ├── ProductForm.test.tsx
+│   │   ├── ProductList.test.tsx
+│   │   └── setup.ts
+│   └── components/
+├── vitest.config.ts
 └── package.json
 ```
 
