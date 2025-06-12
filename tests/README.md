@@ -47,25 +47,44 @@ newman run tests/postman/collection.json --environment tests/postman/environment
 
 ### Cypress E2E Tests
 
-1. Initialize Cypress in the project root:
-   ```bash
-   npm init -y
-   npm install --save-dev cypress
-   npx cypress open
-   ```
-2. Configure `cypress.config.js` in the project root
-3. Add E2E tests in `cypress/e2e/`
-4. In `.github/workflows/ci.yml`, change `if: false` to `if: true` for the `cypress-tests` job
+✅ **Available and Ready** - The Cypress E2E tests are now available in the `tests/e2e/` directory:
+
+- Test files: `tests/e2e/cypress/e2e/*.cy.js`
+- Configuration: `tests/e2e/cypress.config.js`
+- Custom commands: `tests/e2e/cypress/support/commands.js`
+
+The test suite includes comprehensive E2E tests for:
+- Product creation with form validation
+- Product listing and search functionality
+- Product editing and deletion
+- Low stock warnings
+- Complete workflow testing
+- Error handling scenarios
+
+To run locally:
+```bash
+cd tests/e2e
+npm install
+npm run cypress:open  # Interactive mode
+npm run cypress:run   # Headless mode
+```
+
+To enable in CI pipeline:
+1. In `.github/workflows/ci.yml`, change `if: false` to `if: true` for the `cypress-tests` job
 
 Example Cypress structure:
 ```
-cypress/
-├── e2e/
-│   └── api.cy.js
-├── fixtures/
-└── support/
-cypress.config.js
-package.json
+tests/e2e/
+├── cypress/
+│   ├── e2e/
+│   │   ├── products-create.cy.js
+│   │   ├── products-view.cy.js
+│   │   └── products-e2e-flow.cy.js
+│   └── support/
+│       ├── commands.js
+│       └── e2e.js
+├── cypress.config.js
+└── package.json
 ```
 
 ## Running Tests Locally
