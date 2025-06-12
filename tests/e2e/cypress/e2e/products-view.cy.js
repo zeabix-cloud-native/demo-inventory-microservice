@@ -78,8 +78,8 @@ describe('Product View Frontend E2E Tests', () => {
 
     cy.createProductViaUI(productData)
     
-    // Click edit button for the product
-    cy.get('[data-testid^="edit-product-"]').first().click()
+    // Click edit button for the specific product by its SKU
+    cy.editProductBySku(productData.sku)
     
     // Should navigate to edit form
     cy.url().should('include', '/product/')
@@ -103,13 +103,8 @@ describe('Product View Frontend E2E Tests', () => {
     // Verify product exists
     cy.contains(productData.name).should('be.visible')
     
-    // Mock the confirm dialog to return true
-    cy.window().then((win) => {
-      cy.stub(win, 'confirm').returns(true)
-    })
-    
-    // Click delete button
-    cy.get('[data-testid^="delete-product-"]').first().click()
+    // Delete the specific product by its SKU to ensure we delete the right one
+    cy.deleteProductBySku(productData.sku)
     
     // Product should be removed from the list
     cy.contains(productData.name).should('not.exist')
