@@ -33,6 +33,7 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
       quantityInStock: 50
     }
 
+    cy.get('[data-testid="products-table"]').should('be.visible')
     cy.get('[data-testid="add-new-product-btn"]').click()
     cy.createProductViaUI(product2)
     
@@ -153,6 +154,8 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     // Create all test products
     testProducts.forEach((productData, index) => {
       if (index > 0) {
+        // Wait for the previous product to be fully visible before creating next one
+        cy.get('[data-testid="products-table"]').should('be.visible')
         cy.get('[data-testid="add-new-product-btn"]').click()
       }
       cy.createProductViaUI(productData)
@@ -259,6 +262,7 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     cy.createProductViaUI(productData)
     
     // Try to create second product with same SKU (should fail if backend validates)
+    cy.get('[data-testid="products-table"]').should('be.visible')
     cy.get('[data-testid="add-new-product-btn"]').click()
     
     cy.get('[data-testid="product-name-input"]').type('Error Test Product 2')
