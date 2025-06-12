@@ -33,6 +33,7 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
       quantityInStock: 50
     }
 
+    cy.get('[data-testid="products-table"]').should('be.visible')
     cy.get('[data-testid="add-new-product-btn"]').click()
     cy.createProductViaUI(product2)
     
@@ -67,11 +68,15 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     cy.contains('$1,399.99').should('be.visible')
 
     // Step 6: Delete a product
+    // Mock the confirm dialog first
     cy.window().then((win) => {
       cy.stub(win, 'confirm').returns(true)
     })
     
     cy.get('[data-testid^="delete-product-"]').first().click()
+    
+    // Wait for deletion to complete by waiting for the products table to update
+    cy.get('[data-testid="products-table"]').should('be.visible')
     
     // Verify product is deleted
     cy.contains('Updated E2E Test Laptop').should('not.exist')
@@ -149,10 +154,15 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     // Create all test products
     testProducts.forEach((productData, index) => {
       if (index > 0) {
+        // Wait for the previous product to be fully visible before creating next one
+        cy.get('[data-testid="products-table"]').should('be.visible')
         cy.get('[data-testid="add-new-product-btn"]').click()
       }
       cy.createProductViaUI(productData)
     })
+
+    // Wait for products table to be fully rendered
+    cy.get('[data-testid="products-table"]').should('be.visible')
 
     // Verify all products are displayed
     testProducts.forEach((productData) => {
@@ -252,6 +262,7 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     cy.createProductViaUI(productData)
     
     // Try to create second product with same SKU (should fail if backend validates)
+    cy.get('[data-testid="products-table"]').should('be.visible')
     cy.get('[data-testid="add-new-product-btn"]').click()
     
     cy.get('[data-testid="product-name-input"]').type('Error Test Product 2')

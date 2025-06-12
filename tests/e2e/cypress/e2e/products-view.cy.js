@@ -31,6 +31,7 @@ describe('Product View Frontend E2E Tests', () => {
     cy.get('[data-testid="products-table"]').should('be.visible')
     
     // Create second product
+    cy.get('[data-testid="products-table"]').should('be.visible')
     cy.get('[data-testid="add-new-product-btn"]').click()
     cy.createProductViaUI(product2)
     
@@ -142,8 +143,10 @@ describe('Product View Frontend E2E Tests', () => {
 
     // Create products
     cy.createProductViaUI(product1)
+    cy.get('[data-testid="products-table"]').should('be.visible')
     cy.get('[data-testid="add-new-product-btn"]').click()
     cy.createProductViaUI(product2)
+    cy.get('[data-testid="products-table"]').should('be.visible')
     cy.get('[data-testid="add-new-product-btn"]').click()
     cy.createProductViaUI(product3)
     
@@ -195,8 +198,12 @@ describe('Product View Frontend E2E Tests', () => {
     }
 
     cy.createProductViaUI(lowStockProduct)
+    cy.get('[data-testid="products-table"]').should('be.visible')
     cy.get('[data-testid="add-new-product-btn"]').click()
     cy.createProductViaUI(normalStockProduct)
+    
+    // Wait for products table to be fully rendered
+    cy.get('[data-testid="products-table"]').should('be.visible')
     
     // Low stock product should have low-stock class
     cy.get('[data-testid^="product-stock-"]').contains('5').should('have.class', 'low-stock')
