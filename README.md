@@ -34,7 +34,7 @@ docker-compose up -d
 
 ### Local Development
 
-**Prerequisites**: .NET 9 SDK, Node.js 18+, PostgreSQL
+**Prerequisites**: .NET 9 SDK, Node.js 20+, PostgreSQL
 
 ```bash
 # Backend setup
@@ -102,7 +102,7 @@ This project implements **Clean Architecture** with clear separation of concerns
 - **Swagger/OpenAPI** - API documentation
 
 ### Frontend  
-- **React 18** - UI library
+- **React 19** - UI library
 - **TypeScript** - Type-safe JavaScript
 - **Vite** - Build tool and dev server
 - **Axios** - HTTP client
@@ -142,7 +142,7 @@ This project implements **Clean Architecture** with clear separation of concerns
 ### Prerequisites
 
 - **[.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)** (for local development)
-- **[Node.js 18+](https://nodejs.org/)** and npm  
+- **[Node.js 20+](https://nodejs.org/)** and npm  
 - **[Docker Desktop](https://www.docker.com/products/docker-desktop)** (recommended)
 - **[PostgreSQL 13+](https://www.postgresql.org/)** (if not using Docker)
 
@@ -214,7 +214,7 @@ The frontend will be available at `http://localhost:5173`.
 docker run --name demo-inventory-db \
   -e POSTGRES_PASSWORD=password \
   -e POSTGRES_DB=demo_inventory \
-  -p 5432:5432 -d postgres:13
+  -p 5432:5432 -d postgres:15
 ```
 
 **Local PostgreSQL:**

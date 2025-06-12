@@ -95,7 +95,7 @@ The frontend will be available at:
 
 ```bash
 # Start PostgreSQL container
-docker run --name demo-inventory-db -e POSTGRES_PASSWORD=password -e POSTGRES_DB=demo_inventory -p 5432:5432 -d postgres:13
+docker run --name demo-inventory-db -e POSTGRES_PASSWORD=password -e POSTGRES_DB=demo_inventory -p 5432:5432 -d postgres:15
 
 # Or use docker-compose
 docker-compose up -d db
