@@ -342,7 +342,7 @@ npm run cypress:open
 
 ```bash
 # Start full Docker stack (includes frontend and backend)
-docker compose up -d
+docker-compose up -d
 
 # Install Cypress dependencies
 cd tests/e2e
@@ -359,13 +359,13 @@ npm run cypress:open:docker
 
 ```bash
 # Start main services
-docker compose up -d
+docker-compose up -d
 
 # Run Cypress in container (one-time)
-docker compose run --rm cypress
+docker-compose run --rm cypress
 
 # Or include Cypress service in the stack
-docker compose --profile test up -d
+docker-compose --profile test up -d
 ```
 
 ## Debugging
