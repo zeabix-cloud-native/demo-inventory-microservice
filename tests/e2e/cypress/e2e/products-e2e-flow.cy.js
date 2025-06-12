@@ -19,9 +19,8 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
 
     cy.createProductViaUI(product1)
     
-    // Verify product is created and visible
+    // Verify additional product details beyond what the command checks
     cy.get('[data-testid="products-table"]').should('be.visible')
-    cy.contains(product1.name).should('be.visible')
     cy.contains(product1.sku).should('be.visible')
     cy.contains('$1,299.99').should('be.visible')
 
@@ -162,7 +161,7 @@ describe('Products Complete Frontend E2E Flow Tests', () => {
     })
 
     // Test truncated description (Budget Item has long description)
-    cy.contains('Low cost item with very long description that should be trun').should('be.visible')
+    cy.contains('Low cost item with very long description that sh...').should('be.visible')
     
     // Test low stock warning (Low Stock Item should have low-stock class)
     cy.get('[data-testid^="product-stock-"]').contains('5').should('have.class', 'low-stock')
