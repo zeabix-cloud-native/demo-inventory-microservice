@@ -1,0 +1,247 @@
+@startuml Backend Class Diagram
+!define LIGHTYELLOW
+
+skinparam linetype polyline
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam classFontSize 11
+skinparam backgroundColor white
+skinparam packageBackgroundColor #F0F0F0
+skinparam packageBorderColor #888888
+
+title Demo Inventory Microservice - Backend Class Diagram
+
+package "API Layer" as ApiLayer {
+  class ProductsController {
+    - _productService: IProductService
+    --
+    + ProductsController(productService: IProductService)
+    + GetProducts(): Task<ActionResult<IEnumerable<ProductDto>>>
+    + GetProduct(id: int): Task<ActionResult<ProductDto>>
+    + GetProductBySku(sku: string): Task<ActionResult<ProductDto>>
+    + SearchProducts(searchTerm: string): Task<ActionResult<IEnumerable<ProductDto>>>
+    + CreateProduct(createProductDto: CreateProductDto): Task<ActionResult<ProductDto>>
+    + UpdateProduct(id: int, updateProductDto: UpdateProductDto): Task<ActionResult<ProductDto>>
+    + DeleteProduct(id: int): Task<IActionResult>
+  }
+}
+
+package "Application Layer" as ApplicationLayer {
+  interface IProductService {
+    + GetProductByIdAsync(id: int): Task<ProductDto?>
+    + GetAllProductsAsync(): Task<IEnumerable<ProductDto>>
+    + CreateProductAsync(createProductDto: CreateProductDto): Task<ProductDto>
+    + UpdateProductAsync(id: int, updateProductDto: UpdateProductDto): Task<ProductDto>
+    + DeleteProductAsync(id: int): Task
+    + GetProductBySkuAsync(sku: string): Task<ProductDto?>
+    + SearchProductsAsync(searchTerm: string): Task<IEnumerable<ProductDto>>
+    + GetProductsByPriceRangeAsync(priceRange: PriceRangeDto): Task<IEnumerable<ProductDto>>
+  }
+
+  class ProductService {
+    - _productRepository: IProductRepository
+    --
+    + ProductService(productRepository: IProductRepository)
+    + GetProductByIdAsync(id: int): Task<ProductDto?>
+    + GetAllProductsAsync(): Task<IEnumerable<ProductDto>>
+    + CreateProductAsync(createProductDto: CreateProductDto): Task<ProductDto>
+    + UpdateProductAsync(id: int, updateProductDto: UpdateProductDto): Task<ProductDto>
+    + DeleteProductAsync(id: int): Task
+    + GetProductBySkuAsync(sku: string): Task<ProductDto?>
+    + SearchProductsAsync(searchTerm: string): Task<IEnumerable<ProductDto>>
+    + GetProductsByPriceRangeAsync(priceRange: PriceRangeDto): Task<IEnumerable<ProductDto>>
+    - MapToDto(product: Product): ProductDto
+  }
+
+  class ProductDto {
+    + Id: int
+    + Name: string
+    + Description: string
+    + SKU: string
+    + Price: decimal
+    + QuantityInStock: int
+    + CreatedAt: DateTime
+    + UpdatedAt: DateTime
+  }
+
+  class CreateProductDto {
+    + Name: string
+    + Description: string
+    + SKU: string
+    + Price: decimal
+    + QuantityInStock: int
+  }
+
+  class UpdateProductDto {
+    + Name: string
+    + Description: string
+    + Price: decimal
+    + QuantityInStock: int
+  }
+
+  class PriceRangeDto {
+    + MinPrice: decimal
+    + MaxPrice: decimal
+  }
+}
+
+package "Domain Layer" as DomainLayer {
+  class Product {
+    - _name: string
+    - _sku: string
+    - _price: decimal
+    - _quantityInStock: int
+    --
+    + Id: int
+    + Name: string {get; set}
+    + Description: string
+    + SKU: string {get; set}
+    + Price: decimal {get; set}
+    + QuantityInStock: int {get; set}
+    + CreatedAt: DateTime
+    + UpdatedAt: DateTime
+    --
+    + ValidateDescription(): void
+    + Validate(): void
+  }
+
+  class User {
+    - _username: string
+    - _email: string
+    - _firstName: string
+    - _lastName: string
+    --
+    + Id: int
+    + Username: string {get; set}
+    + Email: string {get; set}
+    + FirstName: string {get; set}
+    + LastName: string {get; set}
+    + IsActive: bool
+    + CreatedAt: DateTime
+    + UpdatedAt: DateTime
+    + FullName: string {get}
+    --
+    + Validate(): void
+  }
+
+  interface IRepository<T> {
+    + GetByIdAsync(id: int): Task<T?>
+    + GetAllAsync(): Task<IEnumerable<T>>
+    + AddAsync(entity: T): Task<T>
+    + UpdateAsync(entity: T): Task<T>
+    + DeleteAsync(id: int): Task
+  }
+
+  interface IProductRepository {
+    + GetBySkuAsync(sku: string): Task<Product?>
+    + GetByPriceRangeAsync(minPrice: decimal, maxPrice: decimal): Task<IEnumerable<Product>>
+    + SearchByNameAsync(name: string): Task<IEnumerable<Product>>
+  }
+
+  interface IUserRepository {
+    + GetByUsernameAsync(username: string): Task<User?>
+    + GetByEmailAsync(email: string): Task<User?>
+    + GetActiveUsersAsync(): Task<IEnumerable<User>>
+    + SearchByNameAsync(name: string): Task<IEnumerable<User>>
+  }
+}
+
+package "Infrastructure Layer" as InfrastructureLayer {
+  class ApplicationDbContext {
+    + Products: DbSet<Product>
+    --
+    + ApplicationDbContext(options: DbContextOptions<ApplicationDbContext>)
+    # OnModelCreating(modelBuilder: ModelBuilder): void
+  }
+
+  class InMemoryProductRepository {
+    - _products: List<Product>
+    - _nextId: int
+    --
+    + GetByIdAsync(id: int): Task<Product?>
+    + GetAllAsync(): Task<IEnumerable<Product>>
+    + AddAsync(entity: Product): Task<Product>
+    + UpdateAsync(entity: Product): Task<Product>
+    + DeleteAsync(id: int): Task
+    + GetBySkuAsync(sku: string): Task<Product?>
+    + GetByPriceRangeAsync(minPrice: decimal, maxPrice: decimal): Task<IEnumerable<Product>>
+    + SearchByNameAsync(name: string): Task<IEnumerable<Product>>
+  }
+
+  class PostgreSqlProductRepository {
+    - _context: ApplicationDbContext
+    --
+    + PostgreSqlProductRepository(context: ApplicationDbContext)
+    + GetByIdAsync(id: int): Task<Product?>
+    + GetAllAsync(): Task<IEnumerable<Product>>
+    + AddAsync(entity: Product): Task<Product>
+    + UpdateAsync(entity: Product): Task<Product>
+    + DeleteAsync(id: int): Task
+    + GetBySkuAsync(sku: string): Task<Product?>
+    + GetByPriceRangeAsync(minPrice: decimal, maxPrice: decimal): Task<IEnumerable<Product>>
+    + SearchByNameAsync(name: string): Task<IEnumerable<Product>>
+  }
+
+  class InMemoryProductService {
+    - _products: List<Product>
+    - _nextId: int
+    --
+    + GetProductByIdAsync(id: int): Task<ProductDto?>
+    + GetAllProductsAsync(): Task<IEnumerable<ProductDto>>
+    + CreateProductAsync(createProductDto: CreateProductDto): Task<ProductDto>
+    + UpdateProductAsync(id: int, updateProductDto: UpdateProductDto): Task<ProductDto>
+    + DeleteProductAsync(id: int): Task
+    + GetProductBySkuAsync(sku: string): Task<ProductDto?>
+    + SearchProductsAsync(searchTerm: string): Task<IEnumerable<ProductDto>>
+    + GetProductsByPriceRangeAsync(priceRange: PriceRangeDto): Task<IEnumerable<ProductDto>>
+    - MapToDto(product: Product): ProductDto
+  }
+}
+
+' Relationships - API Layer
+ProductsController --> IProductService : depends on
+
+' Relationships - Application Layer
+ProductService ..|> IProductService : implements
+ProductService --> IProductRepository : depends on
+ProductService --> Product : uses
+ProductService --> ProductDto : creates
+ProductService --> CreateProductDto : consumes
+ProductService --> UpdateProductDto : consumes
+
+' Relationships - Domain Layer
+IProductRepository --|> IRepository : extends
+IUserRepository --|> IRepository : extends
+IRepository --> Product : manages <T>
+IRepository --> User : manages <T>
+
+' Relationships - Infrastructure Layer
+InMemoryProductRepository ..|> IProductRepository : implements
+PostgreSqlProductRepository ..|> IProductRepository : implements
+InMemoryProductService ..|> IProductService : implements
+
+PostgreSqlProductRepository --> ApplicationDbContext : uses
+ApplicationDbContext --> Product : manages
+
+InMemoryProductRepository --> Product : manages
+InMemoryProductService --> Product : manages
+InMemoryProductService --> ProductDto : creates
+
+' Cross-layer relationships
+ProductService --> Product : uses
+PostgreSqlProductRepository --> Product : persists
+InMemoryProductRepository --> Product : stores
+
+' Notes
+note top of ApiLayer : Presentation Layer\nHTTP Controllers & API Endpoints
+note top of ApplicationLayer : Application Layer\nBusiness Logic & Use Cases
+note top of DomainLayer : Domain Layer\nCore Business Entities & Rules
+note top of InfrastructureLayer : Infrastructure Layer\nData Access & External Services
+
+note right of IRepository : Generic repository pattern\nfor common CRUD operations
+
+note bottom of ApplicationDbContext : Entity Framework Core\nDatabase Context
+
+note bottom of InMemoryProductService : Alternative service implementation\nfor testing/development
+
+@enduml

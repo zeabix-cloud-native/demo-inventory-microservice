@@ -58,6 +58,9 @@ ctrf/
 ctrf-reports/
 *ctrf-report*.json
 cypress/reports/
+tests/postman/test-results/
+tests/e2e/cypress/fixtures/
+tests/e2e/cypress/screenshots/
 
 # Newman test reports and temporary files
 newman-report.html
