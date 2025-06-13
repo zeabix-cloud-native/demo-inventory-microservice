@@ -1,0 +1,19 @@
+{
+  "name": "newman-runner",
+  "version": "1.0.0",
+  "description": "Newman test runner with environment detection for Demo Inventory API",
+  "scripts": {
+    "test": "node run-newman.js",
+    "test:local": "node run-newman.js local",
+    "test:docker": "node run-newman.js docker",
+    "test:auto": "node run-newman.js auto",
+    "test:verbose": "node run-newman.js auto --verbose",
+    "test:report": "node run-newman.js auto --reporters cli,htmlextra --reporter-htmlextra-export newman-report.html"
+  },
+  "dependencies": {
+    "newman": "^6.0.0"
+  },
+  "devDependencies": {
+    "newman-reporter-htmlextra": "^1.23.0"
+  }
+}

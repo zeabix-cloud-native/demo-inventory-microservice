@@ -59,6 +59,10 @@ ctrf-reports/
 *ctrf-report*.json
 cypress/reports/
 
+# Newman test reports and temporary files
+newman-report.html
+temp-environment.json
+
 # Node.js dependencies and Cypress
 node_modules/
 cypress/videos/
