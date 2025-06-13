@@ -28,6 +28,7 @@ public class ProductService : IProductService
 
     public async Task<ProductDto> CreateProductAsync(CreateProductDto createProductDto)
     {
+        // Create the product object first to normalize the SKU
         var product = new Product
         {
             Name = createProductDto.Name,
@@ -38,6 +39,13 @@ public class ProductService : IProductService
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
+
+        // Check if a product with the same SKU already exists
+        var existingProduct = await _productRepository.GetBySkuAsync(product.SKU);
+        if (existingProduct != null)
+        {
+            throw new ArgumentException($"SKU '{product.SKU}' already exists. Each product must have a unique SKU.", nameof(createProductDto.SKU));
+        }
 
         var createdProduct = await _productRepository.AddAsync(product);
         return MapToDto(createdProduct);

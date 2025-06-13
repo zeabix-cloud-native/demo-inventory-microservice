@@ -99,8 +99,15 @@ public class ProductsController : ControllerBase
     [SwaggerResponse(400, "Invalid product data")]
     public async Task<ActionResult<ProductDto>> CreateProduct(CreateProductDto createProductDto)
     {
-        var product = await _productService.CreateProductAsync(createProductDto);
-        return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+        try
+        {
+            var product = await _productService.CreateProductAsync(createProductDto);
+            return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
