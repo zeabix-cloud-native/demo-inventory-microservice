@@ -257,4 +257,29 @@ public class ProductsControllerTests
         Assert.IsType<NoContentResult>(result);
         _mockProductService.Verify(s => s.DeleteProductAsync(productId), Times.Once);
     }
+
+    [Fact]
+    public async Task CreateProduct_Should_Return_BadRequest_When_SKU_Already_Exists()
+    {
+        // Arrange
+        var createProductDto = new CreateProductDto
+        {
+            Name = "Duplicate SKU Product",
+            Description = "This product has a duplicate SKU",
+            SKU = "EXISTING-SKU",
+            Price = 25.99m,
+            QuantityInStock = 10
+        };
+
+        _mockProductService.Setup(s => s.CreateProductAsync(createProductDto))
+                          .ThrowsAsync(new ArgumentException("SKU 'EXISTING-SKU' already exists. Each product must have a unique SKU."));
+
+        // Act
+        var result = await _controller.CreateProduct(createProductDto);
+
+        // Assert
+        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);
+        Assert.Equal("SKU 'EXISTING-SKU' already exists. Each product must have a unique SKU.", badRequestResult.Value);
+        _mockProductService.Verify(s => s.CreateProductAsync(createProductDto), Times.Once);
+    }
 }
