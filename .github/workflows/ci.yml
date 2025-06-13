@@ -97,19 +97,20 @@ jobs:
         dotnet run --project backend/src/DemoInventory.API --configuration Release &
         echo $! > api.pid
         sleep 15
-        curl -f http://localhost:5000/swagger/index.html || curl -f http://localhost:5126/swagger/index.html
+        # API should be running on port 5126 for local environment
+        curl -f http://localhost:5126/api/products
       
     - name: Run Postman tests
       run: |
         mkdir -p TestResults
-        newman run tests/postman/collection.json \
-          --environment tests/postman/environment.json \
+        cd tests/postman
+        ./run-newman.sh auto \
           --reporters cli,htmlextra,ctrf-json \
-          --reporter-htmlextra-export TestResults/postman-report.html \
-          --reporter-ctrf-json-export TestResults/ctrf-api-tests.json || true
+          --reporter-htmlextra-export ../../TestResults/postman-report.html \
+          --reporter-ctrf-json-export ../../TestResults/ctrf-api-tests.json || true
         # Ensure CTRF file exists even if tests fail
-        if [ ! -f TestResults/ctrf-api-tests.json ]; then
-          echo '{"results":{"tool":{"name":"newman"},"summary":{"tests":0,"passed":0,"failed":0,"skipped":0,"pending":0,"other":0},"tests":[]}}' > TestResults/ctrf-api-tests.json
+        if [ ! -f ../../TestResults/ctrf-api-tests.json ]; then
+          echo '{"results":{"tool":{"name":"newman"},"summary":{"tests":0,"passed":0,"failed":0,"skipped":0,"pending":0,"other":0},"tests":[]}}' > ../../TestResults/ctrf-api-tests.json
         fi
           
     - name: Stop API server

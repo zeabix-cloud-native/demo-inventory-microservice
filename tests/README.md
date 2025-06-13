@@ -135,7 +135,15 @@ dotnet test
 # Install Newman
 npm install -g newman
 
-# Run collection
+# Option 1: Automatic environment detection (recommended)
+cd tests/postman && ./run-newman.sh
+
+# Option 2: Specify environment
+cd tests/postman
+./run-newman.sh local    # Local development (port 5126)
+./run-newman.sh docker   # Docker environment (port 5000)
+
+# Option 3: Manual environment selection
 newman run tests/postman/collection.json --environment tests/postman/environment.json
 ```
 

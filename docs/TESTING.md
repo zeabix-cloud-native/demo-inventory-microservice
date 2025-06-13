@@ -115,7 +115,22 @@ tests/postman/
 # Install Newman globally
 npm install -g newman
 
-# Run Postman collection
+# Option 1: Automatic environment detection (recommended)
+cd tests/postman && ./run-newman.sh
+
+# Option 2: Specify environment explicitly
+cd tests/postman
+./run-newman.sh local    # For local development (port 5126)
+./run-newman.sh docker   # For Docker environment (port 5000)
+
+# Option 3: Use Node.js runner (with npm)
+cd tests/postman
+npm run test          # Auto-detect environment
+npm run test:local    # Local environment
+npm run test:docker   # Docker environment
+npm run test:report   # With HTML report generation
+
+# Option 4: Direct Newman commands (manual environment selection)
 newman run tests/postman/collection.json \
   --environment tests/postman/environment.json
 
