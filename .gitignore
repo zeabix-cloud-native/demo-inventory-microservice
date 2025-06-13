@@ -62,6 +62,7 @@ cypress/reports/
 # Newman test reports and temporary files
 newman-report.html
 temp-environment.json
+package-lock.json
 
 # Node.js dependencies and Cypress
 node_modules/

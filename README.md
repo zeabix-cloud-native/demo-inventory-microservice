@@ -285,8 +285,9 @@ The project implements a comprehensive testing strategy:
 dotnet test
 
 # Run API tests (requires running API)
-newman run tests/postman/collection.json \
-  --environment tests/postman/environment.json
+cd tests/postman && ./run-newman.sh    # Auto-detect environment
+./run-newman.sh local                  # Local development
+./run-newman.sh docker                 # Docker environment
 
 # Run E2E tests (requires running application)
 cd tests/e2e && npm run test:e2e
