@@ -15,6 +15,10 @@ public class ProductServiceTests
     {
         _mockRepository = new Mock<IProductRepository>();
         _service = new ProductService(_mockRepository.Object);
+        
+        // Default setup: GetBySkuAsync returns null (no existing product) unless explicitly overridden
+        _mockRepository.Setup(r => r.GetBySkuAsync(It.IsAny<string>()))
+                      .ReturnsAsync((Product?)null);
     }
 
     [Fact]
@@ -359,6 +363,45 @@ public class ProductServiceTests
         Assert.Equal(99, result.QuantityInStock);
         Assert.Equal(new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc), result.CreatedAt);
         Assert.Equal(new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc), result.UpdatedAt);
+    }
+
+    [Fact]
+    public async Task CreateProductAsync_Should_Throw_ArgumentException_When_SKU_Already_Exists()
+    {
+        // Arrange
+        var existingProduct = new Product
+        {
+            Id = 1,
+            Name = "Existing Product",
+            Description = "Already exists",
+            SKU = "DUPLICATE-SKU",
+            Price = 10.99m,
+            QuantityInStock = 50,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+
+        var createDto = new CreateProductDto
+        {
+            Name = "New Product",
+            Description = "Attempting duplicate SKU",
+            SKU = "duplicate-sku", // Will be normalized to "DUPLICATE-SKU"
+            Price = 15.99m,
+            QuantityInStock = 25
+        };
+
+        // Mock GetBySkuAsync to return existing product (indicating SKU exists)
+        _mockRepository.Setup(r => r.GetBySkuAsync("DUPLICATE-SKU"))
+                      .ReturnsAsync(existingProduct);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ArgumentException>(() => 
+            _service.CreateProductAsync(createDto));
+        
+        Assert.Contains("SKU 'DUPLICATE-SKU' already exists", exception.Message);
+        
+        // Verify that AddAsync was never called since we should fail early
+        _mockRepository.Verify(r => r.AddAsync(It.IsAny<Product>()), Times.Never);
     }
 
     [Fact]
