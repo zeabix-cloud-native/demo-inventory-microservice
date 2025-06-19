@@ -1,0 +1,304 @@
+name: "🔧 Copilot Agent Task - Refactoring"
+description: "Template for assigning code refactoring tasks to GitHub Copilot"
+title: "[Copilot Refactor] Refactor [Component/Feature Name]"
+labels: ["copilot-task", "refactoring", "code-quality"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🤖 Copilot Agent Refactoring Assignment
+        
+        This template is designed for assigning code refactoring tasks to GitHub Copilot. Please provide clear objectives and constraints for the refactoring work.
+
+  - type: input
+    id: refactor-target
+    attributes:
+      label: "Refactoring Target"
+      description: "What needs to be refactored?"
+      placeholder: "e.g., ProductService class, User authentication logic"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: refactor-type
+    attributes:
+      label: "Type of Refactoring"
+      description: "What type of refactoring is needed?"
+      options:
+        - "Extract Method/Class"
+        - "Simplify Complex Logic"
+        - "Improve Performance"
+        - "Enhance Readability"
+        - "Reduce Code Duplication"
+        - "Improve Error Handling"
+        - "Modernize Legacy Code"
+        - "Apply Design Patterns"
+        - "Improve Testability"
+        - "Architecture Restructuring"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority-level
+    attributes:
+      label: "Priority Level"
+      description: "How urgent is this refactoring?"
+      options:
+        - "🔴 High - Blocking other work or causing issues"
+        - "🟡 Medium - Should be done soon for code quality"
+        - "🟢 Low - Nice to have when time permits"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-problems
+    attributes:
+      label: "Current Problems"
+      description: "What issues exist with the current code?"
+      placeholder: |
+        Describe the problems with the current implementation:
+        - Code is difficult to understand and maintain
+        - Methods are too long (>50 lines)
+        - High cyclomatic complexity
+        - Code duplication across multiple classes
+        - Poor separation of concerns
+        - Hard to unit test due to tight coupling
+        - Performance issues under load
+    validations:
+      required: true
+
+  - type: textarea
+    id: refactor-goals
+    attributes:
+      label: "Refactoring Goals"
+      description: "What should be achieved through this refactoring?"
+      placeholder: |
+        Goals for the refactoring:
+        - Improve code readability and maintainability
+        - Reduce method complexity to manageable levels
+        - Eliminate code duplication
+        - Improve testability with better dependency injection
+        - Better separation of concerns following SOLID principles
+        - Improve performance by 20-30%
+        - Make the code easier for new developers to understand
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-files
+    attributes:
+      label: "Files to be Refactored"
+      description: "List the specific files that need refactoring"
+      placeholder: |
+        Files requiring refactoring:
+        - `backend/src/DemoInventory.Application/Services/ProductService.cs` (main target)
+        - `backend/src/DemoInventory.Infrastructure/Repositories/ProductRepository.cs`
+        - `backend/tests/DemoInventory.Application.Tests/Services/ProductServiceTests.cs`
+        
+        Related files that may need updates:
+        - Dependency injection configurations
+        - Controller classes using the refactored services
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-code-issues
+    attributes:
+      label: "Specific Code Issues"
+      description: "Point out specific problems in the current code"
+      placeholder: |
+        Specific issues identified:
+        
+        **Method Length Issues:**
+        - `ProductService.CreateProductAsync()` is 150+ lines
+        - `ProductRepository.SearchProducts()` has nested loops and complex logic
+        
+        **Complexity Issues:**
+        - High cyclomatic complexity in validation methods
+        - Nested if-else statements 5+ levels deep
+        
+        **Duplication Issues:**
+        - Similar validation logic repeated in 3 different methods
+        - Database error handling duplicated across repositories
+        
+        **Testability Issues:**
+        - Direct database calls in service methods
+        - Static method dependencies that can't be mocked
+
+  - type: checkboxes
+    id: refactoring-techniques
+    attributes:
+      label: "Refactoring Techniques to Apply"
+      description: "Which refactoring techniques should be used?"
+      options:
+        - label: "Extract Method - Break down large methods"
+        - label: "Extract Class - Separate concerns into different classes"
+        - label: "Replace Magic Numbers/Strings with Constants"
+        - label: "Introduce Parameter Object - Reduce parameter lists"
+        - label: "Replace Conditional with Polymorphism"
+        - label: "Move Method - Better class responsibility distribution"
+        - label: "Inline Method - Remove unnecessary abstraction"
+        - label: "Replace Nested Conditional with Guard Clauses"
+        - label: "Extract Interface - Improve testability"
+        - label: "Apply Strategy Pattern - Handle algorithm variations"
+
+  - type: textarea
+    id: design-patterns
+    attributes:
+      label: "Design Patterns to Apply"
+      description: "Which design patterns should be introduced or improved?"
+      placeholder: |
+        Design patterns to consider:
+        
+        **Repository Pattern**: 
+        - Already exists but needs better abstraction
+        - Add specification pattern for complex queries
+        
+        **Strategy Pattern**:
+        - For different product validation rules
+        - For different pricing calculation methods
+        
+        **Factory Pattern**:
+        - For creating different types of products
+        - For creating validation strategies
+        
+        **Command Pattern**:
+        - For product operations (Create, Update, Delete)
+        - Better undo/redo capability
+
+  - type: textarea
+    id: performance-considerations
+    attributes:
+      label: "Performance Considerations"
+      description: "What performance improvements should be made?"
+      placeholder: |
+        Performance improvements needed:
+        - Reduce database queries from N+1 to single query
+        - Add caching for frequently accessed data
+        - Optimize LINQ queries to avoid unnecessary enumeration
+        - Use async/await properly throughout the call chain
+        - Implement bulk operations for batch processing
+        - Add pagination for large result sets
+
+  - type: textarea
+    id: testing-strategy
+    attributes:
+      label: "Testing Strategy"
+      description: "How should the refactored code be tested?"
+      placeholder: |
+        Testing approach for refactored code:
+        
+        **Unit Tests:**
+        - Maintain existing test coverage (currently 85%)
+        - Add tests for new extracted methods
+        - Improve testability with better mocking
+        - Test edge cases and error scenarios
+        
+        **Integration Tests:**
+        - Verify refactored services work with database
+        - Test API endpoints after service refactoring
+        
+        **Performance Tests:**
+        - Benchmark before and after refactoring
+        - Ensure performance improvements are measurable
+        
+        **Regression Tests:**
+        - Run full test suite to ensure no functionality breaks
+
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: "Refactoring Constraints"
+      description: "What constraints must be observed during refactoring?"
+      options:
+        - label: "Maintain backward compatibility of public APIs"
+        - label: "Keep existing database schema unchanged"
+        - label: "Preserve current functionality exactly"
+        - label: "Don't break existing unit tests"
+        - label: "Maintain current performance levels (minimum)"
+        - label: "Follow existing architectural patterns"
+        - label: "Keep changes reviewable (smaller pull requests)"
+        - label: "Document significant changes"
+
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: "Success Criteria"
+      description: "How will we know the refactoring was successful?"
+      placeholder: |
+        Success will be measured by:
+        
+        **Code Quality Metrics:**
+        - Reduce cyclomatic complexity from >10 to <5 per method
+        - Reduce method length from >50 to <30 lines
+        - Eliminate code duplication (detected by tools)
+        - Improve code coverage to >90%
+        
+        **Performance Metrics:**
+        - API response time improvement of 20%+
+        - Reduced memory allocation during operations
+        - Database query count reduction
+        
+        **Maintainability Metrics:**
+        - New developer onboarding time reduced
+        - Easier to add new features
+        - Reduced bug introduction rate
+
+  - type: textarea
+    id: rollback-plan
+    attributes:
+      label: "Rollback Plan"
+      description: "What's the plan if the refactoring causes issues?"
+      placeholder: |
+        Rollback strategy:
+        - Create feature branch for refactoring work
+        - Keep comprehensive backup of original code
+        - Plan incremental refactoring with smaller PRs
+        - Have monitoring in place to detect issues quickly
+        - Prepare hotfix procedures if production issues occur
+        - Document all changes for easy reversal if needed
+
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: "Additional Notes"
+      description: "Any other information relevant to this refactoring"
+      placeholder: |
+        Additional considerations:
+        - Timeline expectations
+        - Resource constraints
+        - Dependencies on other teams/systems
+        - Business impact of the refactoring
+        - Training needs for team members
+        - Documentation updates required
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 📋 For Copilot Agent
+        
+        When performing this refactoring, please:
+        
+        1. **Plan the refactoring** - Don't jump straight into changing code
+        2. **Make incremental changes** - Small, testable improvements
+        3. **Preserve functionality** - Ensure all existing tests still pass
+        4. **Improve testability** - Make the code easier to unit test
+        5. **Follow SOLID principles** - Single Responsibility, Open/Closed, etc.
+        6. **Document significant changes** - Explain complex refactoring decisions
+        7. **Consider performance** - Don't sacrifice performance for elegance
+        8. **Maintain consistency** - Follow existing project patterns and conventions
+        
+        **Refactoring Process**:
+        1. Understand the current code thoroughly
+        2. Identify the specific problems to solve
+        3. Plan the refactoring approach
+        4. Make small, incremental changes
+        5. Run tests after each change
+        6. Measure improvements against success criteria
+        7. Document the changes made
+        
+        **Remember**: The goal is to improve code quality while maintaining functionality. If unsure about a change, ask for clarification.
+        
+        **Architecture Reference**: See `.github/copilot-instructions.md` for detailed project guidance.

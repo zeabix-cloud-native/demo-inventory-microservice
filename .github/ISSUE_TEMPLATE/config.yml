@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 🤖 GitHub Copilot Documentation
+    url: https://docs.github.com/en/copilot
+    about: Official GitHub Copilot documentation and guides
+  - name: 📖 Project Documentation
+    url: https://github.com/zeabix-cloud-native/demo-inventory-microservice/tree/main/docs
+    about: Complete project documentation including architecture, development, and testing guides
+  - name: 💬 Discussions
+    url: https://github.com/zeabix-cloud-native/demo-inventory-microservice/discussions
+    about: General questions, ideas, and community discussions
