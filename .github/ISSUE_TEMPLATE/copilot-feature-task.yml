@@ -1,0 +1,256 @@
+name: "🤖 Copilot Agent Task - New Feature"
+description: "Template for assigning new feature development tasks to GitHub Copilot"
+title: "[Copilot Task] Add [Feature Name]"
+labels: ["copilot-task", "feature", "needs-implementation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🤖 Copilot Agent Task Assignment
+        
+        This template is designed for assigning development tasks to GitHub Copilot. Please provide comprehensive context to help Copilot understand the requirements and architectural constraints.
+
+  - type: input
+    id: feature-name
+    attributes:
+      label: "Feature Name"
+      description: "What feature should be implemented?"
+      placeholder: "e.g., Product Categories Management"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: architecture-layer
+    attributes:
+      label: "Primary Architecture Layer"
+      description: "Which Clean Architecture layer will be primarily affected?"
+      options:
+        - "Domain Layer"
+        - "Application Layer"
+        - "Infrastructure Layer"
+        - "Presentation Layer (API)"
+        - "Presentation Layer (Frontend)"
+        - "Cross-cutting (Multiple Layers)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: technology-stack
+    attributes:
+      label: "Technology Stack"
+      description: "Which technology stack is primarily involved?"
+      options:
+        - "Backend (.NET/C#)"
+        - "Frontend (React/TypeScript)"
+        - "Database (EF Core/PostgreSQL)"
+        - "Full-stack (Backend + Frontend)"
+        - "Infrastructure (Docker/CI-CD)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: "Feature Description"
+      description: "Provide a detailed description of the feature to be implemented"
+      placeholder: |
+        Describe the feature in detail:
+        - What functionality should be added?
+        - How should it integrate with existing code?
+        - What are the business requirements?
+        - Any specific constraints or requirements?
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: "Acceptance Criteria"
+      description: "Define clear acceptance criteria for the feature"
+      placeholder: |
+        - [ ] Criterion 1: Specific measurable outcome
+        - [ ] Criterion 2: Another specific outcome
+        - [ ] Criterion 3: Test coverage requirement
+        - [ ] Criterion 4: Documentation requirement
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-requirements
+    attributes:
+      label: "Technical Requirements"
+      description: "Specify technical constraints and requirements"
+      placeholder: |
+        - Follow Clean Architecture principles
+        - Implement repository pattern for data access
+        - Include comprehensive unit tests (>80% coverage)
+        - Add API documentation with OpenAPI annotations
+        - Follow existing naming conventions
+        - Implement proper error handling and logging
+        - Add input validation where appropriate
+    validations:
+      required: true
+
+  - type: textarea
+    id: api-specification
+    attributes:
+      label: "API Specification (if applicable)"
+      description: "Define the API endpoints and contracts"
+      placeholder: |
+        ### Endpoints to implement:
+        
+        - `GET /api/categories` - Get all categories
+        - `GET /api/categories/{id}` - Get category by ID
+        - `POST /api/categories` - Create new category
+        - `PUT /api/categories/{id}` - Update category
+        - `DELETE /api/categories/{id}` - Delete category
+        
+        ### Request/Response Models:
+        ```json
+        {
+          "id": "guid",
+          "name": "string",
+          "description": "string",
+          "createdAt": "datetime",
+          "updatedAt": "datetime"
+        }
+        ```
+
+  - type: textarea
+    id: database-changes
+    attributes:
+      label: "Database Changes (if applicable)"
+      description: "Specify any database schema changes required"
+      placeholder: |
+        ### New Tables:
+        - Categories table with columns: Id, Name, Description, CreatedAt, UpdatedAt
+        
+        ### Existing Table Updates:
+        - Add CategoryId foreign key to Products table
+        
+        ### Indexes:
+        - Add index on Categories.Name for search performance
+
+  - type: textarea
+    id: frontend-requirements
+    attributes:
+      label: "Frontend Requirements (if applicable)"
+      description: "Specify frontend component and UI requirements"
+      placeholder: |
+        ### Components to create:
+        - CategoryList component for displaying categories
+        - CategoryForm component for create/edit operations
+        - CategoryCard component for individual category display
+        
+        ### UI/UX Requirements:
+        - Responsive design for mobile and desktop
+        - Loading states for async operations
+        - Error handling with user-friendly messages
+        - Form validation with real-time feedback
+
+  - type: textarea
+    id: testing-requirements
+    attributes:
+      label: "Testing Requirements"
+      description: "Specify testing requirements and scenarios"
+      placeholder: |
+        ### Unit Tests Required:
+        - Domain entity tests with business rule validation
+        - Application service tests with mock dependencies
+        - Repository tests with in-memory database
+        - API controller tests with integration scenarios
+        
+        ### API Tests:
+        - Postman collection for all endpoints
+        - Happy path and error scenarios
+        - Authentication and authorization tests
+        
+        ### E2E Tests:
+        - User workflow tests with Cypress
+        - CRUD operations through UI
+        - Form validation scenarios
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: implementation-checklist
+    attributes:
+      label: "Implementation Checklist"
+      description: "Standard checklist for feature implementation"
+      options:
+        - label: "Domain entities and value objects created"
+        - label: "Business rules and validation implemented"
+        - label: "Repository interfaces defined"
+        - label: "Application services implemented"
+        - label: "API controllers with proper HTTP methods"
+        - label: "EF Core configurations and migrations"
+        - label: "Unit tests with >80% coverage"
+        - label: "Integration tests for API endpoints"
+        - label: "API documentation with OpenAPI"
+        - label: "Frontend components (if applicable)"
+        - label: "Error handling and logging"
+        - label: "Input validation and sanitization"
+        - label: "Performance optimization considered"
+        - label: "Security considerations addressed"
+
+  - type: textarea
+    id: related-files
+    attributes:
+      label: "Related Files and References"
+      description: "List existing files that should be referenced or modified"
+      placeholder: |
+        ### Files to reference for patterns:
+        - `backend/src/DemoInventory.Domain/Entities/Product.cs`
+        - `backend/src/DemoInventory.Application/Services/ProductService.cs`
+        - `backend/src/DemoInventory.Infrastructure/Repositories/ProductRepository.cs`
+        - `backend/src/DemoInventory.API/Controllers/ProductsController.cs`
+        
+        ### Files that may need updates:
+        - Database context configurations
+        - Dependency injection registrations
+        - API documentation
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority Level"
+      description: "What is the priority of this feature?"
+      options:
+        - "🔴 High - Critical feature needed soon"
+        - "🟡 Medium - Important but not urgent"
+        - "🟢 Low - Nice to have when time permits"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: "Additional Context"
+      description: "Any additional information that would help Copilot implement this feature"
+      placeholder: |
+        - Links to relevant documentation
+        - Similar features in other projects
+        - Performance considerations
+        - Security requirements
+        - Integration with external systems
+        - Future extensibility considerations
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 📋 For Copilot Agent
+        
+        When implementing this feature, please:
+        
+        1. **Follow the project's Clean Architecture** - Respect layer boundaries and dependency directions
+        2. **Reference existing patterns** - Look at similar implementations in the codebase
+        3. **Include comprehensive tests** - Unit, integration, and API tests as specified
+        4. **Document your code** - Add XML documentation for public APIs
+        5. **Consider error scenarios** - Implement proper error handling and logging
+        6. **Validate inputs** - Add appropriate validation for all user inputs
+        7. **Follow naming conventions** - Use the established naming patterns
+        8. **Update related documentation** - Include API documentation and README updates if needed
+        
+        **Architecture Reference**: See `.github/copilot-instructions.md` for detailed project guidance.
