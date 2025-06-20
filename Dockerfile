@@ -1,5 +1,5 @@
-# Use the official .NET 9 SDK image for building
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# Use the official .NET 8 SDK image for building
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # Copy all source files
@@ -9,8 +9,8 @@ COPY . .
 RUN dotnet restore backend/src/DemoInventory.API/DemoInventory.API.csproj
 RUN dotnet publish backend/src/DemoInventory.API/DemoInventory.API.csproj -c Release -o /app/publish
 
-# Use the official .NET 9 runtime image for the final stage
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+# Use the official .NET 8 runtime image for the final stage
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
 # Copy the published application
