@@ -8,7 +8,7 @@ body:
       value: |
         ## 🤖 Copilot Agent Documentation Assignment
         
-        This template is designed for assigning documentation tasks to GitHub Copilot. Please provide clear guidance on what needs to be documented and the target audience.
+        **📖 Reference**: See `.github/copilot-instructions.md` for comprehensive project guidance, documentation standards, and style guidelines.
 
   - type: input
     id: documentation-target
@@ -62,15 +62,13 @@ body:
       label: "Documentation Scope"
       description: "What specifically needs to be documented?"
       placeholder: |
-        Define the scope of documentation needed:
+        Define the scope:
         - API endpoints and their usage
         - Request/response formats and examples
-        - Authentication and authorization requirements
+        - Authentication requirements
         - Error codes and handling
-        - Rate limiting and quotas
-        - SDK/client library usage
         - Integration examples
-        - Best practices and common patterns
+        - Best practices
     validations:
       required: true
 
@@ -80,15 +78,12 @@ body:
       label: "Current Documentation Gaps"
       description: "What's missing or inadequate in current documentation?"
       placeholder: |
-        Current documentation issues:
+        Current issues:
         - No API examples for complex operations
         - Missing error code documentation
         - Outdated installation instructions
         - No troubleshooting section
         - Missing architecture diagrams
-        - Incomplete code comments
-        - No performance guidelines
-        - Missing security considerations
     validations:
       required: true
 
@@ -98,79 +93,15 @@ body:
       label: "Content Requirements"
       description: "What specific content should be included?"
       placeholder: |
-        Required content sections:
-        
-        **For API Documentation:**
-        - Endpoint descriptions
-        - HTTP methods and URLs
-        - Request/response schemas
-        - Authentication examples
-        - Error response formats
-        - Code examples in multiple languages
-        - Rate limiting information
-        
-        **For Code Documentation:**
-        - Class and method descriptions
-        - Parameter explanations
-        - Return value descriptions
-        - Usage examples
-        - Exception handling
-        - Performance considerations
-        
-        **For User Guides:**
+        Required content:
         - Step-by-step instructions
-        - Screenshots or diagrams
+        - Code examples with explanations
+        - Screenshots or diagrams (if applicable)
         - Common use cases
         - Troubleshooting tips
         - Best practices
     validations:
       required: true
-
-  - type: textarea
-    id: code-examples
-    attributes:
-      label: "Code Examples Needed"
-      description: "What code examples should be included?"
-      placeholder: |
-        Code examples to create:
-        
-        **API Usage Examples:**
-        ```javascript
-        // Get all products
-        const response = await fetch('/api/products');
-        const products = await response.json();
-        ```
-        
-        **React Component Examples:**
-        ```tsx
-        <ProductList 
-          searchTerm="laptop" 
-          onProductSelect={handleProductSelect} 
-        />
-        ```
-        
-        **Backend Service Examples:**
-        ```csharp
-        var result = await _productService.CreateProductAsync(productDto);
-        if (result.IsSuccess) { /* handle success */ }
-        ```
-
-  - type: checkboxes
-    id: documentation-features
-    attributes:
-      label: "Documentation Features"
-      description: "What features should the documentation include?"
-      options:
-        - label: "Interactive examples (live code)"
-        - label: "Downloadable code samples"
-        - label: "API playground/testing interface"
-        - label: "Visual diagrams and flowcharts"
-        - label: "Screenshots and UI mockups"
-        - label: "Video tutorials or demos"
-        - label: "Search functionality"
-        - label: "Mobile-responsive design"
-        - label: "Multi-language support"
-        - label: "Version history and changelog"
 
   - type: textarea
     id: existing-files
@@ -182,52 +113,8 @@ body:
         - `README.md` - Main project overview
         - `docs/API.md` - API documentation
         - `docs/DEVELOPMENT.md` - Development guide
-        - `docs/CONTRIBUTING.md` - Contribution guidelines
-        - `docs/ARCHITECTURE.md` - System architecture
-        - `docs/TESTING.md` - Testing documentation
         - `backend/src/**/*.cs` - Code XML documentation
         - `frontend/src/**/*.tsx` - JSDoc comments
-
-  - type: textarea
-    id: format-requirements
-    attributes:
-      label: "Format and Style Requirements"
-      description: "What format and style guidelines should be followed?"
-      placeholder: |
-        Documentation format requirements:
-        
-        **Markdown Standards:**
-        - Use consistent heading hierarchy (H1, H2, H3)
-        - Include table of contents for long documents
-        - Use code blocks with language specification
-        - Include clear examples and explanations
-        
-        **Code Documentation:**
-        - XML documentation for C# public APIs
-        - JSDoc comments for TypeScript/JavaScript
-        - Inline comments for complex business logic
-        - Consistent naming and formatting
-        
-        **Style Guidelines:**
-        - Clear, concise writing
-        - Use active voice where possible
-        - Include practical examples
-        - Maintain professional tone
-        - Use consistent terminology
-
-  - type: textarea
-    id: maintenance-plan
-    attributes:
-      label: "Documentation Maintenance"
-      description: "How should this documentation be kept up to date?"
-      placeholder: |
-        Maintenance strategy:
-        - Include documentation updates in definition of done
-        - Set up automated checks for outdated documentation
-        - Schedule regular documentation reviews
-        - Assign documentation ownership to team members
-        - Create templates for future documentation
-        - Set up feedback mechanisms for documentation users
 
   - type: checkboxes
     id: quality-criteria
@@ -240,41 +127,8 @@ body:
         - label: "Includes practical, working examples"
         - label: "Follows project style guidelines"
         - label: "Properly formatted with consistent structure"
-        - label: "Includes error handling and edge cases"
         - label: "Contains troubleshooting information"
-        - label: "Is testable (examples actually work)"
-        - label: "Includes performance considerations"
-        - label: "Addresses security implications"
-
-  - type: textarea
-    id: integration-requirements
-    attributes:
-      label: "Integration Requirements"
-      description: "How should this documentation integrate with existing docs?"
-      placeholder: |
-        Integration considerations:
-        - Link to related documentation sections
-        - Update navigation menus and indexes
-        - Cross-reference with API documentation
-        - Include in automated documentation builds
-        - Add to documentation site if applicable
-        - Update README with links to new docs
-        - Include in onboarding materials
-
-  - type: textarea
-    id: review-process
-    attributes:
-      label: "Review Process"
-      description: "What review process should be followed?"
-      placeholder: |
-        Documentation review process:
-        - Technical accuracy review by subject matter expert
-        - Style and clarity review by technical writer
-        - User testing with target audience
-        - Accessibility review for screen readers
-        - Cross-platform testing (mobile, desktop)
-        - Link validation and example testing
-        - Grammar and spelling check
+        - label: "Examples are tested and working"
 
   - type: textarea
     id: additional-context
@@ -287,7 +141,6 @@ body:
         - Related documentation projects
         - External documentation standards to follow
         - Translation requirements
-        - Legal or compliance considerations
         - Branding guidelines to follow
 
   - type: markdown
@@ -297,34 +150,9 @@ body:
         
         ## 📋 For Copilot Agent
         
-        When creating this documentation, please:
-        
         1. **Know your audience** - Write for the specified target audience
-        2. **Start with structure** - Create a clear outline before writing content
-        3. **Use examples liberally** - Include practical, working code examples
-        4. **Test everything** - Ensure all code examples actually work
-        5. **Be consistent** - Follow existing documentation patterns and style
-        6. **Keep it current** - Include version information and update dates
-        7. **Make it searchable** - Use clear headings and keywords
-        8. **Include troubleshooting** - Anticipate common problems and solutions
+        2. **Use examples liberally** - Include practical, working code examples
+        3. **Test everything** - Ensure all code examples actually work
+        4. **Be consistent** - Follow existing documentation patterns and style
         
-        **Documentation Process**:
-        1. Analyze existing documentation and identify gaps
-        2. Create a detailed outline covering all required topics
-        3. Write content section by section
-        4. Include practical, tested code examples
-        5. Add diagrams or screenshots where helpful
-        6. Review for clarity, accuracy, and completeness
-        7. Test all examples and links
-        8. Update related documentation with cross-references
-        
-        **Quality Checklist**:
-        - [ ] Content is accurate and up-to-date
-        - [ ] Examples are tested and working
-        - [ ] Writing is clear and concise
-        - [ ] Format follows project standards
-        - [ ] All links work correctly
-        - [ ] Cross-references are updated
-        - [ ] Accessibility guidelines followed
-        
-        **Architecture Reference**: See `.github/copilot-instructions.md` for detailed project guidance.
+        **📖 Full project guidance**: `.github/copilot-instructions.md` contains detailed documentation standards, style guidelines, and project-specific requirements.

@@ -8,7 +8,7 @@ body:
       value: |
         ## 🤖 Copilot Agent Bug Fix Assignment
         
-        This template is designed for assigning bug fix tasks to GitHub Copilot. Please provide comprehensive information about the bug to help Copilot understand and fix the issue.
+        **📖 Reference**: See `.github/copilot-instructions.md` for comprehensive project guidance, architecture details, and development standards.
 
   - type: input
     id: bug-summary
@@ -50,21 +50,6 @@ body:
       required: true
 
   - type: textarea
-    id: bug-description
-    attributes:
-      label: "Detailed Bug Description"
-      description: "Provide a comprehensive description of the bug"
-      placeholder: |
-        Describe the bug in detail:
-        - What exactly is happening?
-        - What should happen instead?
-        - When did this bug first appear?
-        - Is it consistently reproducible?
-        - What might have caused it?
-    validations:
-      required: true
-
-  - type: textarea
     id: reproduction-steps
     attributes:
       label: "Steps to Reproduce"
@@ -73,59 +58,31 @@ body:
         1. Go to the products page
         2. Enter 'laptop' in the search box
         3. Click the search button
-        4. Observe the results list
-        5. Notice duplicate entries for the same product
+        4. Observe duplicate entries for the same product
     validations:
       required: true
 
   - type: textarea
-    id: expected-behavior
+    id: expected-vs-actual
     attributes:
-      label: "Expected Behavior"
-      description: "What should happen instead of the bug?"
+      label: "Expected vs Actual Behavior"
+      description: "What should happen vs what actually happens?"
       placeholder: |
-        The search should return unique products only, without duplicates.
-        Each product should appear only once in the search results.
-    validations:
-      required: true
-
-  - type: textarea
-    id: actual-behavior
-    attributes:
-      label: "Actual Behavior"
-      description: "What actually happens (the bug)?"
-      placeholder: |
-        The search returns duplicate entries for the same product.
-        Some products appear 2-3 times in the results list.
+        **Expected**: Search returns unique products only
+        **Actual**: Search returns duplicate entries for the same product
     validations:
       required: true
 
   - type: textarea
     id: error-logs
     attributes:
-      label: "Error Logs/Stack Traces"
-      description: "Include any relevant error messages, logs, or stack traces"
+      label: "Error Logs/Stack Traces (if any)"
+      description: "Include relevant error messages or stack traces"
       placeholder: |
         ```
-        [2024-01-15 10:30:45] ERROR: Duplicate key violation in product search
         System.InvalidOperationException: Sequence contains duplicate elements
-           at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
            at DemoInventory.Application.Services.ProductService.SearchProducts(String searchTerm)
         ```
-
-  - type: textarea
-    id: environment-info
-    attributes:
-      label: "Environment Information"
-      description: "Provide details about the environment where the bug occurs"
-      placeholder: |
-        - **Environment**: Development/Docker/Production
-        - **OS**: Windows 11, macOS 14, Ubuntu 22.04
-        - **Browser**: Chrome 120, Firefox 121, Safari 17
-        - **.NET Version**: 9.0
-        - **Node.js Version**: 20.x
-        - **Database**: PostgreSQL 15.x
-        - **Docker Version**: 24.x (if applicable)
 
   - type: textarea
     id: affected-files
@@ -134,95 +91,18 @@ body:
       description: "List files that might be related to this bug"
       placeholder: |
         - `backend/src/DemoInventory.Application/Services/ProductService.cs`
-        - `backend/src/DemoInventory.Infrastructure/Repositories/ProductRepository.cs`
         - `frontend/src/components/ProductSearch.tsx`
-        - `frontend/src/services/productApi.ts`
-
-  - type: textarea
-    id: investigation-notes
-    attributes:
-      label: "Investigation Notes"
-      description: "Any debugging or investigation already done"
-      placeholder: |
-        - Checked the database query - it returns correct unique results
-        - The issue seems to be in the application layer mapping
-        - Console logs show duplicate objects in the response
-        - API endpoint `/api/products/search` returns duplicates
-        - Frontend displays whatever the API returns
-
-  - type: checkboxes
-    id: bug-impact
-    attributes:
-      label: "Bug Impact Areas"
-      description: "Which areas does this bug impact?"
-      options:
-        - label: "User Experience"
-        - label: "Data Integrity"
-        - label: "Performance"
-        - label: "Security"
-        - label: "API Functionality"
-        - label: "UI/UX"
-        - label: "Business Logic"
-        - label: "Database Operations"
-
-  - type: textarea
-    id: proposed-solution
-    attributes:
-      label: "Proposed Solution (if any)"
-      description: "If you have ideas for fixing the bug, describe them"
-      placeholder: |
-        Potential solutions:
-        1. Add `.Distinct()` to the LINQ query in ProductService
-        2. Use `GroupBy` to eliminate duplicates based on product ID
-        3. Review the database join query for cartesian product issues
-        4. Add unique constraint validation in the repository layer
-
-  - type: checkboxes
-    id: fix-requirements
-    attributes:
-      label: "Fix Requirements"
-      description: "Requirements for the bug fix"
-      options:
-        - label: "Fix the root cause, not just symptoms"
-        - label: "Add tests to prevent regression"
-        - label: "Update documentation if needed"
-        - label: "Verify fix doesn't break existing functionality"
-        - label: "Test on multiple environments"
-        - label: "Follow existing code patterns and conventions"
-        - label: "Add logging for debugging if needed"
-        - label: "Consider performance implications"
-
-  - type: textarea
-    id: test-scenarios
-    attributes:
-      label: "Test Scenarios for Verification"
-      description: "How should the fix be tested?"
-      placeholder: |
-        ### Unit Tests:
-        - Test ProductService.SearchProducts with various search terms
-        - Test duplicate elimination logic
-        - Test edge cases (empty search, special characters)
-        
-        ### Integration Tests:
-        - Test API endpoint with known duplicate-prone queries
-        - Verify database queries return expected results
-        
-        ### Manual Testing:
-        - Search for products that previously returned duplicates
-        - Test various search terms and filters
-        - Verify no regression in existing functionality
 
   - type: textarea
     id: additional-context
     attributes:
       label: "Additional Context"
-      description: "Any other information that might help fix this bug"
+      description: "Environment details, investigation notes, or proposed solutions"
       placeholder: |
-        - Related issues or similar bugs
+        - Environment: Development/Docker/Production
         - Recent changes that might have caused this
-        - Workarounds currently in use
-        - Impact on users or business operations
-        - Urgency timeline for the fix
+        - Any debugging already performed
+        - Potential solutions considered
 
   - type: markdown
     attributes:
@@ -231,23 +111,9 @@ body:
         
         ## 📋 For Copilot Agent
         
-        When fixing this bug, please:
+        1. **Analyze the root cause** - Don't just fix symptoms
+        2. **Write tests first** - Create failing tests that reproduce the bug  
+        3. **Fix systematically** - Make minimal changes to address the root cause
+        4. **Verify thoroughly** - Ensure fix works and doesn't break existing functionality
         
-        1. **Analyze the root cause** - Don't just fix symptoms, understand why the bug exists
-        2. **Review related code** - Check for similar issues in other parts of the codebase
-        3. **Write tests first** - Create failing tests that reproduce the bug
-        4. **Fix systematically** - Make minimal changes to address the root cause
-        5. **Verify thoroughly** - Ensure the fix works and doesn't break anything else
-        6. **Document the fix** - Explain what was wrong and how you fixed it
-        7. **Consider edge cases** - Think about scenarios that might trigger similar issues
-        8. **Follow patterns** - Use the same coding patterns as the rest of the project
-        
-        **Debug Process**:
-        1. Reproduce the bug locally
-        2. Write a failing test that demonstrates the bug
-        3. Identify the root cause through debugging
-        4. Implement the minimal fix required
-        5. Verify all tests pass (old and new)
-        6. Test manually to confirm the fix works
-        
-        **Architecture Reference**: See `.github/copilot-instructions.md` for detailed project guidance.
+        **📖 Full project guidance**: `.github/copilot-instructions.md` contains comprehensive details on architecture, coding standards, testing strategy, and development workflow.

@@ -8,7 +8,7 @@ body:
       value: |
         ## 🤖 Copilot Agent Task Assignment
         
-        This template is designed for assigning development tasks to GitHub Copilot. Please provide comprehensive context to help Copilot understand the requirements and architectural constraints.
+        **📖 Reference**: See `.github/copilot-instructions.md` for comprehensive project guidance, architecture patterns, and development standards.
 
   - type: input
     id: feature-name
@@ -54,11 +54,10 @@ body:
       label: "Feature Description"
       description: "Provide a detailed description of the feature to be implemented"
       placeholder: |
-        Describe the feature in detail:
+        Describe the feature:
         - What functionality should be added?
         - How should it integrate with existing code?
-        - What are the business requirements?
-        - Any specific constraints or requirements?
+        - Business requirements and constraints?
     validations:
       required: true
 
@@ -76,43 +75,21 @@ body:
       required: true
 
   - type: textarea
-    id: technical-requirements
-    attributes:
-      label: "Technical Requirements"
-      description: "Specify technical constraints and requirements"
-      placeholder: |
-        - Follow Clean Architecture principles
-        - Implement repository pattern for data access
-        - Include comprehensive unit tests (>80% coverage)
-        - Add API documentation with OpenAPI annotations
-        - Follow existing naming conventions
-        - Implement proper error handling and logging
-        - Add input validation where appropriate
-    validations:
-      required: true
-
-  - type: textarea
     id: api-specification
     attributes:
       label: "API Specification (if applicable)"
       description: "Define the API endpoints and contracts"
       placeholder: |
-        ### Endpoints to implement:
-        
+        ### Endpoints:
         - `GET /api/categories` - Get all categories
-        - `GET /api/categories/{id}` - Get category by ID
         - `POST /api/categories` - Create new category
-        - `PUT /api/categories/{id}` - Update category
-        - `DELETE /api/categories/{id}` - Delete category
         
-        ### Request/Response Models:
+        ### Models:
         ```json
         {
           "id": "guid",
           "name": "string",
-          "description": "string",
-          "createdAt": "datetime",
-          "updatedAt": "datetime"
+          "description": "string"
         }
         ```
 
@@ -123,13 +100,10 @@ body:
       description: "Specify any database schema changes required"
       placeholder: |
         ### New Tables:
-        - Categories table with columns: Id, Name, Description, CreatedAt, UpdatedAt
+        - Categories table with Id, Name, Description columns
         
         ### Existing Table Updates:
         - Add CategoryId foreign key to Products table
-        
-        ### Indexes:
-        - Add index on Categories.Name for search performance
 
   - type: textarea
     id: frontend-requirements
@@ -137,78 +111,25 @@ body:
       label: "Frontend Requirements (if applicable)"
       description: "Specify frontend component and UI requirements"
       placeholder: |
-        ### Components to create:
+        ### Components:
         - CategoryList component for displaying categories
         - CategoryForm component for create/edit operations
-        - CategoryCard component for individual category display
         
-        ### UI/UX Requirements:
-        - Responsive design for mobile and desktop
-        - Loading states for async operations
-        - Error handling with user-friendly messages
-        - Form validation with real-time feedback
-
-  - type: textarea
-    id: testing-requirements
-    attributes:
-      label: "Testing Requirements"
-      description: "Specify testing requirements and scenarios"
-      placeholder: |
-        ### Unit Tests Required:
-        - Domain entity tests with business rule validation
-        - Application service tests with mock dependencies
-        - Repository tests with in-memory database
-        - API controller tests with integration scenarios
-        
-        ### API Tests:
-        - Postman collection for all endpoints
-        - Happy path and error scenarios
-        - Authentication and authorization tests
-        
-        ### E2E Tests:
-        - User workflow tests with Cypress
-        - CRUD operations through UI
-        - Form validation scenarios
-    validations:
-      required: true
+        ### UI Requirements:
+        - Responsive design, loading states, error handling
 
   - type: checkboxes
     id: implementation-checklist
     attributes:
-      label: "Implementation Checklist"
-      description: "Standard checklist for feature implementation"
+      label: "Implementation Requirements"
+      description: "Standard requirements for feature implementation"
       options:
-        - label: "Domain entities and value objects created"
-        - label: "Business rules and validation implemented"
-        - label: "Repository interfaces defined"
-        - label: "Application services implemented"
-        - label: "API controllers with proper HTTP methods"
-        - label: "EF Core configurations and migrations"
-        - label: "Unit tests with >80% coverage"
-        - label: "Integration tests for API endpoints"
-        - label: "API documentation with OpenAPI"
-        - label: "Frontend components (if applicable)"
-        - label: "Error handling and logging"
-        - label: "Input validation and sanitization"
-        - label: "Performance optimization considered"
-        - label: "Security considerations addressed"
-
-  - type: textarea
-    id: related-files
-    attributes:
-      label: "Related Files and References"
-      description: "List existing files that should be referenced or modified"
-      placeholder: |
-        ### Files to reference for patterns:
-        - `backend/src/DemoInventory.Domain/Entities/Product.cs`
-        - `backend/src/DemoInventory.Application/Services/ProductService.cs`
-        - `backend/src/DemoInventory.Infrastructure/Repositories/ProductRepository.cs`
-        - `backend/src/DemoInventory.API/Controllers/ProductsController.cs`
-        
-        ### Files that may need updates:
-        - Database context configurations
-        - Dependency injection registrations
-        - API documentation
+        - label: "Follow Clean Architecture principles"
+        - label: "Include comprehensive unit tests (>80% coverage)"
+        - label: "Add API documentation with OpenAPI annotations"
+        - label: "Implement proper error handling and logging"
+        - label: "Add input validation where appropriate"
+        - label: "Follow existing naming conventions"
 
   - type: dropdown
     id: priority
@@ -226,14 +147,12 @@ body:
     id: additional-context
     attributes:
       label: "Additional Context"
-      description: "Any additional information that would help Copilot implement this feature"
+      description: "Any additional information that would help implement this feature"
       placeholder: |
-        - Links to relevant documentation
-        - Similar features in other projects
+        - Related files to reference for patterns
         - Performance considerations
         - Security requirements
         - Integration with external systems
-        - Future extensibility considerations
 
   - type: markdown
     attributes:
@@ -242,15 +161,9 @@ body:
         
         ## 📋 For Copilot Agent
         
-        When implementing this feature, please:
-        
-        1. **Follow the project's Clean Architecture** - Respect layer boundaries and dependency directions
+        1. **Follow Clean Architecture** - Respect layer boundaries and dependency directions
         2. **Reference existing patterns** - Look at similar implementations in the codebase
-        3. **Include comprehensive tests** - Unit, integration, and API tests as specified
-        4. **Document your code** - Add XML documentation for public APIs
-        5. **Consider error scenarios** - Implement proper error handling and logging
-        6. **Validate inputs** - Add appropriate validation for all user inputs
-        7. **Follow naming conventions** - Use the established naming patterns
-        8. **Update related documentation** - Include API documentation and README updates if needed
+        3. **Include comprehensive tests** - Unit, integration, and API tests as needed
+        4. **Consider error scenarios** - Implement proper error handling and logging
         
-        **Architecture Reference**: See `.github/copilot-instructions.md` for detailed project guidance.
+        **📖 Full project guidance**: `.github/copilot-instructions.md` contains detailed architecture patterns, coding standards, testing strategy, and development workflow.
