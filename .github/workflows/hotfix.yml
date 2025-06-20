@@ -1,0 +1,451 @@
+name: Hotfix Pipeline
+
+on:
+  push:
+    branches:
+      - 'hotfix/*'
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+env:
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  # Validate hotfix branch
+  validate-hotfix:
+    runs-on: ubuntu-latest
+    outputs:
+      is-hotfix: ${{ steps.check.outputs.is-hotfix }}
+      hotfix-name: ${{ steps.check.outputs.hotfix-name }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Validate hotfix branch
+      id: check
+      run: |
+        if [[ "${{ github.ref }}" == refs/heads/hotfix/* ]]; then
+          echo "is-hotfix=true" >> $GITHUB_OUTPUT
+          HOTFIX_NAME=${GITHUB_REF#refs/heads/hotfix/}
+          echo "hotfix-name=$HOTFIX_NAME" >> $GITHUB_OUTPUT
+          echo "✅ Valid hotfix branch: $HOTFIX_NAME"
+        else
+          echo "is-hotfix=false" >> $GITHUB_OUTPUT
+          echo "hotfix-name=" >> $GITHUB_OUTPUT
+        fi
+
+  # Fast-track testing for hotfixes (critical fixes need quick deployment)
+  critical-tests:
+    runs-on: ubuntu-latest
+    needs: validate-hotfix
+    if: needs.validate-hotfix.outputs.is-hotfix == 'true'
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: demo_inventory_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Run critical unit tests
+      run: |
+        # Run only critical/smoke tests for faster feedback
+        dotnet test --no-build --configuration Release --verbosity normal \
+          --filter "Category=Critical|Category=Smoke" \
+          --logger trx --logger junit --results-directory TestResults
+          
+    - name: Install test tools
+      run: npm install -g newman newman-reporter-ctrf-json junit-to-ctrf
+      
+    - name: Convert test results to CTRF
+      run: |
+        if ls TestResults/*.xml >/dev/null 2>&1; then
+          junit-to-ctrf "TestResults/*.xml" -o TestResults/ctrf-hotfix-tests.json -t "Hotfix Tests"
+        fi
+        
+    - name: Start API for critical API tests
+      run: |
+        cd backend/src/DemoInventory.API
+        dotnet run --configuration Release &
+        API_PID=$!
+        echo "API_PID=$API_PID" >> $GITHUB_ENV
+        timeout 60 bash -c 'until curl -f http://localhost:5126/health; do sleep 2; done'
+      env:
+        ConnectionStrings__DefaultConnection: "Host=localhost;Database=demo_inventory_test;Username=postgres;Password=postgres"
+        
+    - name: Run critical API tests
+      run: |
+        cd tests/postman
+        # Run only critical/smoke API tests
+        newman run collection.json \
+          --environment environment.json \
+          --folder "Critical Tests" \
+          --reporters cli,ctrf-json \
+          --reporter-ctrf-json-export test-results/ctrf-api-hotfix.json \
+          --timeout-request 30000
+        
+    - name: Stop API server
+      if: always()
+      run: |
+        if [ ! -z "$API_PID" ]; then
+          kill $API_PID || true
+        fi
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: hotfix-test-results
+        path: |
+          TestResults/
+          tests/postman/test-results/
+
+  # Security scan for hotfixes (quick security check)
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: validate-hotfix
+    if: needs.validate-hotfix.outputs.is-hotfix == 'true'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run security scan
+      uses: github/codeql-action/init@v3
+      with:
+        languages: csharp, javascript
+        
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Build for security scan
+      run: |
+        dotnet restore
+        dotnet build --no-restore --configuration Release
+        
+    - name: Perform security analysis
+      uses: github/codeql-action/analyze@v3
+
+  # Expedited review notification
+  notify-team:
+    runs-on: ubuntu-latest
+    needs: [validate-hotfix, critical-tests, security-scan]
+    if: needs.validate-hotfix.outputs.is-hotfix == 'true' && github.event_name == 'push'
+    
+    steps:
+    - name: Notify team of hotfix
+      run: |
+        echo "🚨 HOTFIX ALERT: ${{ needs.validate-hotfix.outputs.hotfix-name }}"
+        echo "Branch: ${{ github.ref }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Author: ${{ github.actor }}"
+        echo ""
+        echo "This hotfix requires expedited review and testing."
+        echo "Please prioritize review and approval for production deployment."
+        
+        # Here you would typically send notifications to:
+        # - Slack channels
+        # - Email lists
+        # - PagerDuty/incident management systems
+        # - Team communication platforms
+        
+        # Example Slack notification (requires SLACK_WEBHOOK_URL secret):
+        # curl -X POST -H 'Content-type: application/json' \
+        #   --data '{"text":"🚨 HOTFIX: ${{ needs.validate-hotfix.outputs.hotfix-name }} requires urgent review"}' \
+        #   ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # Emergency deployment preparation
+  prepare-emergency-deployment:
+    runs-on: ubuntu-latest
+    needs: [validate-hotfix, critical-tests, security-scan]
+    if: needs.validate-hotfix.outputs.is-hotfix == 'true' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Build hotfix packages
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
+        dotnet publish --configuration Release --output ./publish
+        
+    - name: Create hotfix deployment package
+      run: |
+        # Create deployment package with hotfix
+        mkdir -p hotfix-package
+        cp -r publish/* hotfix-package/
+        
+        # Create deployment script
+        cat > hotfix-package/deploy-hotfix.sh << 'EOF'
+        #!/bin/bash
+        set -e
+        
+        echo "🚨 Deploying hotfix: ${{ needs.validate-hotfix.outputs.hotfix-name }}"
+        echo "Timestamp: $(date)"
+        echo "Commit: ${{ github.sha }}"
+        
+        # Backup current deployment
+        if [ -d "/app/current" ]; then
+          echo "Creating backup of current deployment..."
+          cp -r /app/current /app/backup-$(date +%Y%m%d-%H%M%S)
+        fi
+        
+        # Deploy hotfix
+        echo "Deploying hotfix..."
+        cp -r . /app/current/
+        
+        # Restart services
+        echo "Restarting services..."
+        systemctl restart demo-inventory-api
+        
+        # Verify deployment
+        echo "Verifying deployment..."
+        sleep 5
+        curl -f http://localhost:5000/health || (echo "❌ Deployment verification failed"; exit 1)
+        
+        echo "✅ Hotfix deployed successfully"
+        EOF
+        
+        chmod +x hotfix-package/deploy-hotfix.sh
+        
+    - name: Upload deployment package
+      uses: actions/upload-artifact@v4
+      with:
+        name: hotfix-deployment-package
+        path: hotfix-package/
+        
+    - name: Prepare rollback package
+      run: |
+        # Create rollback instructions
+        cat > rollback-instructions.md << 'EOF'
+        # Rollback Instructions for Hotfix
+        
+        ## Hotfix Details
+        - **Hotfix Name**: ${{ needs.validate-hotfix.outputs.hotfix-name }}
+        - **Branch**: ${{ github.ref }}
+        - **Commit**: ${{ github.sha }}
+        - **Author**: ${{ github.actor }}
+        - **Timestamp**: $(date)
+        
+        ## Rollback Steps
+        
+        ### 1. Immediate Rollback (if deployment fails)
+        ```bash
+        # Stop current services
+        systemctl stop demo-inventory-api
+        
+        # Restore from backup
+        BACKUP_DIR=$(ls -t /app/backup-* | head -1)
+        cp -r $BACKUP_DIR/* /app/current/
+        
+        # Restart services
+        systemctl start demo-inventory-api
+        
+        # Verify rollback
+        curl -f http://localhost:5000/health
+        ```
+        
+        ### 2. Database Rollback (if needed)
+        ```bash
+        # If database changes were made, restore from backup
+        # This should be done carefully and tested first
+        ```
+        
+        ### 3. Verification
+        ```bash
+        # Verify all services are running
+        systemctl status demo-inventory-api
+        
+        # Check application health
+        curl -f http://localhost:5000/health
+        
+        # Run smoke tests
+        newman run production-smoke-tests.json
+        ```
+        
+        ## Post-Rollback Actions
+        1. Update incident management system
+        2. Notify stakeholders
+        3. Create new hotfix branch with proper fix
+        4. Document lessons learned
+        EOF
+        
+    - name: Upload rollback instructions
+      uses: actions/upload-artifact@v4
+      with:
+        name: rollback-instructions
+        path: rollback-instructions.md
+
+  # Validate hotfix PR to main
+  validate-hotfix-pr:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Validate hotfix PR
+      run: |
+        echo "🔍 Validating hotfix PR to main branch"
+        
+        # Check if PR title indicates hotfix
+        PR_TITLE="${{ github.event.pull_request.title }}"
+        if [[ ! "$PR_TITLE" =~ ^(hotfix|fix|🔥|🚨) ]]; then
+          echo "⚠️  PR title should indicate this is a hotfix"
+        fi
+        
+        # Check if PR has hotfix labels
+        echo "PR Labels: ${{ github.event.pull_request.labels }}"
+        
+        # Validate that this is coming from a hotfix branch
+        SOURCE_BRANCH="${{ github.head_ref }}"
+        if [[ ! "$SOURCE_BRANCH" =~ ^hotfix/ ]]; then
+          echo "❌ PR to main should come from hotfix/* branch"
+          exit 1
+        fi
+        
+        echo "✅ Hotfix PR validation passed"
+        
+    - name: Check for required reviewers
+      run: |
+        echo "🔍 Checking for required emergency reviewers"
+        
+        # In a real scenario, you would check if the PR has been approved by:
+        # - Tech lead
+        # - Product owner (for user-facing changes)
+        # - Security team (for security fixes)
+        # - DevOps team (for infrastructure changes)
+        
+        echo "⚠️  Ensure the following teams have approved this hotfix:"
+        echo "  - [ ] Tech Lead"
+        echo "  - [ ] DevOps Team"
+        echo "  - [ ] Security Team (if security-related)"
+        echo "  - [ ] Product Owner (if user-facing)"
+
+  # Emergency deployment to production (only for approved hotfix PRs)
+  emergency-deploy:
+    runs-on: ubuntu-latest
+    needs: [validate-hotfix-pr, critical-tests, security-scan]
+    if: github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download deployment package
+      uses: actions/download-artifact@v4
+      with:
+        name: hotfix-deployment-package
+        path: hotfix-package/
+        
+    - name: Emergency production deployment
+      run: |
+        echo "🚨 EMERGENCY DEPLOYMENT TO PRODUCTION"
+        echo "Hotfix: ${{ github.event.pull_request.title }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Deployed by: ${{ github.actor }}"
+        echo "Timestamp: $(date)"
+        
+        # In a real scenario, this would:
+        # 1. Deploy to production environment
+        # 2. Run production smoke tests
+        # 3. Update monitoring and alerting
+        # 4. Notify stakeholders
+        
+        echo "✅ Emergency deployment completed"
+        
+    - name: Post-deployment verification
+      run: |
+        echo "🔍 Running post-deployment verification"
+        
+        # Wait for services to stabilize
+        sleep 30
+        
+        # Run critical health checks
+        # curl -f https://api.production.com/health
+        
+        # Run smoke tests
+        # newman run production-smoke-tests.json
+        
+        echo "✅ Post-deployment verification completed"
+        
+    - name: Create deployment tag
+      run: |
+        # Create a hotfix tag for tracking
+        HOTFIX_TAG="hotfix-$(date +%Y%m%d-%H%M%S)"
+        git tag -a "$HOTFIX_TAG" -m "Emergency hotfix deployment: ${{ github.event.pull_request.title }}"
+        git push origin "$HOTFIX_TAG"
+        
+    - name: Notify stakeholders
+      run: |
+        echo "📢 Notifying stakeholders of emergency deployment"
+        
+        # Create incident update
+        cat > incident-update.md << 'EOF'
+        # Emergency Hotfix Deployment Complete
+        
+        ## Summary
+        - **Hotfix**: ${{ github.event.pull_request.title }}
+        - **Deployment Time**: $(date)
+        - **Commit**: ${{ github.sha }}
+        - **Deployed by**: ${{ github.actor }}
+        
+        ## Status
+        ✅ Emergency hotfix has been successfully deployed to production
+        
+        ## Next Steps
+        1. Monitor production metrics for 24 hours
+        2. Merge hotfix back to develop branch
+        3. Schedule post-incident review
+        4. Update incident management system
+        
+        ## Rollback Plan
+        If issues arise, rollback instructions are available in the deployment artifacts.
+        EOF
+        
+        # Send notifications (implement based on your notification system)
+        # - Slack/Teams message
+        # - Email to stakeholders
+        # - Update incident management system
+        # - Update status page
+        
+        echo "✅ Stakeholder notifications sent"

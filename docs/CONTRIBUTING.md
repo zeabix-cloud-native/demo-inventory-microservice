@@ -39,6 +39,58 @@ We welcome various types of contributions:
 
 ## Development Workflow
 
+This project follows the **Git Flow** branching strategy. Please read our [Git Flow Guide](GITFLOW.md) for complete details.
+
+### Quick Git Flow Reference
+
+#### 🌟 Feature Development
+```bash
+# Start new feature
+git checkout develop
+git pull origin develop
+git checkout -b feature/your-feature-name
+
+# Work on feature
+git add .
+git commit -m "feat: add new functionality"
+git push origin feature/your-feature-name
+
+# Submit PR to develop
+# After approval, feature is merged and branch deleted
+```
+
+#### 🚀 Release Process
+```bash
+# Create release branch
+git checkout develop
+git pull origin develop
+git checkout -b release/v1.2.0
+
+# Prepare release (version bumps, changelog, etc.)
+git add .
+git commit -m "chore: prepare v1.2.0 release"
+git push origin release/v1.2.0
+
+# Test in staging, then PR to main
+# After deployment, merge back to develop
+```
+
+#### 🔥 Hotfix Process
+```bash
+# Create hotfix from main
+git checkout main
+git pull origin main
+git checkout -b hotfix/critical-fix
+
+# Make fix
+git add .
+git commit -m "fix: resolve critical issue"
+git push origin hotfix/critical-fix
+
+# Emergency PR to main
+# After deployment, merge back to develop
+```
+
 ### 1. Setting Up Your Environment
 
 ```bash
@@ -54,7 +106,40 @@ dotnet restore
 cd frontend && npm install
 ```
 
-### 2. Creating a Branch
+### 2. Git Flow Branch Types
+
+Choose the appropriate branch type for your contribution:
+
+#### 🌟 Feature Branches (`feature/*`)
+For new features and enhancements:
+```bash
+feature/add-product-categories
+feature/implement-user-authentication
+feature/enhance-search-functionality
+```
+
+#### 🐛 Bugfix Branches (`bugfix/*`)
+For non-critical bug fixes:
+```bash
+bugfix/fix-validation-error
+bugfix/resolve-ui-alignment-issue
+```
+
+#### 🔥 Hotfix Branches (`hotfix/*`)
+For critical production fixes (emergency only):
+```bash
+hotfix/fix-security-vulnerability
+hotfix/resolve-data-corruption
+```
+
+#### 🚀 Release Branches (`release/*`)
+For release preparation (maintainers only):
+```bash
+release/v1.2.0
+release/v2.0.0-beta
+```
+
+### 3. Creating a Branch
 
 Create a descriptive branch name that indicates the type of change:
 
