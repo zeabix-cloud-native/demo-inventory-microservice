@@ -8,6 +8,14 @@ This directory contains comprehensive GitHub Copilot integration files for the D
 - **[copilot-instructions.md](copilot-instructions.md)** - Complete project guide for GitHub Copilot
 - **[copilot-agent-instructions.md](copilot-agent-instructions.md)** - VS Code Copilot agent mode instructions
 
+### Comprehensive Workshop
+- **[workshop/](workshop/)** - Complete hands-on workshop for mastering Copilot
+  - **[Getting Started Guide](workshop/getting-started.md)** - Zero to hero setup and basics
+  - **[Hands-on Exercises](workshop/exercises/)** - Practical coding exercises
+  - **[Best Practices Guide](workshop/best-practices.md)** - Professional development techniques
+  - **[Troubleshooting Guide](workshop/troubleshooting.md)** - Common issues and solutions
+  - **[Code Verification Guide](workshop/code-verification.md)** - Validating AI-generated code
+
 ### Issue Templates
 - **[copilot-feature-task.yml](ISSUE_TEMPLATE/copilot-feature-task.yml)** - New feature development assignments
 - **[copilot-bug-fix.yml](ISSUE_TEMPLATE/copilot-bug-fix.yml)** - Bug fix task assignments  
@@ -16,14 +24,23 @@ This directory contains comprehensive GitHub Copilot integration files for the D
 
 ## 🚀 Quick Start
 
-### 1. Enable GitHub Copilot
-Ensure GitHub Copilot is enabled for your repository and VS Code workspace.
+### Option 1: Complete Workshop Experience (Recommended)
+**For developers new to AI-assisted development or wanting comprehensive training:**
 
-### 2. Configure VS Code
-Install recommended extensions and configure workspace settings as described in [copilot-agent-instructions.md](copilot-agent-instructions.md).
+1. **Start the Workshop**: Begin with the [Comprehensive Workshop](workshop/)
+2. **Follow the Learning Path**: Complete exercises from beginner to advanced
+3. **Practice with Real Scenarios**: Use hands-on exercises with the Demo Inventory project
+4. **Master Best Practices**: Learn professional AI-assisted development techniques
 
-### 3. Use Issue Templates
-Create tasks for Copilot using the provided issue templates:
+### Option 2: Quick Setup
+**For experienced developers who want to get started immediately:**
+
+1. **Enable GitHub Copilot**: Ensure GitHub Copilot is enabled for your repository and VS Code workspace
+2. **Configure VS Code**: Install recommended extensions and configure workspace settings as described in [copilot-agent-instructions.md](copilot-agent-instructions.md)
+3. **Use Issue Templates**: Create tasks for Copilot using the provided issue templates
+
+### Option 3: Reference-Only
+**For teams looking to create tasks for AI assistance:**
 
 1. Go to **Issues** → **New Issue**
 2. Select the appropriate Copilot task template
@@ -105,10 +122,23 @@ To create additional Copilot task templates:
 
 ## 📚 References
 
-- [GitHub Copilot Instructions](copilot-instructions.md) - Complete project understanding
-- [VS Code Agent Instructions](copilot-agent-instructions.md) - Agent mode configuration
-- [Project Documentation](../docs/) - Comprehensive project docs
-- [Contributing Guidelines](../docs/CONTRIBUTING.md) - Development standards
+### Workshop Materials
+- **[Complete Workshop](workshop/)** - Comprehensive hands-on training
+- **[Getting Started Guide](workshop/getting-started.md)** - Zero to hero setup
+- **[Exercise Collection](workshop/exercises/)** - Practical coding scenarios
+- **[Best Practices](workshop/best-practices.md)** - Professional development techniques
+- **[Troubleshooting](workshop/troubleshooting.md)** - Common issues and solutions
+- **[Code Verification](workshop/code-verification.md)** - Quality assurance methods
+
+### Reference Documentation
+- **[GitHub Copilot Instructions](copilot-instructions.md)** - Complete project understanding
+- **[VS Code Agent Instructions](copilot-agent-instructions.md)** - Agent mode configuration
+- **[Project Documentation](../docs/)** - Comprehensive project docs
+- **[Contributing Guidelines](../docs/CONTRIBUTING.md)** - Development standards
+
+### External Resources
+- **[GitHub Copilot Documentation](https://docs.github.com/en/copilot)** - Official documentation
+- **[VS Code Copilot Extension](https://code.visualstudio.com/docs/copilot/overview)** - Extension guide
 
 ## 🤝 Contributing
 
