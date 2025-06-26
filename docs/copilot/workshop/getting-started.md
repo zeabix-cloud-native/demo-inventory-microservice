@@ -32,6 +32,43 @@ docker --version
 git config --list | grep user
 ```
 
+## 📥 Repository Setup
+
+Before starting the exercises, you need to clone the repository and set up your local environment:
+
+### Clone and Setup Local Repository
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/zeabix-cloud-native/demo-inventory-microservice.git
+cd demo-inventory-microservice
+```
+
+2. **Create and checkout to a feature branch:**
+```bash
+# Create a new feature branch for your exercises
+git checkout -b feature/copilot-exercises
+
+# Or if you want to work on a specific feature
+git checkout -b feature/your-feature-name
+```
+
+3. **Verify your setup:**
+```bash
+# Check current branch
+git branch
+
+# Ensure all dependencies are ready
+dotnet restore
+cd frontend && npm install && cd ..
+```
+
+**Why use a feature branch?**
+- Keeps your changes isolated from the main codebase
+- Allows you to experiment safely with Copilot-generated code
+- Follows Git best practices for feature development
+- Makes it easy to reset if needed: `git checkout main && git branch -D feature/your-branch-name`
+
 ## 🚀 Step 1: GitHub Copilot Setup
 
 ### 1.1 Install GitHub Copilot Extensions
@@ -89,19 +126,179 @@ Create `.vscode/settings.json` in your project root:
 
 ## 🎨 Step 2: Understanding Copilot Modes
 
-GitHub Copilot works in two main modes:
+GitHub Copilot offers multiple interaction modes, each designed for different development scenarios. Understanding when and how to use each mode will maximize your productivity.
 
-### 2.1 Inline Suggestions (Ghost Text)
-- Appears as you type
-- Shows code completions in gray text
+### 2.1 Auto-Complete Mode (Inline Suggestions)
+
+**What it is:**
+- Real-time code suggestions that appear as you type
+- Shows up as gray "ghost text" in your editor
+- Powered by machine learning trained on billions of lines of code
+
+**How to use:**
+- Simply start typing - suggestions appear automatically
 - Accept with `Tab`, reject with `Esc`
-- Cycle through suggestions with `Alt+]` and `Alt+[`
+- Cycle through alternatives with `Alt+]` and `Alt+[`
+- Works in any file type (code, configs, documentation)
 
-### 2.2 Chat Mode (Copilot Chat)
-- Open with `Ctrl+Shift+I` (or `Cmd+Shift+I`)
-- Conversational interface for complex tasks
-- Use `@workspace` for project-specific help
-- Great for explanations, debugging, and code reviews
+**Best for:**
+- **Quick code completion** - method implementations, property definitions
+- **Boilerplate code** - constructors, getters/setters, common patterns
+- **API calls** - HTTP requests, database queries
+- **Unit test scaffolding** - test method structures
+- **Documentation** - comments, README sections
+
+**Example scenarios:**
+```csharp
+// Type this...
+public class Product
+{
+    // Copilot suggests properties based on class name
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+}
+
+// Or this...
+public async Task<IActionResult> GetProducts()
+{
+    // Copilot suggests the entire method body
+}
+```
+
+### 2.2 Edit Mode (Code Modification)
+
+**What it is:**
+- Copilot can modify existing code in-place
+- Triggered through editor commands or chat interface
+- Understands context of existing code structure
+
+**How to use:**
+- Select code and use `Ctrl+I` for inline editing
+- Use chat commands like `/fix` or `/optimize`
+- Highlight problematic code and ask for improvements
+
+**Best for:**
+- **Refactoring existing code** - improving structure, performance
+- **Bug fixing** - correcting logic errors, handling edge cases
+- **Code optimization** - improving performance, readability
+- **Adding features to existing methods** - extending functionality
+- **Converting between patterns** - changing from sync to async, etc.
+
+**Example scenarios:**
+```csharp
+// Select this existing code and ask Copilot to optimize it
+public List<Product> FilterProducts(List<Product> products, string category)
+{
+    var result = new List<Product>();
+    foreach(var product in products)
+    {
+        if(product.Category == category)
+            result.Add(product);
+    }
+    return result;
+}
+
+// Copilot can convert it to LINQ, add null checks, improve performance
+```
+
+### 2.3 Agent Mode (VS Code Chat Interface)
+
+**What it is:**
+- Conversational AI assistant within VS Code
+- Contextually aware of your entire workspace
+- Can perform complex, multi-step development tasks
+
+**How to use:**
+- Open with `Ctrl+Shift+I` (or `Cmd+Shift+I` on Mac)
+- Use `@workspace` for project-specific assistance
+- Ask questions, request explanations, get code reviews
+- Have extended conversations about architecture and design
+
+**Best for:**
+- **Complex feature development** - multi-file, multi-layer implementations
+- **Architecture discussions** - design patterns, project structure
+- **Code reviews and analysis** - understanding existing code
+- **Debugging assistance** - analyzing stack traces, finding root causes
+- **Learning and explanations** - understanding how code works
+- **Project-wide refactoring** - changes across multiple files
+
+**Example interactions:**
+```
+@workspace I need to implement user authentication following Clean Architecture. 
+Create the domain entities, application services, and API controllers with proper 
+validation and JWT token generation.
+
+@workspace Analyze this error and suggest fixes: [paste stack trace]
+
+@workspace Review this pull request for security vulnerabilities and performance issues
+```
+
+### 2.4 Code Agent (GitHub Portal)
+
+**What it is:**
+- GitHub Copilot integrated directly into GitHub.com
+- Web-based AI assistant for repository management
+- Works with pull requests, issues, and repository exploration
+
+**How to use:**
+- Available directly in GitHub.com interface
+- Access through repository pages, PR reviews, issue discussions
+- Ask questions about repository structure and history
+- Get help with GitHub-specific tasks
+
+**Best for:**
+- **Repository exploration** - understanding unfamiliar codebases
+- **Pull request reviews** - automated code analysis and suggestions
+- **Issue triage** - analyzing bug reports and feature requests
+- **Documentation generation** - creating README files, API docs
+- **Release planning** - analyzing changes between versions
+- **Code search and analysis** - finding patterns across repositories
+
+**Example use cases:**
+- "Explain the architecture of this repository"
+- "Review this pull request for breaking changes"
+- "Generate release notes for version 2.1.0"
+- "Find all usages of deprecated methods"
+- "Suggest labels for this issue"
+
+## 🎯 Choosing the Right Mode for Your Task
+
+| Task Type | Recommended Mode | Why This Mode? |
+|-----------|------------------|----------------|
+| **Writing new methods/classes** | Auto-Complete Mode | Fast, real-time suggestions as you type |
+| **Fixing bugs in existing code** | Edit Mode | Focused on modifying specific code sections |
+| **Complex feature development** | Agent Mode (VS Code) | Handles multi-file, architectural decisions |
+| **Code reviews and analysis** | Agent Mode (VS Code) | Deep understanding of codebase context |
+| **Repository exploration** | Code Agent (GitHub) | Best for understanding unfamiliar repos |
+| **PR reviews and documentation** | Code Agent (GitHub) | Integrated with GitHub workflow |
+| **Learning how something works** | Agent Mode (VS Code) | Conversational explanations |
+| **Quick code snippets** | Auto-Complete Mode | Immediate, contextual suggestions |
+| **Refactoring large sections** | Edit Mode + Agent Mode | Combination approach for complex changes |
+
+## 💡 Pro Tips for Mode Selection
+
+### Start Simple, Scale Up
+1. **Begin with Auto-Complete** for basic code writing
+2. **Switch to Edit Mode** when you need to modify existing code
+3. **Use Agent Mode** for complex discussions and multi-step tasks
+4. **Leverage Code Agent** for repository-level understanding
+
+### Context Matters
+- **Auto-Complete** works best when you have a clear idea of what to write
+- **Edit Mode** excels when you know what needs to change but not how
+- **Agent Mode** shines when you need to think through problems
+- **Code Agent** is perfect for understanding larger codebases
+
+### Combine Modes Effectively
+```
+Typical workflow:
+1. Use Code Agent (GitHub) to understand the repository structure
+2. Use Agent Mode (VS Code) to plan your feature implementation
+3. Use Auto-Complete Mode to write the initial code
+4. Use Edit Mode to refine and optimize
+5. Use Agent Mode to generate tests and documentation
+```
 
 ## 🏗️ Step 3: Project Context Understanding
 
