@@ -30,7 +30,7 @@ Zero to hero setup and first steps with GitHub Copilot
 #### ⚙️ Copilot Instruction Configuration
 **Duration: 15 minutes**  
 Configure GitHub Copilot for optimal performance in this project
-- [Project-specific instructions](../../.github/copilot-instructions.md)
+- [Project-specific instructions](../../../.github/copilot-instructions.md)
 - Context optimization for Clean Architecture
 - Custom configuration for .NET 9 and React 19
 - Team collaboration settings
