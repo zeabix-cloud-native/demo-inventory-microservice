@@ -5,7 +5,7 @@ This directory contains comprehensive GitHub Copilot integration files for the D
 ## 📁 Files Overview
 
 ### Core Instructions
-- **[copilot-instructions.md](copilot-instructions.md)** - Complete project guide for GitHub Copilot
+- **[copilot-instructions.md](../../.github/copilot-instructions.md)** - Complete project guide for GitHub Copilot
 - **[copilot-agent-instructions.md](copilot-agent-instructions.md)** - VS Code Copilot agent mode instructions
 
 ### Comprehensive Workshop
@@ -131,7 +131,7 @@ To create additional Copilot task templates:
 - **[Code Verification](workshop/code-verification.md)** - Quality assurance methods
 
 ### Reference Documentation
-- **[GitHub Copilot Instructions](copilot-instructions.md)** - Complete project understanding
+- **[GitHub Copilot Instructions](../../.github/copilot-instructions.md)** - Complete project understanding
 - **[VS Code Agent Instructions](copilot-agent-instructions.md)** - Agent mode configuration
 - **[Project Documentation](../docs/)** - Comprehensive project docs
 - **[Contributing Guidelines](../docs/CONTRIBUTING.md)** - Development standards

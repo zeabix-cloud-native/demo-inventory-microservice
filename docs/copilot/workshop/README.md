@@ -15,15 +15,53 @@ By the end of this workshop, you will:
 
 ## 📚 Workshop Structure
 
-### 🚀 [Getting Started Guide](getting-started.md)
+### 📖 Part 1: Training Session
+**Duration: 90 minutes**  
+Essential knowledge and skills for effective AI-assisted development
+
+#### 🚀 [Getting Started Guide](getting-started.md)
 **Duration: 30 minutes**  
 Zero to hero setup and first steps with GitHub Copilot
 - Installation and configuration
-- Basic prompting techniques
+- Basic prompting techniques  
 - Understanding project context
 - Your first AI-generated code
 
-### 🛠️ Hands-On Exercises
+#### ⚙️ Copilot Instruction Configuration
+**Duration: 15 minutes**  
+Configure GitHub Copilot for optimal performance in this project
+- [Project-specific instructions](../../.github/copilot-instructions.md)
+- Context optimization for Clean Architecture
+- Custom configuration for .NET 9 and React 19
+- Team collaboration settings
+
+#### 🏆 [Best Practices Guide](best-practices.md)
+**Duration: 20 minutes**  
+Essential practices for effective AI-assisted development
+- Prompt engineering techniques
+- Context management strategies
+- Code quality maintenance
+- Security considerations
+
+#### ✅ [Code Verification Guide](code-verification.md)
+**Duration: 15 minutes**  
+How to validate AI-generated code
+- Quality assessment techniques
+- Security review checklist
+- Architecture compliance validation
+- Testing verification methods
+
+#### 🔧 [Troubleshooting Guide](troubleshooting.md)
+**Duration: 10 minutes**  
+Common issues and solutions
+- Setup and configuration problems
+- Copilot not working as expected
+- Code generation issues
+- Integration problems
+
+### 🛠️ Part 2: Hands-On Exercises
+**Duration: 3 hours**  
+Practical coding exercises to master AI-assisted development
 
 #### 1. [Backend Development Exercise](exercises/backend-exercise.md)
 **Duration: 45 minutes**  
@@ -65,48 +103,41 @@ Improve code quality with AI assistance
 - Optimize performance
 - Maintain Clean Architecture boundaries
 
-### 📋 Reference Guides
-
-#### [Best Practices Guide](best-practices.md)
-**Essential practices for effective AI-assisted development**
-- Prompt engineering techniques
-- Context management strategies
-- Code quality maintenance
-- Security considerations
-
-#### [Troubleshooting Guide](troubleshooting.md)
-**Common issues and solutions**
-- Setup and configuration problems
-- Copilot not working as expected
-- Code generation issues
-- Integration problems
-
-#### [Code Verification Guide](code-verification.md)
-**How to validate AI-generated code**
-- Quality assessment techniques
-- Security review checklist
-- Architecture compliance validation
-- Testing verification methods
-
 ## 🎓 Learning Path
 
-### Beginner Track (2 hours)
+### Beginner Track (3 hours)
+**Part 1: Training Session (90 minutes)**
 1. Getting Started Guide
-2. Backend Development Exercise (basic)
-3. Frontend Development Exercise (basic)
-4. Best Practices Guide
+2. Copilot Instruction Configuration  
+3. Best Practices Guide (essential concepts)
+4. Code Verification Guide (basics)
 
-### Intermediate Track (3 hours)
-1. All Beginner Track content
+**Part 2: Hands-On Exercises (90 minutes)**
+1. Backend Development Exercise (basic features)
+2. Frontend Development Exercise (basic components)
+
+### Intermediate Track (4.5 hours)
+**Part 1: Training Session (90 minutes)**
+1. Complete Training Session from Beginner Track
+2. Advanced Best Practices techniques
+3. Troubleshooting Guide
+
+**Part 2: Hands-On Exercises (3 hours)**
+1. All Beginner Track exercises
 2. Testing Exercise
 3. Bug Fixing Exercise
-4. Code Verification Guide
 
-### Advanced Track (4 hours)
-1. All previous content
-2. Refactoring Exercise
+### Advanced Track (4.5-6 hours)
+**Part 1: Training Session (90 minutes)**
+1. Complete Training Session with advanced techniques
+2. Custom prompt development
 3. Advanced troubleshooting scenarios
-4. Custom prompt development
+
+**Part 2: Hands-On Exercises (3+ hours)**
+1. All previous exercises
+2. Refactoring Exercise
+3. Advanced exercise variations
+4. Custom feature development
 
 ## 🛠️ Prerequisites
 
@@ -186,10 +217,13 @@ Track your progress with these checkpoints:
 ## 🚀 Ready to Start?
 
 1. **Verify your setup** using the commands above
-2. **Read the [Getting Started Guide](getting-started.md)**
+2. **Begin with Part 1: Training Session**
+   - Start with the [Getting Started Guide](getting-started.md)
+   - Configure [Copilot Instructions](../../.github/copilot-instructions.md) for this project
+   - Read through [Best Practices](best-practices.md) and [Code Verification](code-verification.md)
 3. **Choose your learning track** based on your experience level
-4. **Begin with hands-on exercises**
-5. **Practice, experiment, and have fun!**
+4. **Move to Part 2: Hands-On Exercises** to practice your skills
+5. **Experiment, practice, and have fun!**
 
 Remember: The goal is not just to use Copilot, but to become proficient at AI-assisted development while maintaining code quality, security, and architectural integrity.
 
