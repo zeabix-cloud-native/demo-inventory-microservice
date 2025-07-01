@@ -15,145 +15,283 @@ By the end of this workshop, you will:
 
 ## 📚 Workshop Structure
 
-### 📖 Part 1: Training Session
-**Duration: 90 minutes**  
-Essential knowledge and skills for effective AI-assisted development
+### 📖 Part 1: Extended Training Session
+**Duration: 3 hours (with breaks)**  
+Comprehensive foundation and advanced knowledge for AI-assisted development
 
 #### 🚀 [Getting Started Guide](getting-started.md)
-**Duration: 30 minutes**  
-Zero to hero setup and first steps with GitHub Copilot
+**Duration: 45 minutes**  
+Comprehensive setup and introduction to GitHub Copilot
 - Installation and configuration
-- Basic prompting techniques  
-- Understanding project context
+- Basic and advanced prompting techniques  
+- Understanding project context and workspace optimization
 - Your first AI-generated code
+- Hands-on practice with simple examples
 
-#### ⚙️ Copilot Instruction Configuration
-**Duration: 15 minutes**  
-Configure GitHub Copilot for optimal performance in this project
+#### ⚙️ [Copilot Instruction Configuration](copilot-configuration.md)
+**Duration: 30 minutes**  
+Deep dive into configuration for optimal performance
 - [Project-specific instructions](../../../.github/copilot-instructions.md)
 - Context optimization for Clean Architecture
 - Custom configuration for .NET 9 and React 19
 - Team collaboration settings
+- Environment-specific configurations
 
 #### 🏆 [Best Practices Guide](best-practices.md)
-**Duration: 20 minutes**  
-Essential practices for effective AI-assisted development
-- Prompt engineering techniques
+**Duration: 45 minutes**  
+Comprehensive practices for effective AI-assisted development
+- Advanced prompt engineering techniques
 - Context management strategies
 - Code quality maintenance
 - Security considerations
+- Performance optimization with AI
+- Team collaboration patterns
 
 #### ✅ [Code Verification Guide](code-verification.md)
-**Duration: 15 minutes**  
-How to validate AI-generated code
+**Duration: 30 minutes**  
+Advanced validation techniques for AI-generated code
 - Quality assessment techniques
 - Security review checklist
 - Architecture compliance validation
 - Testing verification methods
+- Code review best practices with AI
+- Static analysis integration
 
 #### 🔧 [Troubleshooting Guide](troubleshooting.md)
-**Duration: 10 minutes**  
-Common issues and solutions
+**Duration: 20 minutes**  
+Comprehensive problem-solving approach
 - Setup and configuration problems
 - Copilot not working as expected
 - Code generation issues
 - Integration problems
+- Performance and optimization issues
 
-### 🛠️ Part 2: Hands-On Exercises
-**Duration: 3 hours**  
+#### ☕ **Break 1**
+**Duration: 10 minutes**  
+Refreshment break and networking
+
+### 🛠️ Part 2: Core Hands-On Exercises
+**Duration: 4 hours (with breaks)**  
 Practical coding exercises to master AI-assisted development
 
 #### 1. [Backend Development Exercise](exercises/backend-exercise.md)
-**Duration: 45 minutes**  
-Build a complete feature using Clean Architecture
-- Create domain entities with business rules
+**Duration: 75 minutes**  
+Build complete features using Clean Architecture
+- Create domain entities with complex business rules
 - Implement application services and DTOs
 - Add repository patterns and EF Core configuration
-- Build API controllers with validation
+- Build API controllers with advanced validation
+- Performance optimization techniques
+- Security implementation patterns
 
 #### 2. [Frontend Development Exercise](exercises/frontend-exercise.md)
-**Duration: 45 minutes**  
-Create React components with TypeScript
+**Duration: 75 minutes**  
+Create sophisticated React components with TypeScript
 - Generate TypeScript interfaces from backend DTOs
-- Build forms with validation
-- Implement API integration
-- Add error handling and loading states
+- Build complex forms with validation and state management
+- Implement API integration with error handling
+- Add loading states and user experience enhancements
+- Responsive design patterns
+- Accessibility considerations
+
+#### ☕ **Break 2**
+**Duration: 15 minutes**  
+Refreshment break and progress discussion
 
 #### 3. [Testing Exercise](exercises/testing-exercise.md)
-**Duration: 30 minutes**  
-Comprehensive testing with AI assistance
+**Duration: 60 minutes**  
+Comprehensive testing strategy with AI assistance
 - Generate unit tests with xUnit and NSubstitute
-- Create API tests with Postman collections
+- Create integration tests for API endpoints
 - Build E2E tests with Cypress
 - Test-driven development with Copilot
+- Performance testing strategies
+- Security testing approaches
 
 #### 4. [Bug Fixing Exercise](exercises/bug-fixing-exercise.md)
-**Duration: 30 minutes**  
-Debug and fix issues using Copilot
-- Analyze error messages and stack traces
-- Generate debugging solutions
-- Fix common architectural violations
-- Validate fixes with tests
+**Duration: 45 minutes**  
+Advanced debugging and problem resolution
+- Analyze complex error messages and stack traces
+- Generate debugging solutions for architectural issues
+- Fix performance problems and memory leaks
+- Handle concurrency and async issues
+- Validate fixes with comprehensive tests
+
+#### ☕ **Break 3**
+**Duration: 10 minutes**  
+Quick break before advanced topics
+
+### 🚀 Part 3: Advanced Topics and Scenarios
+**Duration: 4 hours (with breaks)**  
+Advanced AI-assisted development techniques and real-world scenarios
 
 #### 5. [Refactoring Exercise](exercises/refactoring-exercise.md)
-**Duration: 30 minutes**  
-Improve code quality with AI assistance
-- Identify code smells and refactoring opportunities
-- Apply SOLID principles
-- Optimize performance
+**Duration: 45 minutes**  
+Advanced code quality improvement with AI assistance
+- Identify complex code smells and refactoring opportunities
+- Apply SOLID principles and design patterns
+- Optimize performance and memory usage
 - Maintain Clean Architecture boundaries
+- Legacy code modernization techniques
+
+#### 6. [Security-Focused Development](exercises/security-exercise.md)
+**Duration: 60 minutes**  
+AI-assisted secure coding practices
+- Security vulnerability detection and prevention
+- Input validation and sanitization
+- Authentication and authorization implementation
+- Secure configuration management
+- Security testing and code reviews
+
+#### 7. [Performance Optimization Exercise](exercises/performance-exercise.md)
+**Duration: 50 minutes**  
+AI-assisted performance tuning and optimization
+- Database query optimization
+- Memory management and garbage collection
+- Async/await best practices
+- Caching strategies implementation
+- Load testing and profiling
+
+#### ☕ **Break 4**
+**Duration: 15 minutes**  
+Refreshment break and technical discussions
+
+#### 8. [DevOps and Deployment Exercise](exercises/devops-exercise.md)
+**Duration: 60 minutes**  
+AI-assisted DevOps practices and deployment
+- Docker containerization optimization
+- CI/CD pipeline enhancement
+- Infrastructure as Code with AI
+- Monitoring and logging setup
+- Cloud deployment strategies
+
+#### 9. [Team Collaboration Scenarios](exercises/collaboration-exercise.md)
+**Duration: 45 minutes**  
+Advanced team development with AI
+- Code review automation with AI
+- Pair programming with Copilot
+- Knowledge sharing and documentation
+- Onboarding new team members
+- Best practices for AI in team environments
+
+#### 10. [Architecture Evolution Exercise](exercises/architecture-exercise.md)
+**Duration: 45 minutes**  
+AI-assisted architectural decision making
+- Microservices patterns and implementation
+- Event-driven architecture design
+- API design and versioning strategies
+- System scalability planning
+- Technology stack evolution
+
+### 🏆 Part 4: Capstone Project and Review
+**Duration: 1 hour**  
+Apply everything learned in a comprehensive project
+
+#### 11. [Capstone Project](exercises/capstone-project.md)
+**Duration: 45 minutes**  
+Build a complete feature from scratch
+- Design and implement a new inventory tracking feature
+- Apply all learned techniques and best practices
+- Use AI for entire development lifecycle
+- Demonstrate mastery of AI-assisted development
+
+#### 🎓 **Workshop Review and Reflection**
+**Duration: 15 minutes**  
+Review achievements and plan next steps
+- Knowledge assessment and certification
+- Feedback and improvement suggestions
+- Next steps for continued learning
+- Resources for ongoing development
 
 ## 🎓 Learning Path
 
-### Beginner Track (3 hours)
-**Part 1: Training Session (90 minutes)**
-1. Getting Started Guide
-2. Copilot Instruction Configuration  
-3. Best Practices Guide (essential concepts)
-4. Code Verification Guide (basics)
+### 12-Hour Comprehensive Track
+**Total Duration: 12 hours with breaks**  
+Complete mastery of AI-assisted development
 
-**Part 2: Hands-On Exercises (90 minutes)**
-1. Backend Development Exercise (basic features)
-2. Frontend Development Exercise (basic components)
+**Part 1: Extended Training Session (3 hours)**
+1. Getting Started Guide (45 min)
+2. Copilot Instruction Configuration (30 min)
+3. Best Practices Guide (45 min)
+4. Code Verification Guide (30 min)
+5. Troubleshooting Guide (20 min)
+6. Break 1 (10 min)
 
-### Intermediate Track (4.5 hours)
-**Part 1: Training Session (90 minutes)**
-1. Complete Training Session from Beginner Track
-2. Advanced Best Practices techniques
-3. Troubleshooting Guide
+**Part 2: Core Hands-On Exercises (4 hours)**
+1. Backend Development Exercise (75 min)
+2. Frontend Development Exercise (75 min)
+3. Break 2 (15 min)
+4. Testing Exercise (60 min)
+5. Bug Fixing Exercise (45 min)
+6. Break 3 (10 min)
 
-**Part 2: Hands-On Exercises (3 hours)**
-1. All Beginner Track exercises
-2. Testing Exercise
-3. Bug Fixing Exercise
+**Part 3: Advanced Topics and Scenarios (4 hours)**
+1. Refactoring Exercise (45 min)
+2. Security-Focused Development (60 min)
+3. Performance Optimization Exercise (50 min)
+4. Break 4 (15 min)
+5. DevOps and Deployment Exercise (60 min)
+6. Team Collaboration Scenarios (45 min)
+7. Architecture Evolution Exercise (45 min)
 
-### Advanced Track (4.5-6 hours)
-**Part 1: Training Session (90 minutes)**
-1. Complete Training Session with advanced techniques
-2. Custom prompt development
-3. Advanced troubleshooting scenarios
+**Part 4: Capstone Project and Review (1 hour)**
+1. Capstone Project (45 min)
+2. Workshop Review and Reflection (15 min)
 
-**Part 2: Hands-On Exercises (3+ hours)**
-1. All previous exercises
-2. Refactoring Exercise
-3. Advanced exercise variations
-4. Custom feature development
+### Flexible Learning Options
+
+#### Half-Day Track (6 hours)
+**For Teams with Limited Time**
+- Part 1: Extended Training Session (2 hours)
+- Part 2: Core Hands-On Exercises (4 hours)
+- Focus on essential skills and immediate productivity
+
+#### Advanced Specialist Track (8 hours)
+**For Senior Developers and Architects**
+- Part 1: Extended Training Session (1.5 hours - skip basics)
+- Part 2: Core Hands-On Exercises (2.5 hours - accelerated)
+- Part 3: Advanced Topics and Scenarios (4 hours - full focus)
+- Emphasis on architecture, security, and performance
+
+#### Team Leader Track (10 hours)
+**For Technical Leads and Managers**
+- All sections with additional focus on:
+- Team collaboration scenarios
+- Code review processes
+- Adoption strategies
+- Training team members
 
 ## 🛠️ Prerequisites
 
 ### Required Tools
-- **VS Code** with recommended extensions
-- **GitHub Copilot** subscription and access
+- **VS Code** with recommended extensions (latest version)
+- **GitHub Copilot** subscription and access (Business or Individual)
 - **.NET 9 SDK** for backend development
 - **Node.js 20+** for frontend development
-- **Docker Desktop** for containerization
-- **PostgreSQL** for database (or Docker)
+- **Docker Desktop** for containerization and deployment
+- **PostgreSQL** for database (or Docker alternative)
+- **Git** for version control
+- **Postman** or similar API testing tool
 
 ### Required Knowledge
-- **Basic C#** and .NET fundamentals
-- **Basic TypeScript/JavaScript** and React concepts
-- **Basic understanding** of REST APIs
+- **Intermediate C#** and .NET fundamentals
+- **Intermediate TypeScript/JavaScript** and React concepts
+- **Good understanding** of REST APIs and HTTP protocols
 - **Familiarity with Git** and GitHub workflows
+- **Basic understanding** of Clean Architecture concepts
+- **Experience with** database concepts and SQL
+
+### Recommended Knowledge (for advanced sections)
+- **Docker** and containerization concepts
+- **CI/CD** pipeline basics
+- **Cloud platforms** (Azure, AWS, or GCP)
+- **Performance testing** and optimization
+- **Security** best practices
+
+### Advanced Prerequisites (for specialist tracks)
+- **Software architecture** patterns and principles
+- **DevOps** practices and tools
+- **Team leadership** or technical mentoring experience
 
 ### Setup Verification
 Before starting, ensure your environment is ready:
@@ -179,23 +317,38 @@ cd frontend && npm install && npm run build
 
 ## 🎯 Success Metrics
 
-Track your progress with these checkpoints:
+Track your progress with these comprehensive checkpoints:
 
-### Knowledge Checkpoints
-- [ ] Can configure GitHub Copilot for optimal performance
-- [ ] Can write effective prompts for code generation
-- [ ] Can generate complete features using Clean Architecture
+### Foundation Knowledge Checkpoints
+- [ ] Can configure GitHub Copilot for optimal performance in any environment
+- [ ] Can write effective prompts for complex code generation scenarios
+- [ ] Can generate complete features using Clean Architecture principles
 - [ ] Can create comprehensive tests with AI assistance
-- [ ] Can debug issues efficiently using Copilot
-- [ ] Can validate and verify AI-generated code
+- [ ] Can debug complex issues efficiently using Copilot
+- [ ] Can validate and verify AI-generated code for quality and security
 
-### Practical Checkpoints
-- [ ] Built a complete API endpoint with Copilot
-- [ ] Created a React component with TypeScript interfaces
-- [ ] Generated comprehensive unit tests
-- [ ] Fixed a bug using AI-assisted debugging
-- [ ] Refactored code following SOLID principles
-- [ ] Validated code for security and quality
+### Advanced Development Checkpoints
+- [ ] Built multiple complete API endpoints with advanced validation
+- [ ] Created sophisticated React components with TypeScript interfaces
+- [ ] Generated comprehensive test suites (unit, integration, E2E)
+- [ ] Fixed complex bugs using AI-assisted debugging techniques
+- [ ] Refactored legacy code following SOLID principles
+- [ ] Implemented security best practices with AI assistance
+
+### Specialization Checkpoints
+- [ ] Optimized application performance using AI-guided techniques
+- [ ] Designed and implemented secure coding patterns
+- [ ] Created and configured CI/CD pipelines with AI assistance
+- [ ] Led team collaboration sessions using AI tools
+- [ ] Made architectural decisions with AI support
+- [ ] Delivered a complete capstone project from conception to deployment
+
+### Team Leadership Checkpoints
+- [ ] Can train other developers in AI-assisted development
+- [ ] Can establish team standards for AI tool usage
+- [ ] Can review and validate AI-generated code at enterprise scale
+- [ ] Can integrate AI tools into existing development workflows
+- [ ] Can measure and report on AI adoption benefits
 
 ## 🤝 Getting Help
 
