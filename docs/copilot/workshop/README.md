@@ -17,7 +17,8 @@ By the end of this workshop, you will:
 
 ### 📖 Part 1: Extended Training Session
 **Duration: 3.5 hours (with breaks)**  
-Comprehensive foundation and advanced knowledge for AI-assisted development
+Comprehensive foundation and advanced knowledge for AI-assisted development  
+**Learning Outcome**: Master the fundamentals of GitHub Copilot configuration, prompt engineering, and best practices for professional AI-assisted development
 
 #### 🚀 [Getting Started Guide](getting-started.md)
 **Duration: 45 minutes**  
@@ -78,11 +79,12 @@ Comprehensive problem-solving approach
 
 #### ☕ **Break 1**
 **Duration: 10 minutes**  
-Refreshment break and networking
+Refreshment break and networking opportunity to discuss initial AI experiences and setup challenges
 
 ### 🛠️ Part 2: Core Hands-On Exercises
 **Duration: 4 hours (with breaks)**  
-Practical coding exercises to master AI-assisted development
+Practical coding exercises to master AI-assisted development  
+**Learning Outcome**: Gain hands-on experience building complete features using Clean Architecture with AI assistance, from backend APIs to frontend components and comprehensive testing
 
 #### 1. [Backend Development Exercise](exercises/backend-exercise.md)
 **Duration: 75 minutes**  
@@ -106,7 +108,7 @@ Create sophisticated React components with TypeScript
 
 #### ☕ **Break 2**
 **Duration: 15 minutes**  
-Refreshment break and progress discussion
+Refreshment break and progress discussion - share insights from backend/frontend development exercises
 
 #### 3. [Testing Exercise](exercises/testing-exercise.md)
 **Duration: 60 minutes**  
@@ -129,11 +131,12 @@ Advanced debugging and problem resolution
 
 #### ☕ **Break 3**
 **Duration: 10 minutes**  
-Quick break before advanced topics
+Quick break before advanced topics - reflect on testing and debugging techniques learned
 
 ### 🚀 Part 3: Advanced Topics and Scenarios
 **Duration: 4 hours (with breaks)**  
-Advanced AI-assisted development techniques and real-world scenarios
+Advanced AI-assisted development techniques and real-world scenarios  
+**Learning Outcome**: Master advanced AI techniques for complex scenarios including refactoring legacy code, implementing security best practices, optimizing performance, and managing DevOps processes
 
 #### 5. [Refactoring Exercise](exercises/refactoring-exercise.md)
 **Duration: 45 minutes**  
@@ -164,7 +167,7 @@ AI-assisted performance tuning and optimization
 
 #### ☕ **Break 4**
 **Duration: 15 minutes**  
-Refreshment break and technical discussions
+Refreshment break and technical discussions - exchange experiences with refactoring, security, and performance optimization
 
 #### 8. [DevOps and Deployment Exercise](exercises/devops-exercise.md)
 **Duration: 60 minutes**  
@@ -195,7 +198,8 @@ AI-assisted architectural decision making
 
 ### 🏆 Part 4: Capstone Project and Review
 **Duration: 1 hour**  
-Apply everything learned in a comprehensive project
+Apply everything learned in a comprehensive project  
+**Learning Outcome**: Demonstrate mastery by building a complete feature from scratch using all learned AI-assisted development techniques, and receive feedback for continued improvement
 
 #### 11. [Capstone Project](exercises/capstone-project.md)
 **Duration: 45 minutes**  
@@ -207,7 +211,8 @@ Build a complete feature from scratch
 
 #### 🎓 **Workshop Review and Reflection**
 **Duration: 15 minutes**  
-Review achievements and plan next steps
+Review achievements and plan next steps  
+**What you'll learn**: How to assess your AI development skills, identify areas for improvement, and create a personal learning plan for continued AI-assisted development growth
 - Knowledge assessment and certification
 - Feedback and improvement suggestions
 - Next steps for continued learning
@@ -252,27 +257,36 @@ Complete mastery of AI-assisted development
 ### Flexible Learning Options
 
 #### Half-Day Track (6.5 hours)
-**For Teams with Limited Time**
+**For Teams with Limited Time**  
+Learn core AI-assisted development skills for immediate productivity gains
 - Part 1: Extended Training Session (2.5 hours - including essential MCP setup)
 - Part 2: Core Hands-On Exercises (4 hours)
-- Focus on essential skills and immediate productivity
+- **What you'll learn**: Essential Copilot usage, prompt engineering basics, code generation fundamentals, and hands-on practice with backend/frontend development
+- **Outcome**: Ability to use GitHub Copilot effectively for daily development tasks
 
 #### Advanced Specialist Track (8 hours)
-**For Senior Developers and Architects**
+**For Senior Developers and Architects**  
+Master advanced AI techniques for complex architectural and performance challenges
 - Part 1: Extended Training Session (1.5 hours - skip basics)
 - Part 2: Core Hands-On Exercises (2.5 hours - accelerated)
 - Part 3: Advanced Topics and Scenarios (4 hours - full focus)
-- Emphasis on architecture, security, and performance
+- **What you'll learn**: Advanced prompt engineering, architectural decision-making with AI, security-focused development, performance optimization, and complex refactoring techniques
+- **Outcome**: Expertise in using AI for architectural decisions, security implementation, and system optimization
 
 #### Team Leader Track (10 hours)
-**For Technical Leads and Managers**
+**For Technical Leads and Managers**  
+Develop AI adoption strategies and team leadership skills for AI-assisted development
 - All sections with additional focus on:
 - Team collaboration scenarios
 - Code review processes
 - Adoption strategies
 - Training team members
+- **What you'll learn**: Team AI adoption strategies, code review best practices for AI-generated code, mentoring techniques, and organizational change management for AI tools
+- **Outcome**: Ability to lead AI adoption initiatives and train development teams effectively
 
 ## 🛠️ Prerequisites
+
+**Note**: These prerequisites ensure you can focus on learning AI-assisted development techniques rather than struggling with basic setup. The workshop will build upon this foundation to teach advanced AI integration patterns.
 
 ### Required Tools
 - **VS Code** with recommended extensions (latest version)
@@ -305,7 +319,7 @@ Complete mastery of AI-assisted development
 - **Team leadership** or technical mentoring experience
 
 ### Setup Verification
-Before starting, ensure your environment is ready:
+Before starting, ensure your environment is ready by running these commands. This verification process will also familiarize you with the project structure and build process that you'll be working with throughout the workshop:
 
 ```bash
 # Verify .NET version
@@ -321,7 +335,7 @@ docker --version
 git clone https://github.com/zeabix-cloud-native/demo-inventory-microservice.git
 cd demo-inventory-microservice
 
-# Verify project builds
+# Verify project builds - this confirms your development environment is properly configured
 dotnet build
 cd frontend && npm install && npm run build
 ```
