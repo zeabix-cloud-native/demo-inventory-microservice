@@ -16,7 +16,7 @@ By the end of this workshop, you will:
 ## 📚 Workshop Structure
 
 ### 📖 Part 1: Extended Training Session
-**Duration: 3 hours (with breaks)**  
+**Duration: 3.5 hours (with breaks)**  
 Comprehensive foundation and advanced knowledge for AI-assisted development
 
 #### 🚀 [Getting Started Guide](getting-started.md)
@@ -36,6 +36,16 @@ Deep dive into configuration for optimal performance
 - Custom configuration for .NET 9 and React 19
 - Team collaboration settings
 - Environment-specific configurations
+
+#### 🧠 [Model Context Protocol (MCP) Guide](mcp-guide.md)
+**Duration: 40 minutes**  
+Advanced context management with MCP for enhanced AI development
+- Understanding MCP and its benefits for development
+- Step-by-step MCP setup in VS Code
+- Using MCP for context-aware code generation
+- Practical MCP patterns and use cases
+- Advanced debugging and analysis with MCP
+- Performance optimization and security enhancement
 
 #### 🏆 [Best Practices Guide](best-practices.md)
 **Duration: 45 minutes**  
@@ -205,17 +215,18 @@ Review achievements and plan next steps
 
 ## 🎓 Learning Path
 
-### 12-Hour Comprehensive Track
-**Total Duration: 12 hours with breaks**  
+### 12.5-Hour Comprehensive Track
+**Total Duration: 12.5 hours with breaks**  
 Complete mastery of AI-assisted development
 
-**Part 1: Extended Training Session (3 hours)**
+**Part 1: Extended Training Session (3.5 hours)**
 1. Getting Started Guide (45 min)
 2. Copilot Instruction Configuration (30 min)
-3. Best Practices Guide (45 min)
-4. Code Verification Guide (30 min)
-5. Troubleshooting Guide (20 min)
-6. Break 1 (10 min)
+3. Model Context Protocol (MCP) Guide (40 min)
+4. Best Practices Guide (45 min)
+5. Code Verification Guide (30 min)
+6. Troubleshooting Guide (20 min)
+7. Break 1 (10 min)
 
 **Part 2: Core Hands-On Exercises (4 hours)**
 1. Backend Development Exercise (75 min)
@@ -240,9 +251,9 @@ Complete mastery of AI-assisted development
 
 ### Flexible Learning Options
 
-#### Half-Day Track (6 hours)
+#### Half-Day Track (6.5 hours)
 **For Teams with Limited Time**
-- Part 1: Extended Training Session (2 hours)
+- Part 1: Extended Training Session (2.5 hours - including essential MCP setup)
 - Part 2: Core Hands-On Exercises (4 hours)
 - Focus on essential skills and immediate productivity
 
