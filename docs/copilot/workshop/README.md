@@ -116,7 +116,6 @@ Comprehensive testing strategy with AI assistance
 - Generate unit tests with xUnit and NSubstitute
 - Create integration tests for API endpoints
 - Build E2E tests with Cypress
-- Test-driven development with Copilot
 - Performance testing strategies
 - Security testing approaches
 
