@@ -65,6 +65,11 @@ public class PostgreSqlProductRepository : IProductRepository
         return await _context.Products.FirstOrDefaultAsync(p => p.SKU == sku);
     }
 
+    public async Task<Product?> GetByNameAsync(string name)
+    {
+        return await _context.Products.FirstOrDefaultAsync(p => EF.Functions.ILike(p.Name, name));
+    }
+
     public async Task<IEnumerable<Product>> GetByPriceRangeAsync(decimal minPrice, decimal maxPrice)
     {
         return await _context.Products

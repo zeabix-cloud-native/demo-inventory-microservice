@@ -282,4 +282,48 @@ public class ProductsControllerTests
         Assert.Equal("SKU 'EXISTING-SKU' already exists. Each product must have a unique SKU.", badRequestResult.Value);
         _mockProductService.Verify(s => s.CreateProductAsync(createProductDto), Times.Once);
     }
+
+    [Fact]
+    public async Task GetProductByName_Should_Return_Ok_When_Product_Exists()
+    {
+        // Arrange
+        var productName = "Test Product";
+        var product = new ProductDto
+        {
+            Id = 1,
+            Name = productName,
+            Description = "Test Description",
+            SKU = "TEST-001",
+            Price = 19.99m,
+            QuantityInStock = 100
+        };
+
+        _mockProductService.Setup(s => s.GetProductByNameAsync(productName))
+                          .ReturnsAsync(product);
+
+        // Act
+        var result = await _controller.GetProductByName(productName);
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var returnedProduct = Assert.IsType<ProductDto>(okResult.Value);
+        Assert.Equal(productName, returnedProduct.Name);
+        Assert.Equal(1, returnedProduct.Id);
+    }
+
+    [Fact]
+    public async Task GetProductByName_Should_Return_NotFound_When_Product_Does_Not_Exist()
+    {
+        // Arrange
+        var productName = "Non-existent Product";
+        _mockProductService.Setup(s => s.GetProductByNameAsync(productName))
+                          .ReturnsAsync((ProductDto?)null);
+
+        // Act
+        var result = await _controller.GetProductByName(productName);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(result.Result);
+        _mockProductService.Verify(s => s.GetProductByNameAsync(productName), Times.Once);
+    }
 }

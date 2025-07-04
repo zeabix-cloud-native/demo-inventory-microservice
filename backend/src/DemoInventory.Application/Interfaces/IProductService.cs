@@ -10,6 +10,7 @@ public interface IProductService
     Task<ProductDto> UpdateProductAsync(int id, UpdateProductDto updateProductDto);
     Task DeleteProductAsync(int id);
     Task<ProductDto?> GetProductBySkuAsync(string sku);
+    Task<ProductDto?> GetProductByNameAsync(string name);
     Task<IEnumerable<ProductDto>> SearchProductsAsync(string searchTerm);
     Task<IEnumerable<ProductDto>> GetProductsByPriceRangeAsync(PriceRangeDto priceRange);
 }

@@ -57,6 +57,12 @@ public class InMemoryProductRepository : IProductRepository
         return Task.FromResult(product);
     }
 
+    public Task<Product?> GetByNameAsync(string name)
+    {
+        var product = _products.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(product);
+    }
+
     public Task<IEnumerable<Product>> GetByPriceRangeAsync(decimal minPrice, decimal maxPrice)
     {
         var products = _products.Where(p => p.Price >= minPrice && p.Price <= maxPrice).ToList();
