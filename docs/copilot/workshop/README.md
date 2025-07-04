@@ -34,7 +34,7 @@ Comprehensive setup and introduction to GitHub Copilot
 Deep dive into configuration for optimal performance
 - [Project-specific instructions](../../../.github/copilot-instructions.md)
 - Context optimization for Clean Architecture
-- Custom configuration for .NET 9 and React 19
+- Custom configuration for .NET 8 and Angular
 - Team collaboration settings
 - Environment-specific configurations
 
