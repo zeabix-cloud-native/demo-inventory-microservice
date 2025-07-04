@@ -74,7 +74,9 @@ public class ProductsController : ControllerBase
     /// <summary>
     /// Search for products by name
     /// </summary>
-    /// <param name="searchTerm">The search term to filter products by name</param>
+    /// <param name="searchTerm">
+    /// (Optional) The search term to filter products by name. If null or empty, all products are returned.
+    /// </param>
     /// <returns>A list of products matching the search term</returns>
     /// <response code="200">Returns the list of matching products</response>
     [HttpGet("search")]
