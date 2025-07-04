@@ -78,6 +78,12 @@ public class ProductService : IProductService
         return product == null ? null : MapToDto(product);
     }
 
+    public async Task<ProductDto?> GetProductByNameAsync(string name)
+    {
+        var product = await _productRepository.GetByNameAsync(name);
+        return product == null ? null : MapToDto(product);
+    }
+
     public async Task<IEnumerable<ProductDto>> SearchProductsAsync(string searchTerm)
     {
         var products = await _productRepository.SearchByNameAsync(searchTerm);

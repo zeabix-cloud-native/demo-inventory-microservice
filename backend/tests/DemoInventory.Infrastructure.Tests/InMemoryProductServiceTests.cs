@@ -271,4 +271,83 @@ public class InMemoryProductServiceTests
         Assert.Single(result);
         Assert.Equal("Test Product", result.First().Name);
     }
+
+    [Fact]
+    public async Task GetProductByNameAsync_Should_Return_Product_When_Exists()
+    {
+        // Arrange
+        var createDto = new CreateProductDto
+        {
+            Name = "Test Product",
+            Description = "Test Description",
+            SKU = "TEST-001",
+            Price = 19.99m,
+            QuantityInStock = 100
+        };
+        await _service.CreateProductAsync(createDto);
+
+        // Act
+        var result = await _service.GetProductByNameAsync("Test Product");
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Test Product", result.Name);
+        Assert.Equal("Test Description", result.Description);
+        Assert.Equal("TEST-001", result.SKU);
+        Assert.Equal(19.99m, result.Price);
+        Assert.Equal(100, result.QuantityInStock);
+    }
+
+    [Fact]
+    public async Task GetProductByNameAsync_Should_Return_Null_When_Product_Does_Not_Exist()
+    {
+        // Act
+        var result = await _service.GetProductByNameAsync("Non-existent Product");
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetProductByNameAsync_Should_Be_Case_Insensitive()
+    {
+        // Arrange
+        var createDto = new CreateProductDto
+        {
+            Name = "Test Product",
+            Description = "Test Description",
+            SKU = "TEST-001",
+            Price = 19.99m,
+            QuantityInStock = 100
+        };
+        await _service.CreateProductAsync(createDto);
+
+        // Act
+        var result = await _service.GetProductByNameAsync("test product");
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal("Test Product", result.Name);
+    }
+
+    [Fact]
+    public async Task GetProductByNameAsync_Should_Return_Null_For_Partial_Match()
+    {
+        // Arrange
+        var createDto = new CreateProductDto
+        {
+            Name = "Test Product",
+            Description = "Test Description",
+            SKU = "TEST-001",
+            Price = 19.99m,
+            QuantityInStock = 100
+        };
+        await _service.CreateProductAsync(createDto);
+
+        // Act
+        var result = await _service.GetProductByNameAsync("Test");
+
+        // Assert
+        Assert.Null(result);
+    }
 }

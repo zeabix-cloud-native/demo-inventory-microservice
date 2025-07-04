@@ -70,6 +70,12 @@ public class InMemoryProductService : IProductService
         return Task.FromResult(product == null ? null : MapToDto(product));
     }
 
+    public Task<ProductDto?> GetProductByNameAsync(string name)
+    {
+        var product = _products.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(product == null ? null : MapToDto(product));
+    }
+
     public Task<IEnumerable<ProductDto>> SearchProductsAsync(string searchTerm)
     {
         var products = _products.Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));

@@ -72,6 +72,26 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>
+    /// Get a product by its name
+    /// </summary>
+    /// <param name="name">The name of the product to retrieve</param>
+    /// <returns>The product with the specified name</returns>
+    /// <response code="200">Returns the product</response>
+    /// <response code="404">Product not found</response>
+    [HttpGet("name/{name}")]
+    [SwaggerOperation(Summary = "Get product by name", Description = "Retrieves a specific product by its exact name")]
+    [SwaggerResponse(200, "Success", typeof(ProductDto))]
+    [SwaggerResponse(404, "Product not found")]
+    public async Task<ActionResult<ProductDto>> GetProductByName(string name)
+    {
+        var product = await _productService.GetProductByNameAsync(name);
+        if (product == null)
+            return NotFound();
+
+        return Ok(product);
+    }
+
+    /// <summary>
     /// Search for products by name
     /// </summary>
     /// <param name="searchTerm">
