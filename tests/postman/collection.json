@@ -509,6 +509,248 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Category Analytics",
+			"item": [
+				{
+					"name": "Get Category Metrics",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has correct structure\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('totalCategories');",
+									"    pm.expect(responseJson).to.have.property('totalProducts');",
+									"    pm.expect(responseJson).to.have.property('totalInventoryValue');",
+									"    pm.expect(responseJson).to.have.property('categoryAnalytics');",
+									"});",
+									"",
+									"pm.test(\"Category analytics is an array\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.categoryAnalytics).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Numeric values are valid\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.totalCategories).to.be.a('number');",
+									"    pm.expect(responseJson.totalProducts).to.be.a('number');",
+									"    pm.expect(responseJson.totalInventoryValue).to.be.a('number');",
+									"    pm.expect(responseJson.totalCategories).to.be.at.least(0);",
+									"    pm.expect(responseJson.totalProducts).to.be.at.least(0);",
+									"    pm.expect(responseJson.totalInventoryValue).to.be.at.least(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/categories/analytics",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"analytics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category Analytics by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 404\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    pm.test(\"Category analytics structure is valid\", function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('categoryId');",
+									"        pm.expect(responseJson).to.have.property('categoryName');",
+									"        pm.expect(responseJson).to.have.property('totalProducts');",
+									"        pm.expect(responseJson).to.have.property('totalInventoryValue');",
+									"        pm.expect(responseJson).to.have.property('averagePrice');",
+									"        pm.expect(responseJson).to.have.property('lowStockProducts');",
+									"        pm.expect(responseJson).to.have.property('outOfStockProducts');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/categories/analytics/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"analytics",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Top Categories",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/categories/analytics/top?count=5&sortBy=ProductCount",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"analytics",
+								"top"
+							],
+							"query": [
+								{
+									"key": "count",
+									"value": "5"
+								},
+								{
+									"key": "sortBy",
+									"value": "ProductCount"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category Trends",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/categories/analytics/trends?daysPeriod=30&count=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"analytics",
+								"trends"
+							],
+							"query": [
+								{
+									"key": "daysPeriod",
+									"value": "30"
+								},
+								{
+									"key": "count",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Analytics Summary",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Summary has required properties\", function () {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson).to.have.property('totalCategories');",
+									"    pm.expect(responseJson).to.have.property('totalProducts');",
+									"    pm.expect(responseJson).to.have.property('totalInventoryValue');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/categories/analytics/summary",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"analytics",
+								"summary"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"event": [

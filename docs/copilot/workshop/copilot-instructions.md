@@ -16,29 +16,29 @@ This is a **modern full-stack inventory management microservice** demonstrating 
 ### Clean Architecture Implementation
 
 The project follows **Clean Architecture** with strict separation of concerns:
-
 ```plaintext
 ┌─────────────────────────────────────────────────────────────┐
 │                   Presentation Layer                        │
 │  ┌─────────────────────┐  ┌─────────────────────────────────┐│
-│  │   React Frontend    │  │      Web API Controllers       ││
-│  │   (TypeScript)      │  │        (.NET 9)               ││
+│  │   Controllers/API   │  │           Frontend UI            ││
+│  └─────────────────────┘  └─────────────────────────────────┘│
+├─────────────────────────────────────────────────────────────┤
+│                   Application Layer                         │
+│  ┌─────────────────────┐  ┌─────────────────────────────────┐│
+│  │   Application       │  │         Use Cases/Services       ││
+│  └─────────────────────┘  └─────────────────────────────────┘│
+├─────────────────────────────────────────────────────────────┤
+│                   Domain Layer                              │
+│  ┌─────────────────────┐  ┌─────────────────────────────────┐│
+│  │   Domain Entities   │  │         Domain Services          ││
+│  └─────────────────────┘  └─────────────────────────────────┘│
+├─────────────────────────────────────────────────────────────┤
+│                   Infrastructure Layer                      │
+│  ┌─────────────────────┐  ┌─────────────────────────────────┐│
+│  │   Repositories      │  │         Data Access Layer        ││
 │  └─────────────────────┘  └─────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                   Application Layer                         │
-│           Services, DTOs, Use Cases                         │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                     Domain Layer                            │
-│        Entities, Value Objects, Business Rules              │
-└─────────────────────────────────────────────────────────────┘
-┌─────────────────────────────────────────────────────────────┐
-│                 Infrastructure Layer                        │
-│       Data Access, External Services, Persistence           │
-└─────────────────────────────────────────────────────────────┘
 ```
-
 **Layer Responsibilities:**
 - **Domain**: Core business logic, entities, value objects, domain services
 - **Application**: Use cases, DTOs, application services, interfaces
@@ -228,21 +228,29 @@ npm run preview
 ### Testing Strategy
 
 The project implements a comprehensive testing pyramid:
+# Testing Pyramid
 
-```plaintext
-    ┌─────────────────────────────────────────────────────────────┐
-    │            E2E Tests (Cypress)                              │  ← Few, high-value
-    └─────────────────────────────────────────────────────────────┘
-           ┌─────────────────────────────────────────────────────────────┐
-           │          API Tests (Postman/Newman)                        │  ← More focused
-           └─────────────────────────────────────────────────────────────┘
-                  ┌─────────────────────────────────────────────────────────────┐
-                  │         Integration Tests (API Controllers)                 │  ← Some
-                  └─────────────────────────────────────────────────────────────┘
-                         ┌─────────────────────────────────────────────────────────────┐
-                         │           Unit Tests (Domain & Application Logic)          │  ← Many, fast
-                         └─────────────────────────────────────────────────────────────┘
-```
+The project uses a layered testing strategy, often called the "testing pyramid", to ensure quality and reliability at all levels:
+
+  ┌─────────────────────────────────────────────┐
+  │           End-to-End (E2E) Tests            │  ← Few, high-value UI + backend flows (Cypress)
+  └─────────────────────────────────────────────┘
+       ┌─────────────────────────────────────┐
+       │            API Tests                │  ← More, focused on HTTP contract (Postman/Newman)
+       └─────────────────────────────────────┘
+          ┌─────────────────────────────┐
+          │      Integration Tests      │  ← Some, test multiple components together (API Controllers)
+          └─────────────────────────────┘
+             ┌─────────────────────┐
+             │      Unit Tests     │  ← Many, fast, pure logic (Domain & Application)
+             └─────────────────────┘
+
+- **Unit Tests**: Test individual functions/classes in isolation (most numerous, fastest).
+- **Integration Tests**: Test how multiple components work together (e.g., controller + service + repo).
+- **API Tests**: Test the HTTP API contract and business flows.
+- **E2E Tests**: Simulate real user scenarios through the UI, covering the full stack.
+
+This approach ensures fast feedback for core logic, confidence in integration, and real-world validation of the system.
 
 #### Unit Testing (Backend)
 ```bash

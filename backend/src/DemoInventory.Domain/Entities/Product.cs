@@ -69,6 +69,16 @@ public class Product
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    /// <summary>
+    /// Foreign key for the category this product belongs to
+    /// </summary>
+    public int? CategoryId { get; set; }
+    
+    /// <summary>
+    /// Navigation property for the category this product belongs to
+    /// </summary>
+    public virtual Category? Category { get; set; }
+
     public void ValidateDescription()
     {
         if (Description.Length > 1000)

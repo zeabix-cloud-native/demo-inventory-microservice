@@ -42,6 +42,10 @@ else
 builder.Services.AddScoped<IProductRepository, PostgreSqlProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+// Register Category Analytics services
+builder.Services.AddScoped<ICategoryAnalyticsRepository, DemoInventory.Infrastructure.Repositories.CategoryAnalyticsRepository>();
+builder.Services.AddScoped<ICategoryAnalyticsService, CategoryAnalyticsService>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
