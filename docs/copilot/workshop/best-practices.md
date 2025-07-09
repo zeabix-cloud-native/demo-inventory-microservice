@@ -54,6 +54,11 @@ Constraints:
 Example of existing service pattern: ProductService.cs
 Include comprehensive unit tests using xUnit, NSubstitute, and FluentAssertions.
 ```
+**Trick: Prompt to create Prompt**
+```
+Give me an efective prompt to create <replace with thing you want to create>
+Prompt structure should be: @workspace [Context] + [Task] + [Requirements] + [Constraints] + [Examples]
+```
 
 ### 1.2 Context Layering Techniques
 
