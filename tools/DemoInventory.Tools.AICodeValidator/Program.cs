@@ -108,7 +108,7 @@ public class AICodeValidator
         }
 
         // Generate comprehensive summary
-        await GenerateSummary();
+        GenerateSummary();
 
         // Generate JSON report if requested
         if (!string.IsNullOrEmpty(reportPath))
@@ -117,7 +117,7 @@ public class AICodeValidator
         }
 
         // Provide recommendations
-        await GenerateRecommendations();
+        GenerateRecommendations();
     }
 
     private async Task<ToolResult> RunToolAsync(string toolPath, string arguments)
@@ -157,7 +157,7 @@ public class AICodeValidator
         }
     }
 
-    private async Task GenerateSummary()
+    private void GenerateSummary()
     {
         Console.WriteLine();
         Console.WriteLine("📊 Comprehensive Validation Summary");
@@ -245,7 +245,7 @@ public class AICodeValidator
         Console.WriteLine($"📄 JSON report generated: {reportPath}");
     }
 
-    private async Task GenerateRecommendations()
+    private void GenerateRecommendations()
     {
         Console.WriteLine("💡 Comprehensive Recommendations");
         Console.WriteLine("=================================");
