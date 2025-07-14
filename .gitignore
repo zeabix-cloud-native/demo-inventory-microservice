@@ -86,3 +86,8 @@ yarn-error.log*
 openapi-spec.json
 validate-openapi.sh
 
+# Validation tool reports (testing/temporary files)
+test-report.json
+validation-report.json
+*-validation-report.json
+
