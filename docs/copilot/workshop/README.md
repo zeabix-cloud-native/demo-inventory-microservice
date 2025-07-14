@@ -1,7 +1,7 @@
 # GitHub Copilot Workshop
 ## From Zero to Hero: Mastering AI-Powered Development
 
-Welcome to the comprehensive GitHub Copilot workshop for the Demo Inventory Microservice project! This workshop will guide you through mastering GitHub Copilot for full-stack development using Clean Architecture, .NET 9, and React 19.
+Welcome to the comprehensive GitHub Copilot workshop for the Demo Inventory Microservice project! This workshop will guide you through mastering GitHub Copilot for full-stack development using Clean Architecture, .NET 8, and Angular.
 
 ## 🎯 Workshop Objectives
 
@@ -98,7 +98,7 @@ Build complete features using Clean Architecture
 
 #### 2. [Frontend Development Exercise](exercises/frontend-exercise.md)
 **Duration: 75 minutes**  
-Create sophisticated React components with TypeScript
+Create sophisticated Angular components with TypeScript
 - Generate TypeScript interfaces from backend DTOs
 - Build complex forms with validation and state management
 - Implement API integration with error handling
@@ -332,13 +332,13 @@ Develop AI adoption strategies and team leadership skills for AI-assisted develo
 - **.NET 9 SDK** for backend development
 - **Node.js 20+** for frontend development
 - **Docker Desktop** for containerization and deployment
-- **PostgreSQL** for database (or Docker alternative)
+- **SQL Server** for database (or Docker alternative)
 - **Git** for version control
 - **Postman** or similar API testing tool
 
 ### Required Knowledge
 - **Intermediate C#** and .NET fundamentals
-- **Intermediate TypeScript/JavaScript** and React concepts
+- **Intermediate TypeScript/JavaScript** and Angular concepts
 - **Good understanding** of REST APIs and HTTP protocols
 - **Familiarity with Git** and GitHub workflows
 - **Basic understanding** of Clean Architecture concepts
@@ -392,7 +392,7 @@ Track your progress with these comprehensive checkpoints:
 
 ### Advanced Development Checkpoints
 - [ ] Built multiple complete API endpoints with advanced validation
-- [ ] Created sophisticated React components with TypeScript interfaces
+- [ ] Created sophisticated Angular components with TypeScript interfaces
 - [ ] Generated comprehensive test suites (unit, integration, E2E)
 - [ ] Fixed complex bugs using AI-assisted debugging techniques
 - [ ] Refactored legacy code following SOLID principles

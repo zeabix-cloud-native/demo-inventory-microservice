@@ -41,16 +41,16 @@ We'll implement a modern, scalable architecture using:
 
 ```
 🔧 Technology Stack
-  ├── Backend: .NET 8+ with Clean Architecture
-  ├── Frontend: React 19 with TypeScript
-  ├── Database: PostgreSQL with EF Core
+  ├── Backend: .NET 8 with Clean Architecture
+  ├── Frontend: Angular latest version
+  ├── Database: SQL Server (microsoft sql server using Azure SQL MI) with EF Core
   ├── API: RESTful with OpenAPI/Swagger
-  ├── Authentication: JWT with role-based access
-  ├── Messaging: RabbitMQ for event handling
-  ├── Caching: Redis for performance
+  ├── Authentication: JWT with role-based access and Azure APIM
+  ├── Messaging: Azure event hub (if required)
+  ├── Caching: Redis for performance (if required)
   ├── Containerization: Docker & Kubernetes
   ├── CI/CD: GitHub Actions
-  └── Monitoring: Application Insights
+  └── Monitoring: Azure monitoring
 ```
 
 ## 🎯 Learning Outcomes
@@ -186,26 +186,26 @@ Comprehensive testing and production deployment
 ```bash
 # Development Tools
 ✅ VS Code with GitHub Copilot (Business/Enterprise)
-✅ .NET 8+ SDK
+✅ .NET 8 SDK
 ✅ Node.js 20+
 ✅ Docker Desktop
-✅ PostgreSQL 15+
+✅ SQL Server or Azure SQL MI access
 ✅ Git and GitHub account
 
-# Cloud & Services (Optional but Recommended)
-✅ Azure/AWS/GCP account for deployment
-✅ RabbitMQ Cloud instance
-✅ Redis Cloud instance
-✅ Application monitoring service
+# Cloud & Services (Azure-focused)
+✅ Azure account for deployment
+✅ Azure Event Hub (if required)
+✅ Redis Cloud instance (if required)
+✅ Azure monitoring services
 ```
 
 ### Knowledge Prerequisites
 ```markdown
 🧠 Required Knowledge
   ├── Intermediate C# and .NET development
-  ├── TypeScript/JavaScript and React fundamentals
+  ├── TypeScript/JavaScript and Angular fundamentals
   ├── RESTful API design and HTTP protocols
-  ├── Database design and SQL concepts
+  ├── Database design and SQL Server concepts
   ├── Git version control and GitHub workflows
   ├── Basic understanding of microservices architecture
   └── Familiarity with containerization concepts

@@ -63,7 +63,7 @@ Use xUnit, NSubstitute, FluentAssertions, and AutoFixture for comprehensive cove
 
 **Copilot Chat Prompt:**
 ```
-Implement comprehensive frontend unit testing for Line Dealer BYD React application:
+Implement comprehensive frontend unit testing for Line Dealer BYD Angular application:
 
 1. Component Testing Strategy
    - Pure component rendering and behavior testing
@@ -80,7 +80,7 @@ Implement comprehensive frontend unit testing for Line Dealer BYD React applicat
    - Context provider and consumer testing
 
 3. Testing Infrastructure
-   - React Testing Library setup and configuration
+   - Angular Testing Library setup and configuration
    - Mock service worker (MSW) for API mocking
    - Test data factories and builders
    - Custom render utilities with providers
@@ -93,7 +93,7 @@ Implement comprehensive frontend unit testing for Line Dealer BYD React applicat
    - Memory leak detection in tests
    - Cross-browser compatibility testing
 
-Use Vitest, React Testing Library, MSW, and Testing Library Jest DOM.
+Use Jasmine, Angular Testing Library, MSW, and Angular Testing utilities.
 ```
 
 ### Expected Unit Testing Structure
@@ -510,7 +510,7 @@ Create comprehensive testing pipeline for Line Dealer BYD CI/CD:
    - Deployment blocking for quality failures
    - Quality trend analysis and reporting
 
-Provide complete GitHub Actions or Azure DevOps pipeline configuration.
+Provide complete GitHub Actions pipeline configuration with Azure services integration.
 ```
 
 ### Test Reporting and Analytics

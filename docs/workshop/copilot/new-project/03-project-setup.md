@@ -30,8 +30,8 @@ Help me create an optimal GitHub repository structure for the Line Dealer BYD sy
 
 Requirements:
 - .NET 8 backend with Clean Architecture
-- React 19 TypeScript frontend
-- PostgreSQL database with migrations
+- Angular latest version TypeScript frontend
+- SQL Server database with EF Core migrations
 - Docker containerization
 - Comprehensive testing setup
 - CI/CD with GitHub Actions
@@ -156,29 +156,29 @@ Provide complete project files (.csproj), Program.cs, and basic class templates.
 
 **Copilot Chat Prompt:**
 ```
-Generate React 19 TypeScript project template for Line Dealer BYD frontend:
+Generate Angular latest version TypeScript project template for Line Dealer BYD frontend:
 
-1. Vite Configuration
+1. Angular CLI Configuration
    - TypeScript configuration with strict settings
    - ESLint and Prettier setup
    - Path aliases and build optimization
    - Environment variable handling
 
 2. Project Structure Setup
-   - Component library structure
-   - Routing configuration with React Router
-   - State management setup (Context or Redux Toolkit)
-   - API client configuration with Axios
+   - Angular module structure
+   - Routing configuration with Angular Router
+   - State management setup (NgRx or Angular Services)
+   - API client configuration with Angular HttpClient
 
 3. Development Tools
-   - Testing setup with Vitest and React Testing Library
+   - Testing setup with Jasmine and Angular Testing Library
    - Storybook for component development
-   - Tailwind CSS for styling
+   - Angular Material or Tailwind CSS for styling
    - Development scripts and automation
 
 4. Quality Tools
    - TypeScript strict configuration
-   - ESLint rules for React and TypeScript
+   - ESLint rules for Angular and TypeScript
    - Prettier code formatting
    - Husky git hooks for quality gates
 
@@ -192,7 +192,7 @@ Provide complete package.json, configuration files, and folder structure.
 Create database setup and configuration for the Line Dealer BYD system:
 
 1. Entity Framework Core Setup
-   - DbContext configuration for PostgreSQL
+   - DbContext configuration for SQL Server
    - Entity configurations and relationships
    - Migration generation and management
    - Connection string management
@@ -204,7 +204,7 @@ Create database setup and configuration for the Line Dealer BYD system:
    - Audit and soft delete implementation
 
 3. Development Database Setup
-   - Docker Compose for local PostgreSQL
+   - Docker Compose for local SQL Server
    - Database initialization scripts
    - Test data generation
    - Backup and restore procedures
@@ -227,10 +227,10 @@ Provide Entity Framework configurations, migration scripts, and Docker setup.
 Create comprehensive Docker development environment for Line Dealer BYD:
 
 1. Multi-Container Setup
-   - PostgreSQL database with initialization
-   - Redis for caching and sessions
-   - RabbitMQ for message queuing
-   - pgAdmin for database management
+   - SQL Server database with initialization
+   - Redis for caching and sessions (if required)
+   - Azure Event Hub for message queuing (if required)
+   - SQL Server Management Studio for database management
 
 2. Backend Container
    - Multi-stage Dockerfile for .NET API
@@ -239,7 +239,7 @@ Create comprehensive Docker development environment for Line Dealer BYD:
    - Volume mounting for development
 
 3. Frontend Container
-   - Node.js container for React development
+   - Node.js container for Angular development
    - Hot reload configuration
    - Build optimization for production
    - Nginx for production serving
@@ -267,13 +267,13 @@ Create optimal VS Code workspace configuration for Line Dealer BYD development:
 
 2. Recommended Extensions
    - GitHub Copilot and Copilot Chat
-   - Language-specific extensions (C#, TypeScript, React)
+   - Language-specific extensions (C#, TypeScript, Angular)
    - Database tools and Docker extensions
    - Code quality tools (ESLint, Prettier, SonarLint)
 
 3. Code Snippets and Templates
    - Custom snippets for Clean Architecture patterns
-   - React component templates
+   - Angular component templates
    - API endpoint templates
    - Test case templates
 
@@ -374,7 +374,7 @@ Create environment configuration management for Line Dealer BYD:
    - Environment-specific appsettings.json
    - Docker environment variables
    - Kubernetes ConfigMaps and Secrets
-   - Azure Key Vault or AWS Secrets Manager
+   - Azure Key Vault for secrets management
 
 3. Database Management
    - Environment-specific database configurations
@@ -434,7 +434,7 @@ Establish development standards and guidelines for Line Dealer BYD:
 
 1. Code Quality Standards
    - C# coding conventions and style guide
-   - TypeScript/React best practices
+   - TypeScript/Angular best practices
    - Database design and naming conventions
    - API design standards and patterns
 

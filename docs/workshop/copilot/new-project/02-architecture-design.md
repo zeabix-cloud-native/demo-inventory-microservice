@@ -152,11 +152,9 @@ Design the database strategy for the Line Dealer BYD system:
    - Data synchronization between services
 
 3. Specific Technology Evaluation
-   - PostgreSQL with advanced features
-   - SQL Server with Enterprise features
-   - MongoDB for document storage
-   - Redis for caching and sessions
-   - Event store for domain events
+   - SQL Server (Azure SQL MI) with Enterprise features
+   - Redis for caching and sessions (if required)
+   - Event store for domain events using Azure Event Hub
 
 Recommend the optimal database architecture with justification.
 ```
@@ -176,8 +174,8 @@ Requirements:
 - Component reusability
 
 Evaluate:
-1. React 19 with TypeScript
-2. Angular 17+ with TypeScript
+1. Angular latest version with TypeScript (Recommended)
+2. React 19 with TypeScript
 3. Vue.js 3 with TypeScript
 4. Svelte/SvelteKit
 5. Blazor Server/WebAssembly
@@ -254,7 +252,7 @@ Create the database schema for the Line Dealer BYD system:
    - Partitioning for large tables
    - Caching considerations
 
-Provide SQL DDL scripts for PostgreSQL with proper constraints, indexes, and relationships.
+Provide SQL DDL scripts for SQL Server with proper constraints, indexes, and relationships.
 ```
 
 ### 3.3 Data Migration and Seeding Strategy
@@ -376,7 +374,7 @@ Design event-driven architecture for the Line Dealer BYD system:
    - Dead letter queue management
 
 4. Technology Implementation
-   - Message broker selection (RabbitMQ, Azure Service Bus, Apache Kafka)
+   - Message broker selection (Azure Event Hub, Azure Service Bus)
    - Event serialization and versioning
    - Monitoring and observability
    - Testing strategies for event-driven systems
