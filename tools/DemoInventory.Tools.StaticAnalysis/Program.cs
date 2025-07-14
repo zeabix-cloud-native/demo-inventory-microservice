@@ -132,21 +132,29 @@ public class StaticAnalyzer
         if (methods.Count > 20)
         {
             result.AddIssue($"Class '{className}' has {methods.Count} methods. Consider breaking it down (SRP violation)", 
-                classNode.GetLocation());
+                classNode.GetLocation(), IssueSeverity.High);
+        }
+        else if (methods.Count > 15)
+        {
+            result.AddIssue($"Class '{className}' has {methods.Count} methods. Consider refactoring for better maintainability", 
+                classNode.GetLocation(), IssueSeverity.Medium);
         }
 
         // Check class naming convention
         if (!char.IsUpper(className[0]))
         {
             result.AddIssue($"Class '{className}' should start with uppercase letter", 
-                classNode.Identifier.GetLocation());
+                classNode.Identifier.GetLocation(), IssueSeverity.Low);
         }
 
         // Check for proper documentation
         if (!HasXmlDocumentation(classNode))
         {
+            var severity = classNode.Modifiers.Any(m => m.IsKind(SyntaxKind.PublicKeyword)) 
+                ? IssueSeverity.Medium 
+                : IssueSeverity.Low;
             result.AddIssue($"Class '{className}' is missing XML documentation", 
-                classNode.GetLocation());
+                classNode.GetLocation(), severity);
         }
     }
 
@@ -156,48 +164,83 @@ public class StaticAnalyzer
 
         // Check cyclomatic complexity
         var complexity = CalculateCyclomaticComplexity(method);
-        if (complexity > 10)
+        if (complexity > 15)
+        {
+            result.AddIssue($"Method '{methodName}' has very high cyclomatic complexity: {complexity} (should be ≤ 10)", 
+                method.GetLocation(), IssueSeverity.High);
+        }
+        else if (complexity > 10)
         {
             result.AddIssue($"Method '{methodName}' has high cyclomatic complexity: {complexity} (should be ≤ 10)", 
-                method.GetLocation());
+                method.GetLocation(), IssueSeverity.Medium);
+        }
+        else if (complexity > 7)
+        {
+            result.AddIssue($"Method '{methodName}' has elevated cyclomatic complexity: {complexity} (consider simplifying)", 
+                method.GetLocation(), IssueSeverity.Low);
         }
 
         // Check method length
         var lineCount = method.GetText().Lines.Count;
-        if (lineCount > 50)
+        if (lineCount > 100)
+        {
+            result.AddIssue($"Method '{methodName}' is very long: {lineCount} lines (should be ≤ 50)", 
+                method.GetLocation(), IssueSeverity.High);
+        }
+        else if (lineCount > 50)
         {
             result.AddIssue($"Method '{methodName}' is too long: {lineCount} lines (should be ≤ 50)", 
-                method.GetLocation());
+                method.GetLocation(), IssueSeverity.Medium);
+        }
+        else if (lineCount > 30)
+        {
+            result.AddIssue($"Method '{methodName}' is getting long: {lineCount} lines (consider breaking down)", 
+                method.GetLocation(), IssueSeverity.Low);
         }
 
         // Check parameter count
         var parameterCount = method.ParameterList.Parameters.Count;
-        if (parameterCount > 7)
+        if (parameterCount > 10)
         {
             result.AddIssue($"Method '{methodName}' has too many parameters: {parameterCount} (should be ≤ 7)", 
-                method.GetLocation());
+                method.GetLocation(), IssueSeverity.High);
+        }
+        else if (parameterCount > 7)
+        {
+            result.AddIssue($"Method '{methodName}' has many parameters: {parameterCount} (should be ≤ 7)", 
+                method.GetLocation(), IssueSeverity.Medium);
+        }
+        else if (parameterCount > 5)
+        {
+            result.AddIssue($"Method '{methodName}' has several parameters: {parameterCount} (consider parameter object)", 
+                method.GetLocation(), IssueSeverity.Low);
         }
 
         // Check nesting depth
         var nestingDepth = CalculateNestingDepth(method);
-        if (nestingDepth > 3)
+        if (nestingDepth > 5)
         {
             result.AddIssue($"Method '{methodName}' has excessive nesting depth: {nestingDepth} (should be ≤ 3)", 
-                method.GetLocation());
+                method.GetLocation(), IssueSeverity.High);
+        }
+        else if (nestingDepth > 3)
+        {
+            result.AddIssue($"Method '{methodName}' has high nesting depth: {nestingDepth} (should be ≤ 3)", 
+                method.GetLocation(), IssueSeverity.Medium);
         }
 
         // Check method naming convention
         if (!char.IsUpper(methodName[0]))
         {
             result.AddIssue($"Method '{methodName}' should start with uppercase letter", 
-                method.Identifier.GetLocation());
+                method.Identifier.GetLocation(), IssueSeverity.Low);
         }
 
         // Check for proper documentation on public methods
         if (method.Modifiers.Any(m => m.IsKind(SyntaxKind.PublicKeyword)) && !HasXmlDocumentation(method))
         {
             result.AddIssue($"Public method '{methodName}' is missing XML documentation", 
-                method.GetLocation());
+                method.GetLocation(), IssueSeverity.Medium);
         }
     }
 
@@ -216,7 +259,7 @@ public class StaticAnalyzer
                     if (!fieldName.StartsWith("_"))
                     {
                         result.AddIssue($"Private field '{fieldName}' should start with underscore", 
-                            variable.GetLocation());
+                            variable.GetLocation(), IssueSeverity.Low);
                     }
                 }
             }
@@ -230,7 +273,7 @@ public class StaticAnalyzer
             if (!char.IsUpper(propertyName[0]))
             {
                 result.AddIssue($"Property '{propertyName}' should start with uppercase letter", 
-                    property.Identifier.GetLocation());
+                    property.Identifier.GetLocation(), IssueSeverity.Low);
             }
         }
     }
@@ -306,7 +349,6 @@ public class StaticAnalyzer
         Console.WriteLine($"Files analyzed: {_results.Count}");
         Console.WriteLine($"Files with issues: {filesWithIssues}");
         Console.WriteLine($"Total issues found: {totalIssues}");
-        Console.WriteLine();
 
         if (totalIssues == 0)
         {
@@ -314,8 +356,22 @@ public class StaticAnalyzer
             return;
         }
 
-        // Group issues by severity
+        // Show severity breakdown
         var allIssues = _results.OfType<FileAnalysisResult>().SelectMany(r => r.Issues).ToList();
+        var criticalCount = allIssues.Count(i => i.Severity == IssueSeverity.Critical);
+        var highCount = allIssues.Count(i => i.Severity == IssueSeverity.High);
+        var mediumCount = allIssues.Count(i => i.Severity == IssueSeverity.Medium);
+        var lowCount = allIssues.Count(i => i.Severity == IssueSeverity.Low);
+
+        Console.WriteLine();
+        Console.WriteLine("📊 Issues by severity:");
+        Console.WriteLine($"  Critical: {criticalCount}");
+        Console.WriteLine($"  High:     {highCount}");
+        Console.WriteLine($"  Medium:   {mediumCount}");
+        Console.WriteLine($"  Low:      {lowCount}");
+        Console.WriteLine();
+
+        // Group issues by category
         var issuesByType = allIssues.GroupBy(i => GetIssueType(i.Message))
             .OrderByDescending(g => g.Count());
 
@@ -334,18 +390,223 @@ public class StaticAnalyzer
             foreach (var result in _results.OfType<FileAnalysisResult>().Where(r => r.Issues.Any()))
             {
                 Console.WriteLine($"📄 {Path.GetRelativePath(Directory.GetCurrentDirectory(), result.FilePath)}");
-                foreach (var issue in result.Issues)
+                foreach (var issue in result.Issues.OrderByDescending(i => i.Severity))
                 {
                     var location = issue.Location;
                     var line = location.GetLineSpan().StartLinePosition.Line + 1;
-                    Console.WriteLine($"  ⚠️  Line {line}: {issue.Message}");
+                    var severityIcon = issue.Severity switch
+                    {
+                        IssueSeverity.Critical => "🔴",
+                        IssueSeverity.High => "🟠",
+                        IssueSeverity.Medium => "🟡",
+                        IssueSeverity.Low => "🔵",
+                        _ => "⚪"
+                    };
+                    Console.WriteLine($"  {severityIcon} {issue.Severity} - Line {line}: {issue.Message}");
                 }
                 Console.WriteLine();
             }
         }
 
-        // Exit with error code if issues found
-        Environment.ExitCode = 1;
+        // Show severity-specific recommendations
+        ShowSeverityRecommendations(allIssues);
+
+        // Exit with error code if critical or high issues found
+        if (criticalCount > 0 || highCount > 0)
+        {
+            Environment.ExitCode = 1;
+        }
+    }
+
+    private void ShowSeverityRecommendations(List<CodeIssue> allIssues)
+    {
+        Console.WriteLine("💡 Severity-Specific Recommendations");
+        Console.WriteLine("====================================");
+
+        var criticalIssues = allIssues.Where(i => i.Severity == IssueSeverity.Critical).ToList();
+        var highIssues = allIssues.Where(i => i.Severity == IssueSeverity.High).ToList();
+        var mediumIssues = allIssues.Where(i => i.Severity == IssueSeverity.Medium).ToList();
+        var lowIssues = allIssues.Where(i => i.Severity == IssueSeverity.Low).ToList();
+
+        if (criticalIssues.Any())
+        {
+            Console.WriteLine("🔴 CRITICAL Issues (Immediate Action Required):");
+            ShowRecommendationsForSeverity(criticalIssues, IssueSeverity.Critical);
+            Console.WriteLine();
+        }
+
+        if (highIssues.Any())
+        {
+            Console.WriteLine("🟠 HIGH Priority Issues (Address Soon):");
+            ShowRecommendationsForSeverity(highIssues, IssueSeverity.High);
+            Console.WriteLine();
+        }
+
+        if (mediumIssues.Any())
+        {
+            Console.WriteLine("🟡 MEDIUM Priority Issues (Plan for Next Sprint):");
+            ShowRecommendationsForSeverity(mediumIssues, IssueSeverity.Medium);
+            Console.WriteLine();
+        }
+
+        if (lowIssues.Any())
+        {
+            Console.WriteLine("🔵 LOW Priority Issues (Code Hygiene):");
+            ShowRecommendationsForSeverity(lowIssues, IssueSeverity.Low);
+            Console.WriteLine();
+        }
+
+        if (!allIssues.Any())
+        {
+            Console.WriteLine("🎉 Excellent! No static analysis issues found.");
+            Console.WriteLine("  • Continue following coding standards");
+            Console.WriteLine("  • Maintain current code quality practices");
+            Console.WriteLine("  • Consider code reviews for new changes");
+        }
+    }
+
+    private void ShowRecommendationsForSeverity(List<CodeIssue> issues, IssueSeverity severity)
+    {
+        var recommendations = GetRecommendationsForSeverity(issues, severity);
+        
+        foreach (var recommendation in recommendations.Take(5)) // Limit to top 5 recommendations
+        {
+            Console.WriteLine($"  • {recommendation}");
+        }
+
+        if (recommendations.Count > 5)
+        {
+            Console.WriteLine($"  ... and {recommendations.Count - 5} more recommendations");
+        }
+    }
+
+    private List<string> GetRecommendationsForSeverity(List<CodeIssue> issues, IssueSeverity severity)
+    {
+        var recommendations = new List<string>();
+        var issueGroups = issues.GroupBy(i => GetIssueType(i.Message));
+
+        foreach (var group in issueGroups.OrderByDescending(g => g.Count()))
+        {
+            var category = group.Key;
+            var count = group.Count();
+
+            switch (severity)
+            {
+                case IssueSeverity.Critical:
+                    recommendations.AddRange(GetCriticalRecommendations(category, count));
+                    break;
+                case IssueSeverity.High:
+                    recommendations.AddRange(GetHighRecommendations(category, count));
+                    break;
+                case IssueSeverity.Medium:
+                    recommendations.AddRange(GetMediumRecommendations(category, count));
+                    break;
+                case IssueSeverity.Low:
+                    recommendations.AddRange(GetLowRecommendations(category, count));
+                    break;
+            }
+        }
+
+        return recommendations.Distinct().ToList();
+    }
+
+    private List<string> GetCriticalRecommendations(string category, int count)
+    {
+        return category.ToLower() switch
+        {
+            "complexity" => new List<string> 
+            { 
+                $"URGENT: Refactor {count} extremely complex methods immediately to prevent maintenance disasters",
+                "Break down complex methods using Extract Method pattern",
+                "Consider using Strategy or Command patterns for complex business logic"
+            },
+            "solid principles" => new List<string> 
+            { 
+                $"URGENT: {count} severe SOLID violations detected - architectural review required",
+                "Break down large classes into focused, single-responsibility components",
+                "Schedule immediate architectural refactoring session"
+            },
+            _ => new List<string> { $"URGENT: Address {count} critical {category.ToLower()} issues immediately" }
+        };
+    }
+
+    private List<string> GetHighRecommendations(string category, int count)
+    {
+        return category.ToLower() switch
+        {
+            "complexity" => new List<string> 
+            { 
+                $"HIGH PRIORITY: Simplify {count} complex methods this sprint",
+                "Use early returns to reduce nesting depth",
+                "Extract complex conditions into well-named boolean methods"
+            },
+            "length" => new List<string> 
+            { 
+                $"HIGH PRIORITY: Break down {count} long methods/classes",
+                "Apply Single Responsibility Principle",
+                "Extract related functionality into separate methods or classes"
+            },
+            "parameters" => new List<string> 
+            { 
+                $"HIGH PRIORITY: Reduce parameter count in {count} methods",
+                "Create parameter objects for related parameters",
+                "Use dependency injection for service dependencies"
+            },
+            "nesting" => new List<string> 
+            { 
+                $"HIGH PRIORITY: Reduce nesting in {count} methods",
+                "Use guard clauses and early returns",
+                "Extract nested logic into separate methods"
+            },
+            _ => new List<string> { $"HIGH PRIORITY: Address {count} {category.ToLower()} issues soon" }
+        };
+    }
+
+    private List<string> GetMediumRecommendations(string category, int count)
+    {
+        return category.ToLower() switch
+        {
+            "documentation" => new List<string> 
+            { 
+                $"Add XML documentation to {count} public APIs for better maintainability",
+                "Document public methods, classes, and properties",
+                "Include parameter descriptions and return value information"
+            },
+            "complexity" => new List<string> 
+            { 
+                $"Consider simplifying {count} moderately complex methods",
+                "Review business logic and extract reusable components"
+            },
+            "naming" => new List<string> 
+            { 
+                $"Improve naming conventions for {count} items",
+                "Follow PascalCase for public members, camelCase for private fields"
+            },
+            _ => new List<string> { $"Plan to address {count} {category.ToLower()} issues in upcoming sprints" }
+        };
+    }
+
+    private List<string> GetLowRecommendations(string category, int count)
+    {
+        return category.ToLower() switch
+        {
+            "naming" => new List<string> 
+            { 
+                $"Polish naming conventions for {count} items during code reviews",
+                "Ensure consistent naming patterns across the codebase"
+            },
+            "documentation" => new List<string> 
+            { 
+                $"Add documentation to {count} internal components when time permits",
+                "Document complex business logic for future maintainers"
+            },
+            "complexity" => new List<string> 
+            { 
+                $"Monitor {count} methods that are approaching complexity limits",
+                "Keep an eye on these methods during future changes"
+            },
+            _ => new List<string> { $"Address {count} minor {category.ToLower()} issues during regular maintenance" }
+        };
     }
 
     private string GetIssueType(string message)
@@ -374,9 +635,9 @@ public class FileAnalysisResult : AnalysisResult
         FilePath = filePath;
     }
 
-    public void AddIssue(string message, Location location)
+    public void AddIssue(string message, Location location, IssueSeverity severity = IssueSeverity.Medium)
     {
-        Issues.Add(new CodeIssue(message, location));
+        Issues.Add(new CodeIssue(message, location, severity));
     }
 }
 
@@ -390,4 +651,15 @@ public abstract class AnalysisResult
 /// <summary>
 /// Represents a code quality issue
 /// </summary>
-public record CodeIssue(string Message, Location Location);
+public record CodeIssue(string Message, Location Location, IssueSeverity Severity);
+
+/// <summary>
+/// Severity levels for static analysis issues
+/// </summary>
+public enum IssueSeverity
+{
+    Low,
+    Medium,
+    High,
+    Critical
+}
