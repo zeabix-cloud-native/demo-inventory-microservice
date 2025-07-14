@@ -217,6 +217,30 @@ Review achievements and plan next steps
 - Next steps for continued learning
 - Resources for ongoing development
 
+### 🚀 Part 5: Advanced New Project Development (Optional)
+**Duration: 8-12 hours (Advanced Track)**  
+Master complete enterprise project development from conception to production using AI assistance  
+**Learning Outcome**: Achieve expert-level mastery in AI-assisted development by building a complete enterprise application from scratch, demonstrating leadership in AI adoption and team collaboration
+
+#### 12. [New Project Development Workshop](new-project/README.md)
+**Complete Enterprise Project from Scratch**  
+The ultimate AI-assisted development challenge
+- Requirements analysis and architecture design with AI
+- Complete project setup and development environment
+- Full-stack implementation with Clean Architecture
+- Comprehensive testing and quality assurance strategies
+- DevOps, deployment, and production excellence
+- Team collaboration and knowledge transfer mastery
+
+#### 🎓 **Workshop Review and Reflection**
+**Duration: 15 minutes**  
+Review achievements and plan next steps  
+**What you'll learn**: How to assess your AI development skills, identify areas for improvement, and create a personal learning plan for continued AI-assisted development growth
+- Knowledge assessment and certification
+- Feedback and improvement suggestions
+- Next steps for continued learning
+- Resources for ongoing development
+
 ## 🎓 Learning Path
 
 ### 12.5-Hour Comprehensive Track
@@ -253,6 +277,13 @@ Complete mastery of AI-assisted development
 1. Capstone Project (45 min)
 2. Workshop Review and Reflection (15 min)
 
+**Part 5: Advanced New Project Development (8-12 hours - Optional)**
+1. Complete Enterprise Project Development using AI
+2. Requirements Analysis and Architecture Design (2-3 hours)
+3. Foundation Development and Implementation (3-4 hours)
+4. Quality Assurance and Deployment (2-3 hours)
+5. Team Leadership and Knowledge Transfer (1-2 hours)
+
 ### Flexible Learning Options
 
 #### Half-Day Track (6.5 hours)
@@ -262,6 +293,14 @@ Learn core AI-assisted development skills for immediate productivity gains
 - Part 2: Core Hands-On Exercises (4 hours)
 - **What you'll learn**: Essential Copilot usage, prompt engineering basics, code generation fundamentals, and hands-on practice with backend/frontend development
 - **Outcome**: Ability to use GitHub Copilot effectively for daily development tasks
+
+#### Enterprise Project Mastery Track (20+ hours)
+**For Complete AI Development Mastery**  
+Master enterprise-grade AI-assisted development from conception to production
+- All core workshop content (Parts 1-4: 12.5 hours)
+- Advanced New Project Development (Part 5: 8-12 hours)
+- **What you'll learn**: Complete project lifecycle with AI, enterprise architecture design, team leadership in AI adoption, production deployment excellence
+- **Outcome**: Expert-level mastery with ability to lead enterprise AI development initiatives
 
 #### Advanced Specialist Track (8 hours)
 **For Senior Developers and Architects**  
