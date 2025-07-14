@@ -420,6 +420,7 @@ public class SecurityScanner
         if (_findings.Count == 0)
         {
             Console.WriteLine("✅ No security issues found!");
+            ShowSecurityBestPractices();
             return;
         }
 
@@ -461,11 +462,275 @@ public class SecurityScanner
             }
         }
 
+        // Show severity-specific security recommendations
+        ShowSecurityRecommendations();
+
         // Exit with error code if critical or high findings exist
         if (criticalFindings > 0 || highFindings > 0)
         {
             Environment.ExitCode = 1;
         }
+    }
+
+    private void ShowSecurityRecommendations()
+    {
+        Console.WriteLine("🛡️  Security Recommendations by Severity");
+        Console.WriteLine("=========================================");
+
+        var criticalFindings = _findings.Where(f => f.Level == SecurityLevel.Critical).ToList();
+        var highFindings = _findings.Where(f => f.Level == SecurityLevel.High).ToList();
+        var mediumFindings = _findings.Where(f => f.Level == SecurityLevel.Medium).ToList();
+        var lowFindings = _findings.Where(f => f.Level == SecurityLevel.Low).ToList();
+
+        if (criticalFindings.Any())
+        {
+            Console.WriteLine("🔴 CRITICAL Security Issues (IMMEDIATE ACTION REQUIRED):");
+            ShowRecommendationsForSecurityLevel(criticalFindings, SecurityLevel.Critical);
+            Console.WriteLine();
+        }
+
+        if (highFindings.Any())
+        {
+            Console.WriteLine("🟠 HIGH Risk Security Issues (Address Within 24-48 Hours):");
+            ShowRecommendationsForSecurityLevel(highFindings, SecurityLevel.High);
+            Console.WriteLine();
+        }
+
+        if (mediumFindings.Any())
+        {
+            Console.WriteLine("🟡 MEDIUM Risk Security Issues (Address This Sprint):");
+            ShowRecommendationsForSecurityLevel(mediumFindings, SecurityLevel.Medium);
+            Console.WriteLine();
+        }
+
+        if (lowFindings.Any())
+        {
+            Console.WriteLine("🔵 LOW Risk Security Issues (Security Hardening):");
+            ShowRecommendationsForSecurityLevel(lowFindings, SecurityLevel.Low);
+            Console.WriteLine();
+        }
+    }
+
+    private void ShowRecommendationsForSecurityLevel(List<SecurityFinding> findings, SecurityLevel level)
+    {
+        var groupedByCategory = findings.GroupBy(f => f.Category).OrderByDescending(g => g.Count());
+        
+        foreach (var category in groupedByCategory)
+        {
+            var categoryName = category.Key;
+            var count = category.Count();
+            var recommendations = GetSecurityRecommendations(categoryName, level, count);
+            
+            Console.WriteLine($"  📂 {categoryName} ({count} issues):");
+            foreach (var recommendation in recommendations.Take(3)) // Top 3 recommendations per category
+            {
+                Console.WriteLine($"    • {recommendation}");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    private List<string> GetSecurityRecommendations(string category, SecurityLevel level, int count)
+    {
+        var recommendations = new List<string>();
+
+        switch (category.ToLower())
+        {
+            case "hardcoded secrets":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Critical => new[]
+                    {
+                        $"URGENT: Remove {count} hardcoded secrets immediately - these are security vulnerabilities",
+                        "Move all secrets to environment variables or Azure Key Vault",
+                        "Rotate all exposed secrets/keys immediately",
+                        "Implement secret scanning in CI/CD pipeline"
+                    },
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH PRIORITY: Secure {count} hardcoded sensitive values",
+                        "Use IConfiguration or IOptions pattern for configuration",
+                        "Implement proper secret management strategy"
+                    },
+                    _ => new[]
+                    {
+                        $"Move {count} configuration values to appsettings or environment variables",
+                        "Follow 12-factor app principles for configuration"
+                    }
+                });
+                break;
+
+            case "sql injection":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Critical => new[]
+                    {
+                        $"CRITICAL: Fix {count} SQL injection vulnerabilities NOW - these allow data breaches",
+                        "Use parameterized queries or Entity Framework exclusively",
+                        "Never concatenate user input into SQL strings",
+                        "Conduct immediate security audit of all database access code"
+                    },
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH RISK: Secure {count} potential SQL injection points",
+                        "Replace string concatenation with parameterized queries",
+                        "Use Entity Framework or Dapper with proper parameterization"
+                    },
+                    _ => new[]
+                    {
+                        $"Review {count} database access patterns for security",
+                        "Ensure all user input is properly sanitized"
+                    }
+                });
+                break;
+
+            case "authorization":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Critical => new[]
+                    {
+                        $"CRITICAL: {count} endpoints lack authorization - immediate security risk",
+                        "Add [Authorize] attributes to all controllers and sensitive actions",
+                        "Implement role-based access control (RBAC)",
+                        "Review all API endpoints for proper authentication"
+                    },
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH PRIORITY: Secure {count} unprotected endpoints",
+                        "Add proper authorization attributes",
+                        "Consider using policy-based authorization"
+                    },
+                    SecurityLevel.Medium => new[]
+                    {
+                        $"Add authorization to {count} controller methods",
+                        "Use [AllowAnonymous] explicitly for public endpoints",
+                        "Review current authorization strategy"
+                    },
+                    _ => new[]
+                    {
+                        $"Review authorization patterns for {count} methods",
+                        "Ensure consistent security across all endpoints"
+                    }
+                });
+                break;
+
+            case "input validation":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Critical => new[]
+                    {
+                        $"CRITICAL: {count} parameters lack validation - injection risk",
+                        "Add validation attributes to all user input parameters",
+                        "Implement custom validation for complex business rules",
+                        "Use ModelState.IsValid in all actions"
+                    },
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH PRIORITY: Add validation to {count} input parameters",
+                        "Use data annotations for input validation",
+                        "Implement FluentValidation for complex scenarios"
+                    },
+                    _ => new[]
+                    {
+                        $"Add validation attributes to {count} parameters",
+                        "Follow defense-in-depth principle for input validation"
+                    }
+                });
+                break;
+
+            case "logging security":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH RISK: {count} logging statements may expose sensitive data",
+                        "Sanitize all logged data to remove PII and secrets",
+                        "Use structured logging with careful property selection",
+                        "Implement log sanitization middleware"
+                    },
+                    SecurityLevel.Medium => new[]
+                    {
+                        $"Review {count} logging statements for sensitive data",
+                        "Use logging best practices to avoid data exposure"
+                    },
+                    _ => new[]
+                    {
+                        $"Review logging patterns in {count} locations",
+                        "Ensure no sensitive information is logged"
+                    }
+                });
+                break;
+
+            case "error handling":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Medium => new[]
+                    {
+                        $"Improve error handling in {count} locations to prevent information disclosure",
+                        "Return generic error messages to users",
+                        "Log detailed errors server-side only",
+                        "Implement global exception handling middleware"
+                    },
+                    _ => new[]
+                    {
+                        $"Review error handling patterns in {count} locations",
+                        "Ensure error messages don't expose internal details"
+                    }
+                });
+                break;
+
+            case "resource management":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Low => new[]
+                    {
+                        $"Improve resource management in {count} locations",
+                        "Use IHttpClientFactory for HttpClient instances",
+                        "Implement proper disposal patterns for resources",
+                        "Follow .NET resource management best practices"
+                    },
+                    _ => new[]
+                    {
+                        $"Review resource management patterns in {count} locations"
+                    }
+                });
+                break;
+
+            case "best practices":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Low => new[]
+                    {
+                        $"Follow security best practices in {count} locations",
+                        "Use UTC dates for consistency and security",
+                        "Follow OWASP guidelines for secure coding",
+                        "Regular security code reviews"
+                    },
+                    _ => new[]
+                    {
+                        $"Apply security best practices to {count} code locations"
+                    }
+                });
+                break;
+
+            default:
+                recommendations.Add($"Address {count} {category.ToLower()} security issues based on severity level");
+                break;
+        }
+
+        return recommendations;
+    }
+
+    private void ShowSecurityBestPractices()
+    {
+        Console.WriteLine("🛡️  Security Best Practices to Maintain:");
+        Console.WriteLine("  • Continue using parameterized queries");
+        Console.WriteLine("  • Keep authorization attributes on all endpoints");
+        Console.WriteLine("  • Maintain proper input validation");
+        Console.WriteLine("  • Regular security scanning and code reviews");
+        Console.WriteLine("  • Keep dependencies updated");
+        Console.WriteLine("  • Follow OWASP Top 10 guidelines");
+        Console.WriteLine();
     }
 }
 

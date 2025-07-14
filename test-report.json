@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-07-14T01:59:47.7764436Z",
+  "summary": {
+    "totalTools": 2,
+    "passedTools": 2,
+    "failedTools": 0,
+    "totalDuration": 4887.536
+  },
+  "results": [
+    {
+      "validationName": "Static Analysis",
+      "success": true,
+      "duration": 2433.4619,
+      "output": "\uD83D\uDD0D Starting static analysis on: backend/src\n\nFound 14 C# files to analyze\n\n\n\uD83D\uDCCA Analysis Summary\n==================\nFiles analyzed: 14\nFiles with issues: 9\nTotal issues found: 49\n\n\uD83D\uDCCA Issues by severity:\n  Critical: 0\n  High:     0\n  Medium:   48\n  Low:      1\n\n\uD83D\uDCCB Issues by category:\n  Documentation: 48\n  Length: 1\n\n\uD83D\uDCA1 Severity-Specific Recommendations\n====================================\n\uD83D\uDFE1 MEDIUM Priority Issues (Plan for Next Sprint):\n  \u2022 Add XML documentation to 48 public APIs for better maintainability\n  \u2022 Document public methods, classes, and properties\n  \u2022 Include parameter descriptions and return value information\n\n\uD83D\uDD35 LOW Priority Issues (Code Hygiene):\n  \u2022 Address 1 minor length issues during regular maintenance\n\n",
+      "error": "",
+      "metrics": [
+        "Files with issues: 9",
+        "Total issues found: 49",
+        "Critical: 0",
+        "High:     0",
+        "Medium:   48",
+        "Low:      1"
+      ]
+    },
+    {
+      "validationName": "Security Scan",
+      "success": true,
+      "duration": 2454.0741,
+      "output": "\uD83D\uDD12 Starting security scan on: backend/src\n\nFound 14 C# files to scan\n\n\n\uD83D\uDD12 Security Scan Summary\n========================\nCritical: 0\nHigh:     0\nMedium:   15\nLow:      0\nTotal:    15\n\n\uD83D\uDCCB Issues by category:\n  Authorization: 9\n  Input Validation: 6\n\n\uD83D\uDEE1\uFE0F  Security Recommendations by Severity\n=========================================\n\uD83D\uDFE1 MEDIUM Risk Security Issues (Address This Sprint):\n  \uD83D\uDCC2 Authorization (9 issues):\n    \u2022 Add authorization to 9 controller methods\n    \u2022 Use [AllowAnonymous] explicitly for public endpoints\n    \u2022 Review current authorization strategy\n\n  \uD83D\uDCC2 Input Validation (6 issues):\n    \u2022 Add validation attributes to 6 parameters\n    \u2022 Follow defense-in-depth principle for input validation\n\n\n",
+      "error": "",
+      "metrics": [
+        "Critical: 0",
+        "High:     0",
+        "Medium:   15",
+        "Low:      0",
+        "Total:    15",
+        "\uD83D\uDCC2 Authorization (9 issues):",
+        "\uD83D\uDCC2 Input Validation (6 issues):"
+      ]
+    }
+  ]
+}
