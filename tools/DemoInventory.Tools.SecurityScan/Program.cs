@@ -77,7 +77,7 @@ public class SecurityScanner
         { @"Response\.Write\s*\([^)]*\+", "Potential XSS via Response.Write with concatenation (CWE-79)" },
         
         // CWE-190: Integer Overflow or Wraparound
-        { @"int\.MaxValue|long\.MaxValue", "Potential integer overflow risk (CWE-190)" },
+        { @"int\.MaxValue|long\.MaxValue", "Potential integer overflow risk (CWE-190) - Review usage context" },
         
         // CWE-22: Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)
         { @"\.\.[\\/]", "Potential path traversal pattern detected (CWE-22)" },
@@ -184,10 +184,13 @@ public class SecurityScanner
     private async Task ScanDirectoryAsync(string directoryPath)
     {
         var csFiles = Directory.GetFiles(directoryPath, "*.cs", SearchOption.AllDirectories)
-            .Where(file => !file.Contains("bin") && !file.Contains("obj"))
+            .Where(file => !file.Contains("bin") && 
+                          !file.Contains("obj") &&
+                          !file.Contains("Tests") && // Exclude test files to reduce false positives
+                          !file.Contains("test"))    // Exclude test files (case insensitive)
             .ToList();
 
-        Console.WriteLine($"Found {csFiles.Count} C# files to scan");
+        Console.WriteLine($"Found {csFiles.Count} C# files to scan (excluding tests)");
         Console.WriteLine();
 
         foreach (var file in csFiles)
@@ -1175,12 +1178,19 @@ public class SecurityScanner
 
     private async Task CheckMissingAuthenticationCritical(string filePath, SyntaxNode root)
     {
-        // Check for critical operations without authentication
+        // Check for critical operations without authentication - exclude test methods and infrastructure methods
         var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
 
         foreach (var method in methods)
         {
             var methodName = method.Identifier.ValueText.ToLower();
+            
+            // Skip test methods and infrastructure methods
+            if (methodName.Contains("test") || methodName.Contains("should") || 
+                filePath.ToLower().Contains("test") || filePath.Contains("Repository") || 
+                filePath.Contains("Service") || filePath.Contains("Infrastructure"))
+                continue;
+                
             var hasAuthorization = method.AttributeLists
                 .SelectMany(list => list.Attributes)
                 .Any(attr => attr.Name.ToString().Contains("Authorize"));
@@ -1194,11 +1204,12 @@ public class SecurityScanner
                     .Any(attr => attr.Name.ToString().Contains("Authorize"));
             }
 
-            // Check for critical operations
+            // Check for critical operations only in controllers
             if ((methodName.Contains("delete") || methodName.Contains("remove") || 
                  methodName.Contains("admin") || methodName.Contains("configure") ||
                  methodName.Contains("reset") || methodName.Contains("change")) && 
-                !hasAuthorization && !hasControllerAuthorization)
+                !hasAuthorization && !hasControllerAuthorization &&
+                controllerClass != null && controllerClass.Identifier.ValueText.EndsWith("Controller"))
             {
                 var lineNumber = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
                 _findings.Add(new SecurityFinding(

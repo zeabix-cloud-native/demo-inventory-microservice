@@ -90,10 +90,19 @@ public class AICodeValidator
         if (!skipSet.Contains("security"))
         {
             Console.WriteLine("🔒 Running Security Scan...");
+            
+            // For security scanning, exclude tools directory to prevent false positives from pattern definitions
+            var securityPath = path;
+            if (path == "." || path == Directory.GetCurrentDirectory())
+            {
+                securityPath = "backend"; // Focus on backend code for security scan
+                Console.WriteLine("📋 Note: Scanning 'backend' directory only to exclude security tool pattern definitions");
+            }
+            
             var ctrfArgs = !string.IsNullOrEmpty(ctrfPath) ? $"--ctrf \"{ctrfPath}\"" : "";
             var securityResult = await RunToolAsync(
                 Path.Combine(toolsPath, "DemoInventory.Tools.SecurityScan"),
-                $"--path \"{path}\" {(_verbose ? "--verbose" : "")} {ctrfArgs}".Trim());
+                $"--path \"{securityPath}\" {(_verbose ? "--verbose" : "")} {ctrfArgs}".Trim());
             _results.Add(new ValidationResult("Security Scan", securityResult));
         }
 

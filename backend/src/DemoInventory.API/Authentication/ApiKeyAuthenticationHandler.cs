@@ -36,22 +36,36 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }
 
-        if (!Request.Headers.ContainsKey(ApiKeyHeaderName))
+        // Check if API key header exists with proper validation
+        if (!Request.Headers.TryGetValue(ApiKeyHeaderName, out var headerValues) || 
+            headerValues.Count == 0)
         {
             return Task.FromResult(AuthenticateResult.Fail("API Key not found in header"));
         }
 
-        var apiKey = Request.Headers[ApiKeyHeaderName].FirstOrDefault();
+        var apiKey = headerValues.FirstOrDefault();
 
+        // Validate API key format and content
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             return Task.FromResult(AuthenticateResult.Fail("API Key is empty"));
         }
 
-        // Get API key from configuration
-        var validApiKey = _configuration["Authentication:ApiKey"] ?? "demo-inventory-api-key-2024";
+        if (apiKey.Length < 10 || apiKey.Length > 200)
+        {
+            return Task.FromResult(AuthenticateResult.Fail("API Key format is invalid"));
+        }
+
+        // Get API key from configuration with secure fallback
+        var validApiKey = _configuration["Authentication:ApiKey"];
+        if (string.IsNullOrEmpty(validApiKey))
+        {
+            // Fallback for demo purposes - in production this should come from secure configuration
+            validApiKey = "demo-inventory-api-key-2024";
+            Logger.LogWarning("Using fallback API key configuration. Configure Authentication:ApiKey in production.");
+        }
         
-        if (apiKey != validApiKey)
+        if (!string.Equals(apiKey, validApiKey, StringComparison.Ordinal))
         {
             return Task.FromResult(AuthenticateResult.Fail("Invalid API Key"));
         }

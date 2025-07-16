@@ -3,6 +3,7 @@ using DemoInventory.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace DemoInventory.API.Controllers;
 
@@ -11,6 +12,7 @@ namespace DemoInventory.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
+[Authorize] // Require authentication for the entire controller, with explicit [AllowAnonymous] for public endpoints
 [SwaggerTag("Products management operations")]
 public class ProductsController : ControllerBase
 {
@@ -27,6 +29,7 @@ public class ProductsController : ControllerBase
     /// <returns>A list of all products</returns>
     /// <response code="200">Returns the list of products</response>
     [HttpGet]
+    [AllowAnonymous] // Public endpoint for reading product data
     [SwaggerOperation(Summary = "Get all products", Description = "Retrieves all products from the inventory")]
     [SwaggerResponse(200, "Success", typeof(IEnumerable<ProductDto>))]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
@@ -44,11 +47,12 @@ public class ProductsController : ControllerBase
     /// <response code="404">Product not found</response>
     /// <response code="400">Invalid product ID</response>
     [HttpGet("{id}")]
+    [AllowAnonymous] // Public endpoint for reading product data
     [SwaggerOperation(Summary = "Get product by ID", Description = "Retrieves a specific product by its ID")]
     [SwaggerResponse(200, "Success", typeof(ProductDto))]
     [SwaggerResponse(404, "Product not found")]
     [SwaggerResponse(400, "Invalid product ID")]
-    public async Task<ActionResult<ProductDto>> GetProduct([FromRoute] int id)
+    public async Task<ActionResult<ProductDto>> GetProduct([FromRoute] [Range(1, int.MaxValue, ErrorMessage = "Product ID must be a positive integer")] int id)
     {
         // Input validation
         if (id <= 0)
@@ -72,11 +76,12 @@ public class ProductsController : ControllerBase
     /// <response code="404">Product not found</response>
     /// <response code="400">Invalid SKU format</response>
     [HttpGet("sku/{sku}")]
+    [AllowAnonymous] // Public endpoint for reading product data
     [SwaggerOperation(Summary = "Get product by SKU", Description = "Retrieves a specific product by its SKU")]
     [SwaggerResponse(200, "Success", typeof(ProductDto))]
     [SwaggerResponse(404, "Product not found")]
     [SwaggerResponse(400, "Invalid SKU format")]
-    public async Task<ActionResult<ProductDto>> GetProductBySku([FromRoute] string sku)
+    public async Task<ActionResult<ProductDto>> GetProductBySku([FromRoute] [Required] [StringLength(50, MinimumLength = 1, ErrorMessage = "SKU must be between 1 and 50 characters")] string sku)
     {
         // Input validation
         if (string.IsNullOrWhiteSpace(sku))
@@ -105,11 +110,12 @@ public class ProductsController : ControllerBase
     /// <response code="404">Product not found</response>
     /// <response code="400">Invalid name format</response>
     [HttpGet("name/{name}")]
+    [AllowAnonymous] // Public endpoint for reading product data
     [SwaggerOperation(Summary = "Get product by name", Description = "Retrieves a specific product by its exact name")]
     [SwaggerResponse(200, "Success", typeof(ProductDto))]
     [SwaggerResponse(404, "Product not found")]
     [SwaggerResponse(400, "Invalid name format")]
-    public async Task<ActionResult<ProductDto>> GetProductByName([FromRoute] string name)
+    public async Task<ActionResult<ProductDto>> GetProductByName([FromRoute] [Required] [StringLength(200, MinimumLength = 1, ErrorMessage = "Product name must be between 1 and 200 characters")] string name)
     {
         // Input validation
         if (string.IsNullOrWhiteSpace(name))
@@ -139,10 +145,11 @@ public class ProductsController : ControllerBase
     /// <response code="200">Returns the list of matching products</response>
     /// <response code="400">Invalid search parameters</response>
     [HttpGet("search")]
+    [AllowAnonymous] // Public endpoint for reading product data
     [SwaggerOperation(Summary = "Search products", Description = "Search for products by name using a search term")]
     [SwaggerResponse(200, "Success", typeof(IEnumerable<ProductDto>))]
     [SwaggerResponse(400, "Invalid search parameters")]
-    public async Task<ActionResult<IEnumerable<ProductDto>>> SearchProducts([FromQuery] string? searchTerm)
+    public async Task<ActionResult<IEnumerable<ProductDto>>> SearchProducts([FromQuery] [StringLength(200, ErrorMessage = "Search term cannot exceed 200 characters")] string? searchTerm)
     {
         // Input validation
         if (!string.IsNullOrEmpty(searchTerm) && searchTerm.Length > 200)
@@ -164,6 +171,7 @@ public class ProductsController : ControllerBase
     /// <response code="401">Unauthorized - API key required</response>
     [HttpPost]
     [Authorize]
+    [ValidateAntiForgeryToken] // Add CSRF protection
     [SwaggerOperation(Summary = "Create product", Description = "Creates a new product in the inventory")]
     [SwaggerResponse(201, "Product created successfully", typeof(ProductDto))]
     [SwaggerResponse(400, "Invalid product data")]
@@ -199,12 +207,13 @@ public class ProductsController : ControllerBase
     /// <response code="401">Unauthorized - API key required</response>
     [HttpPut("{id}")]
     [Authorize]
+    [ValidateAntiForgeryToken] // Add CSRF protection
     [SwaggerOperation(Summary = "Update product", Description = "Updates an existing product in the inventory")]
     [SwaggerResponse(200, "Product updated successfully", typeof(ProductDto))]
     [SwaggerResponse(404, "Product not found")]
     [SwaggerResponse(400, "Invalid product data")]
     [SwaggerResponse(401, "Unauthorized - API key required")]
-    public async Task<ActionResult<ProductDto>> UpdateProduct([FromRoute] int id, [FromBody] UpdateProductDto updateProductDto)
+    public async Task<ActionResult<ProductDto>> UpdateProduct([FromRoute] [Range(1, int.MaxValue, ErrorMessage = "Product ID must be a positive integer")] int id, [FromBody] UpdateProductDto updateProductDto)
     {
         // Input validation
         if (id <= 0)
@@ -240,12 +249,13 @@ public class ProductsController : ControllerBase
     /// <response code="401">Unauthorized - API key required</response>
     [HttpDelete("{id}")]
     [Authorize]
+    [ValidateAntiForgeryToken] // Add CSRF protection
     [SwaggerOperation(Summary = "Delete product", Description = "Deletes a product from the inventory")]
     [SwaggerResponse(204, "Product deleted successfully")]
     [SwaggerResponse(404, "Product not found")]
     [SwaggerResponse(400, "Invalid product ID")]
     [SwaggerResponse(401, "Unauthorized - API key required")]
-    public async Task<IActionResult> DeleteProduct([FromRoute] int id)
+    public async Task<IActionResult> DeleteProduct([FromRoute] [Range(1, int.MaxValue, ErrorMessage = "Product ID must be a positive integer")] int id)
     {
         // Input validation
         if (id <= 0)
