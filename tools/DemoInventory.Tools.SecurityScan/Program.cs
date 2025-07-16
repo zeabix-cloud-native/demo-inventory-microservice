@@ -52,52 +52,100 @@ public class SecurityScanner
     private readonly bool _verbose;
     private readonly List<SecurityFinding> _findings = new();
 
-    // Security patterns to detect (OWASP Top 10 & CWE Top 25)
+    // Security patterns to detect (OWASP Top 10 & CWE Top 25 2024)
     private readonly Dictionary<string, string> _securityPatterns = new()
     {
-        // OWASP A02:2021 - Cryptographic Failures / CWE-798: Hardcoded Credentials
+        // CWE-798: Use of Hard-coded Credentials (OWASP A02:2021 - Cryptographic Failures)
         { @"password\s*[=:]\s*[""'][^""']+[""']", "Hardcoded password detected (OWASP A02, CWE-798)" },
         { @"api[_-]?key\s*[=:]\s*[""'][^""']+[""']", "Hardcoded API key detected (OWASP A02, CWE-798)" },
         { @"secret\s*[=:]\s*[""'][^""']+[""']", "Hardcoded secret detected (OWASP A02, CWE-798)" },
         { @"token\s*[=:]\s*[""'][^""']+[""']", "Hardcoded token detected (OWASP A02, CWE-798)" },
         { @"connectionstring\s*[=:]\s*[""'][^""']+[""']", "Hardcoded connection string detected (OWASP A02, CWE-798)" },
         
-        // OWASP A03:2021 - Injection / CWE-89: SQL Injection
+        // CWE-89: SQL Injection (OWASP A03:2021 - Injection)
         { @"SELECT\s+\*\s+FROM\s+\w+\s+WHERE\s+.*\+", "Potential SQL injection via string concatenation (OWASP A03, CWE-89)" },
         
-        // CWE-94: Code Injection
-        { @"exec\s*\(\s*[""'][^""']*\+", "Potential code injection via dynamic execution (CWE-94)" },
+        // CWE-20: Improper Input Validation
+        { @"Request\.QueryString\s*\[[^]]+\]", "Direct access to query string without validation (CWE-20)" },
+        { @"Request\.Form\s*\[[^]]+\]", "Direct access to form data without validation (CWE-20)" },
         
         // CWE-78: OS Command Injection
         { @"Process\.Start\s*\([^)]*\+", "Potential command injection via Process.Start (OWASP A03, CWE-78)" },
-        { @"cmd\.exe|powershell\.exe|bash|sh\s", "Direct OS command execution detected (CWE-78)" },
-        
-        // OWASP A06:2021 - Vulnerable Components
-        { @"HttpClient\s*\(\s*\)\s*\.", "HttpClient without proper disposal pattern (OWASP A06)" },
-        
-        // CWE-22: Path Traversal  
-        { @"\.\.[\\/]|\.\.\\", "Potential path traversal pattern detected (CWE-22)" },
-        { @"File\.ReadAllText\s*\([^)]*\+", "Potential path traversal in file operations (CWE-22)" },
+        { @"cmd\.exe|powershell\.exe", "Direct OS command execution detected (CWE-78)" },
         
         // CWE-79: Cross-site Scripting
-        { @"innerHTML|outerHTML", "Potential XSS via DOM manipulation (CWE-79)" },
-        { @"document\.write\s*\(", "Potential XSS via document.write (CWE-79)" },
+        { @"Response\.Write\s*\([^)]*\+", "Potential XSS via Response.Write with concatenation (CWE-79)" },
         
-        // OWASP A08:2021 - Software and Data Integrity Failures
-        { @"MD5|SHA1(?!256|384|512)", "Weak cryptographic hash algorithm (OWASP A08, CWE-327)" },
-        
-        // CWE-190: Integer Overflow
+        // CWE-190: Integer Overflow or Wraparound
         { @"int\.MaxValue|long\.MaxValue", "Potential integer overflow risk (CWE-190)" },
         
-        // OWASP A10:2021 - Server-Side Request Forgery
-        { @"HttpClient.*\.GetAsync\s*\([^)]*\+", "Potential SSRF via dynamic URL construction (OWASP A10, CWE-918)" },
+        // CWE-22: Improper Limitation of a Pathname to a Restricted Directory (Path Traversal)
+        { @"\.\.[\\/]", "Potential path traversal pattern detected (CWE-22)" },
+        { @"File\.ReadAllText\s*\([^)]*\+", "Potential path traversal in file operations (CWE-22)" },
+        { @"Path\.Combine\s*\([^)]*Request\.", "Path combination with user input (CWE-22)" },
         
-        // CWE-434: Unrestricted File Upload
+        // CWE-125: Out-of-bounds Read
+        { @"\.Substring\s*\(\s*\w+\s*,\s*\w+\s*\)", "String substring without length validation (CWE-125)" },
+        
+        // CWE-434: Unrestricted Upload of File with Dangerous Type
         { @"\.Save\s*\([^)]*\.FileName", "Potential unrestricted file upload (CWE-434)" },
+        { @"IFormFile.*\.SaveAs\s*\(", "File upload without type validation (CWE-434)" },
         
-        // Additional security patterns
+        // CWE-787: Out-of-bounds Write
+        { @"Buffer\.SetByte\s*\(", "Direct buffer manipulation detected (CWE-787)" },
+        { @"Marshal\.Copy\s*\(", "Unsafe memory operation detected (CWE-787)" },
+        
+        // CWE-94: Improper Control of Generation of Code (Code Injection)
+        { @"eval\s*\(|Eval\s*\(", "Dynamic code evaluation detected (CWE-94)" },
+        { @"CompileAssemblyFromSource", "Dynamic code compilation detected (CWE-94)" },
+        
+        // CWE-276: Incorrect Default Permissions
+        { @"FilePermissions\.|UnixFileMode\.", "File permission setting detected - review needed (CWE-276)" },
+        
+        // CWE-200: Exposure of Sensitive Information to an Unauthorized Actor
+        { @"Exception\s*\.\s*(?:Message|StackTrace)", "Exception details exposed (CWE-200)" },
+        
+        // CWE-522: Insufficiently Protected Credentials
+        { @"password.*=.*[""'][^""']+[""']", "Password stored in plain text (CWE-522)" },
+        { @"Encoding\.UTF8\.GetBytes\s*\(\s*password", "Password converted to bytes without hashing (CWE-522)" },
+        
+        // CWE-732: Incorrect Permission Assignment for Critical Resource
+        { @"Directory\.CreateDirectory\s*\([^)]*\)\s*(?!.*permission)", "Directory creation without permission check (CWE-732)" },
+        
+        // CWE-611: Improper Restriction of XML External Entity Reference
+        { @"XmlDocument|XmlTextReader|XslCompiledTransform", "XML processing without XXE protection (CWE-611)" },
+        { @"XmlReaderSettings.*DtdProcessing\s*=\s*DtdProcessing\.Parse", "DTD processing enabled - XXE risk (CWE-611)" },
+        
+        // CWE-77: Improper Neutralization of Special Elements used in a Command (Command Injection)
+        { @"ProcessStartInfo.*Arguments.*\+", "Command arguments concatenation detected (CWE-77)" },
+        
+        // CWE-502: Deserialization of Untrusted Data
+        { @"JsonConvert\.DeserializeObject\s*<.*>\s*\(", "JSON deserialization without validation (CWE-502)" },
+        { @"BinaryFormatter|SoapFormatter", "Unsafe deserialization formatter (CWE-502)" },
+        { @"XmlSerializer.*Deserialize\s*\(", "XML deserialization without validation (CWE-502)" },
+        
+        // CWE-269: Improper Privilege Management
+        { @"WindowsIdentity\.Impersonate|RunAs", "Privilege escalation operation detected (CWE-269)" },
+        
+        // CWE-287: Improper Authentication
+        { @"FormsAuthentication\.SetAuthCookie\s*\([^)]*false", "Authentication cookie without SSL (CWE-287)" },
+        { @"cookieAuthentication.*RequireHttps\s*=\s*false", "Authentication cookie without HTTPS (CWE-287)" },
+        
+        // CWE-327: Use of a Broken or Risky Cryptographic Algorithm
+        { @"\bMD5\b|\bSHA1\b(?!256|384|512)", "Weak cryptographic hash algorithm (OWASP A08, CWE-327)" },
+        { @"\bDES\b(?!3)|\bRC4\b|\bRC2\b", "Weak encryption algorithm detected (CWE-327)" },
+        
+        // CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator
         { @"Random\s*\(\s*\)", "Weak random number generation (CWE-338)" },
-        { @"Thread\.Sleep\s*\(\s*0\s*\)", "Potential timing attack vulnerability (CWE-208)" }
+        { @"Environment\.TickCount", "Predictable random seed detected (CWE-338)" },
+        
+        // CWE-918: Server-Side Request Forgery (SSRF)
+        { @"HttpClient.*\.GetAsync\s*\([^)]*\+", "Potential SSRF via dynamic URL construction (OWASP A10, CWE-918)" },
+        { @"WebRequest\.Create\s*\([^)]*\+", "Web request with dynamic URL (CWE-918)" },
+        
+        // Additional CWE patterns
+        { @"Thread\.Sleep\s*\(\s*0\s*\)", "Potential timing attack vulnerability (CWE-208)" },
+        { @"HttpClient\s*\(\s*\)\s*\.", "HttpClient without proper disposal pattern (OWASP A06)" }
     };
 
     public SecurityScanner(bool verbose = false)
@@ -470,6 +518,42 @@ public class SecurityScanner
 
         // CWE-434: Unrestricted File Upload
         await CheckFileUploadSecurity(filePath, root);
+
+        // CWE-20: Improper Input Validation (enhanced)
+        await CheckImproperInputValidation(filePath, root);
+
+        // CWE-125: Out-of-bounds Read
+        await CheckOutOfBoundsRead(filePath, root);
+
+        // CWE-476: NULL Pointer Dereference
+        await CheckNullPointerDereference(filePath, root);
+
+        // CWE-287: Improper Authentication
+        await CheckImproperAuthentication(filePath, root);
+
+        // CWE-276: Incorrect Default Permissions
+        await CheckIncorrectDefaultPermissions(filePath, root);
+
+        // CWE-522: Insufficiently Protected Credentials
+        await CheckInsufficientlyProtectedCredentials(filePath, root);
+
+        // CWE-732: Incorrect Permission Assignment for Critical Resource
+        await CheckIncorrectPermissionAssignment(filePath, root);
+
+        // CWE-611: XXE (XML External Entity)
+        await CheckXmlExternalEntity(filePath, root);
+
+        // CWE-77: Command Injection (enhanced)
+        await CheckCommandInjection(filePath, root);
+
+        // CWE-306: Missing Authentication for Critical Function
+        await CheckMissingAuthenticationCritical(filePath, root);
+
+        // CWE-502: Deserialization of Untrusted Data
+        await CheckDeserializationUntrustedData(filePath, root);
+
+        // CWE-269: Improper Privilege Management
+        await CheckImproperPrivilegeManagement(filePath, root);
     }
 
     private async Task CheckCsrfProtection(string filePath, SyntaxNode root)
@@ -693,6 +777,544 @@ public class SecurityScanner
                             "File upload without proper validation (CWE-434)",
                             call.ToString(),
                             "File Upload Security"
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task CheckImproperInputValidation(string filePath, SyntaxNode root)
+    {
+        // Check for direct access to Request properties without validation
+        var memberAccess = root.DescendantNodes().OfType<MemberAccessExpressionSyntax>();
+
+        foreach (var access in memberAccess)
+        {
+            var accessString = access.ToString();
+            if (accessString.Contains("Request.QueryString") || 
+                accessString.Contains("Request.Form") ||
+                accessString.Contains("Request.Headers"))
+            {
+                var lineNumber = access.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.Medium,
+                    $"Direct access to request data without validation (CWE-20)",
+                    accessString,
+                    "Input Validation"
+                ));
+            }
+        }
+
+        // Check for user input used in sensitive operations without validation
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+        foreach (var invocation in invocations)
+        {
+            var invText = invocation.ToString();
+            if ((invText.Contains("File.") || invText.Contains("Directory.")) && 
+                invText.Contains("Request."))
+            {
+                var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "User input used in file/directory operations without validation (CWE-20)",
+                    invocation.ToString(),
+                    "Input Validation"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckOutOfBoundsRead(string filePath, SyntaxNode root)
+    {
+        // Check for array access without bounds checking
+        var elementAccess = root.DescendantNodes().OfType<ElementAccessExpressionSyntax>();
+
+        foreach (var access in elementAccess)
+        {
+            // Look for array access where the index is not obviously safe
+            var containingMethod = access.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            if (containingMethod != null)
+            {
+                var methodText = containingMethod.ToString();
+                var accessText = access.ToString();
+                
+                // Check if there's no bounds checking in the method
+                if (!methodText.Contains(".Length") && !methodText.Contains(".Count") && 
+                    !methodText.Contains("bounds") && !accessText.Contains("Length"))
+                {
+                    var lineNumber = access.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                    _findings.Add(new SecurityFinding(
+                        filePath,
+                        lineNumber,
+                        SecurityLevel.Medium,
+                        "Array/collection access without bounds checking (CWE-125)",
+                        access.ToString(),
+                        "Bounds Checking"
+                    ));
+                }
+            }
+        }
+
+        // Check for Substring operations without length validation
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>()
+            .Where(inv => inv.Expression.ToString().Contains("Substring"));
+
+        foreach (var invocation in invocations)
+        {
+            var containingMethod = invocation.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            if (containingMethod != null)
+            {
+                var methodText = containingMethod.ToString();
+                if (!methodText.Contains(".Length") && !methodText.Contains("bounds"))
+                {
+                    var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                    _findings.Add(new SecurityFinding(
+                        filePath,
+                        lineNumber,
+                        SecurityLevel.Medium,
+                        "String substring operation without length validation (CWE-125)",
+                        invocation.ToString(),
+                        "Bounds Checking"
+                    ));
+                }
+            }
+        }
+    }
+
+    private async Task CheckNullPointerDereference(string filePath, SyntaxNode root)
+    {
+        // Check for potential null reference access
+        var memberAccess = root.DescendantNodes().OfType<MemberAccessExpressionSyntax>();
+
+        foreach (var access in memberAccess)
+        {
+            var accessString = access.ToString();
+            
+            // Look for method calls that could throw NullReferenceException
+            if ((accessString.Contains(".ToString()") || 
+                 accessString.Contains(".GetHashCode()") || 
+                 accessString.Contains(".Equals(")) &&
+                !accessString.Contains("?") && // Null-conditional operator
+                !accessString.Contains("??")) // Null-coalescing operator
+            {
+                // Check if there's no null check in the surrounding code
+                var containingStatement = access.Ancestors().OfType<StatementSyntax>().FirstOrDefault();
+                if (containingStatement != null)
+                {
+                    var statementText = containingStatement.ToString();
+                    if (!statementText.Contains("!= null") && !statementText.Contains("is not null"))
+                    {
+                        var lineNumber = access.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                        _findings.Add(new SecurityFinding(
+                            filePath,
+                            lineNumber,
+                            SecurityLevel.Medium,
+                            "Potential null reference access without null check (CWE-476)",
+                            access.ToString(),
+                            "Null Reference"
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task CheckImproperAuthentication(string filePath, SyntaxNode root)
+    {
+        // Check for authentication cookies without secure settings
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+        foreach (var invocation in invocations)
+        {
+            var invText = invocation.ToString();
+            if (invText.Contains("SetAuthCookie") && invText.Contains("false"))
+            {
+                var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "Authentication cookie created without secure settings (CWE-287)",
+                    invocation.ToString(),
+                    "Authentication"
+                ));
+            }
+
+            // Check for authentication configuration without HTTPS requirement
+            if (invText.Contains("cookieAuthentication") || invText.Contains("CookieAuthentication"))
+            {
+                var containingMethod = invocation.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+                if (containingMethod != null)
+                {
+                    var methodText = containingMethod.ToString().ToLower();
+                    if (!methodText.Contains("requirehttps") || methodText.Contains("requirehttps = false"))
+                    {
+                        var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                        _findings.Add(new SecurityFinding(
+                            filePath,
+                            lineNumber,
+                            SecurityLevel.Medium,
+                            "Authentication configuration without HTTPS requirement (CWE-287)",
+                            invocation.ToString(),
+                            "Authentication"
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task CheckIncorrectDefaultPermissions(string filePath, SyntaxNode root)
+    {
+        // Check for file/directory creation without explicit permission setting
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+        foreach (var invocation in invocations)
+        {
+            var invText = invocation.ToString();
+            if (invText.Contains("File.Create") || invText.Contains("Directory.CreateDirectory"))
+            {
+                var containingMethod = invocation.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+                if (containingMethod != null)
+                {
+                    var methodText = containingMethod.ToString();
+                    if (!methodText.Contains("FileMode") && !methodText.Contains("FilePermissions") && 
+                        !methodText.Contains("UnixFileMode"))
+                    {
+                        var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                        _findings.Add(new SecurityFinding(
+                            filePath,
+                            lineNumber,
+                            SecurityLevel.Medium,
+                            "File/directory creation without explicit permission settings (CWE-276)",
+                            invocation.ToString(),
+                            "File Permissions"
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task CheckInsufficientlyProtectedCredentials(string filePath, SyntaxNode root)
+    {
+        // Check for passwords stored or transmitted in plain text
+        var assignments = root.DescendantNodes().OfType<AssignmentExpressionSyntax>();
+
+        foreach (var assignment in assignments)
+        {
+            var assignText = assignment.ToString().ToLower();
+            if ((assignText.Contains("password") || assignText.Contains("credential")) &&
+                !assignText.Contains("hash") && !assignText.Contains("encrypt") && 
+                !assignText.Contains("bcrypt") && !assignText.Contains("pbkdf2"))
+            {
+                var lineNumber = assignment.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "Credentials stored without proper protection (CWE-522)",
+                    assignment.ToString(),
+                    "Credential Protection"
+                ));
+            }
+        }
+
+        // Check for password transmission without encryption
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+        foreach (var invocation in invocations)
+        {
+            var invText = invocation.ToString().ToLower();
+            if ((invText.Contains("send") || invText.Contains("post") || invText.Contains("put")) &&
+                invText.Contains("password") && !invText.Contains("https"))
+            {
+                var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "Password transmission without encryption protection (CWE-522)",
+                    invocation.ToString(),
+                    "Credential Protection"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckIncorrectPermissionAssignment(string filePath, SyntaxNode root)
+    {
+        // Check for overly permissive file/directory permissions
+        var memberAccess = root.DescendantNodes().OfType<MemberAccessExpressionSyntax>();
+
+        foreach (var access in memberAccess)
+        {
+            var accessString = access.ToString();
+            if (accessString.Contains("FilePermissions.All") || 
+                accessString.Contains("UnixFileMode.ReadWriteExecute") ||
+                accessString.Contains("FileAccess.ReadWrite") && accessString.Contains("FileShare.ReadWrite"))
+            {
+                var lineNumber = access.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.Medium,
+                    "Overly permissive file permissions assigned (CWE-732)",
+                    access.ToString(),
+                    "Permission Assignment"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckXmlExternalEntity(string filePath, SyntaxNode root)
+    {
+        // Check for XML processing without XXE protection
+        var objectCreations = root.DescendantNodes().OfType<ObjectCreationExpressionSyntax>();
+
+        foreach (var creation in objectCreations)
+        {
+            var creationType = creation.Type.ToString();
+            if (creationType.Contains("XmlDocument") || creationType.Contains("XmlTextReader") || 
+                creationType.Contains("XslCompiledTransform"))
+            {
+                var containingMethod = creation.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+                if (containingMethod != null)
+                {
+                    var methodText = containingMethod.ToString();
+                    if (!methodText.Contains("DtdProcessing.Prohibit") && 
+                        !methodText.Contains("XmlResolver = null") &&
+                        !methodText.Contains("ProhibitDtd = true"))
+                    {
+                        var lineNumber = creation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                        _findings.Add(new SecurityFinding(
+                            filePath,
+                            lineNumber,
+                            SecurityLevel.High,
+                            "XML processing without XXE protection (CWE-611)",
+                            creation.ToString(),
+                            "XML Security"
+                        ));
+                    }
+                }
+            }
+        }
+
+        // Check for DTD processing enabled
+        var assignments = root.DescendantNodes().OfType<AssignmentExpressionSyntax>();
+        foreach (var assignment in assignments)
+        {
+            var assignText = assignment.ToString();
+            if (assignText.Contains("DtdProcessing") && assignText.Contains("DtdProcessing.Parse"))
+            {
+                var lineNumber = assignment.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "DTD processing enabled - XXE vulnerability risk (CWE-611)",
+                    assignment.ToString(),
+                    "XML Security"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckCommandInjection(string filePath, SyntaxNode root)
+    {
+        // Check for command injection via ProcessStartInfo
+        var objectCreations = root.DescendantNodes().OfType<ObjectCreationExpressionSyntax>()
+            .Where(obj => obj.Type.ToString().Contains("ProcessStartInfo"));
+
+        foreach (var creation in objectCreations)
+        {
+            var containingMethod = creation.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+            if (containingMethod != null)
+            {
+                var methodText = containingMethod.ToString();
+                if (methodText.Contains("Arguments") && methodText.Contains("+"))
+                {
+                    var lineNumber = creation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                    _findings.Add(new SecurityFinding(
+                        filePath,
+                        lineNumber,
+                        SecurityLevel.High,
+                        "Command arguments constructed via concatenation (CWE-77)",
+                        creation.ToString(),
+                        "Command Injection"
+                    ));
+                }
+            }
+        }
+
+        // Check for Process.Start with dynamic parameters
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>()
+            .Where(inv => inv.Expression.ToString().Contains("Process.Start"));
+
+        foreach (var invocation in invocations)
+        {
+            var invText = invocation.ToString();
+            if (invText.Contains("+") || invText.Contains("$\"") || invText.Contains("string.Format"))
+            {
+                var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "Process execution with dynamic parameters (CWE-77)",
+                    invocation.ToString(),
+                    "Command Injection"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckMissingAuthenticationCritical(string filePath, SyntaxNode root)
+    {
+        // Check for critical operations without authentication
+        var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>();
+
+        foreach (var method in methods)
+        {
+            var methodName = method.Identifier.ValueText.ToLower();
+            var hasAuthorization = method.AttributeLists
+                .SelectMany(list => list.Attributes)
+                .Any(attr => attr.Name.ToString().Contains("Authorize"));
+
+            var hasControllerAuthorization = false;
+            var controllerClass = method.Ancestors().OfType<ClassDeclarationSyntax>().FirstOrDefault();
+            if (controllerClass != null)
+            {
+                hasControllerAuthorization = controllerClass.AttributeLists
+                    .SelectMany(list => list.Attributes)
+                    .Any(attr => attr.Name.ToString().Contains("Authorize"));
+            }
+
+            // Check for critical operations
+            if ((methodName.Contains("delete") || methodName.Contains("remove") || 
+                 methodName.Contains("admin") || methodName.Contains("configure") ||
+                 methodName.Contains("reset") || methodName.Contains("change")) && 
+                !hasAuthorization && !hasControllerAuthorization)
+            {
+                var lineNumber = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    $"Critical function '{method.Identifier.ValueText}' lacks authentication (CWE-306)",
+                    method.Identifier.ValueText,
+                    "Missing Authentication"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckDeserializationUntrustedData(string filePath, SyntaxNode root)
+    {
+        // Check for unsafe deserialization
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+        foreach (var invocation in invocations)
+        {
+            var invText = invocation.ToString();
+            
+            // Check for potentially unsafe deserialization methods
+            if (invText.Contains("JsonConvert.DeserializeObject") || 
+                invText.Contains("BinaryFormatter") ||
+                invText.Contains("SoapFormatter") ||
+                invText.Contains("XmlSerializer") && invText.Contains("Deserialize"))
+            {
+                var containingMethod = invocation.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+                if (containingMethod != null)
+                {
+                    var methodText = containingMethod.ToString();
+                    // Check if data comes from user input or external source
+                    if (methodText.Contains("Request.") || methodText.Contains("HttpContext") ||
+                        methodText.Contains("Stream") || methodText.Contains("byte[]"))
+                    {
+                        var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                        _findings.Add(new SecurityFinding(
+                            filePath,
+                            lineNumber,
+                            SecurityLevel.High,
+                            "Deserialization of potentially untrusted data (CWE-502)",
+                            invocation.ToString(),
+                            "Deserialization"
+                        ));
+                    }
+                }
+            }
+        }
+
+        // Check for BinaryFormatter usage (always unsafe)
+        var memberAccess = root.DescendantNodes().OfType<MemberAccessExpressionSyntax>();
+        foreach (var access in memberAccess)
+        {
+            if (access.ToString().Contains("BinaryFormatter") || access.ToString().Contains("SoapFormatter"))
+            {
+                var lineNumber = access.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.Critical,
+                    "Use of unsafe deserialization formatter (CWE-502)",
+                    access.ToString(),
+                    "Deserialization"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckImproperPrivilegeManagement(string filePath, SyntaxNode root)
+    {
+        // Check for privilege escalation operations
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+        foreach (var invocation in invocations)
+        {
+            var invText = invocation.ToString();
+            if (invText.Contains("WindowsIdentity.Impersonate") || 
+                invText.Contains("RunAs") ||
+                invText.Contains("SetThreadToken") ||
+                invText.Contains("ImpersonateLoggedOnUser"))
+            {
+                var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "Privilege escalation operation detected (CWE-269)",
+                    invocation.ToString(),
+                    "Privilege Management"
+                ));
+            }
+        }
+
+        // Check for unsafe privilege assignments
+        var memberAccess = root.DescendantNodes().OfType<MemberAccessExpressionSyntax>();
+        foreach (var access in memberAccess)
+        {
+            var accessString = access.ToString();
+            if (accessString.Contains("WindowsPrincipal") || accessString.Contains("ClaimsPrincipal"))
+            {
+                var containingMethod = access.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+                if (containingMethod != null)
+                {
+                    var methodText = containingMethod.ToString();
+                    if (!methodText.Contains("IsInRole") && !methodText.Contains("HasClaim"))
+                    {
+                        var lineNumber = access.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                        _findings.Add(new SecurityFinding(
+                            filePath,
+                            lineNumber,
+                            SecurityLevel.Medium,
+                            "Principal usage without proper role/claim validation (CWE-269)",
+                            access.ToString(),
+                            "Privilege Management"
                         ));
                     }
                 }
@@ -1214,8 +1836,9 @@ public class SecurityScanner
                             { "category", finding.Category },
                             { "filePath", finding.FilePath },
                             { "lineNumber", finding.LineNumber },
-                            { "owaspMapping", GetOwaspMapping(finding.Description) },
-                            { "cweMapping", GetCweMapping(finding.Description) }
+                            { "owaspMapping", GetOwaspMappingWithUrl(finding.Description) },
+                            { "cweMapping", GetCweMappingWithUrl(finding.Description) },
+                            { "referenceUrls", GetReferenceUrls(finding.Description) }
                         }
                     }).ToList()
                 }
@@ -1234,6 +1857,317 @@ public class SecurityScanner
         {
             Console.WriteLine($"❌ Failed to generate CTRF report: {ex.Message}");
         }
+    }
+
+    private object GetOwaspMappingWithUrl(string description)
+    {
+        var mapping = new Dictionary<string, object>();
+        
+        if (description.Contains("OWASP A01"))
+        {
+            mapping["category"] = "A01:2021 - Broken Access Control";
+            mapping["url"] = "https://owasp.org/Top10/A01_2021-Broken_Access_Control/";
+        }
+        else if (description.Contains("OWASP A02"))
+        {
+            mapping["category"] = "A02:2021 - Cryptographic Failures";
+            mapping["url"] = "https://owasp.org/Top10/A02_2021-Cryptographic_Failures/";
+        }
+        else if (description.Contains("OWASP A03"))
+        {
+            mapping["category"] = "A03:2021 - Injection";
+            mapping["url"] = "https://owasp.org/Top10/A03_2021-Injection/";
+        }
+        else if (description.Contains("OWASP A05"))
+        {
+            mapping["category"] = "A05:2021 - Security Misconfiguration";
+            mapping["url"] = "https://owasp.org/Top10/A05_2021-Security_Misconfiguration/";
+        }
+        else if (description.Contains("OWASP A06"))
+        {
+            mapping["category"] = "A06:2021 - Vulnerable and Outdated Components";
+            mapping["url"] = "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/";
+        }
+        else if (description.Contains("OWASP A07"))
+        {
+            mapping["category"] = "A07:2021 - Identification and Authentication Failures";
+            mapping["url"] = "https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/";
+        }
+        else if (description.Contains("OWASP A08"))
+        {
+            mapping["category"] = "A08:2021 - Software and Data Integrity Failures";
+            mapping["url"] = "https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/";
+        }
+        else if (description.Contains("OWASP A09"))
+        {
+            mapping["category"] = "A09:2021 - Security Logging and Monitoring Failures";
+            mapping["url"] = "https://owasp.org/Top10/A09_2021-Security_Logging_and_Monitoring_Failures/";
+        }
+        else if (description.Contains("OWASP A10"))
+        {
+            mapping["category"] = "A10:2021 - Server-Side Request Forgery";
+            mapping["url"] = "https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/";
+        }
+        else
+        {
+            mapping["category"] = "Multiple OWASP categories may apply";
+            mapping["url"] = "https://owasp.org/Top10/";
+        }
+        
+        return mapping;
+    }
+
+    private object GetCweMappingWithUrl(string description)
+    {
+        var mapping = new Dictionary<string, object>();
+        
+        // Enhanced CWE mapping with all CWE Top 25 2024 patterns
+        if (description.Contains("CWE-79"))
+        {
+            mapping["id"] = "CWE-79";
+            mapping["name"] = "Cross-site Scripting";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/79.html";
+        }
+        else if (description.Contains("CWE-89"))
+        {
+            mapping["id"] = "CWE-89";
+            mapping["name"] = "SQL Injection";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/89.html";
+        }
+        else if (description.Contains("CWE-20"))
+        {
+            mapping["id"] = "CWE-20";
+            mapping["name"] = "Improper Input Validation";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/20.html";
+        }
+        else if (description.Contains("CWE-78"))
+        {
+            mapping["id"] = "CWE-78";
+            mapping["name"] = "OS Command Injection";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/78.html";
+        }
+        else if (description.Contains("CWE-190"))
+        {
+            mapping["id"] = "CWE-190";
+            mapping["name"] = "Integer Overflow or Wraparound";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/190.html";
+        }
+        else if (description.Contains("CWE-352"))
+        {
+            mapping["id"] = "CWE-352";
+            mapping["name"] = "Cross-Site Request Forgery (CSRF)";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/352.html";
+        }
+        else if (description.Contains("CWE-22"))
+        {
+            mapping["id"] = "CWE-22";
+            mapping["name"] = "Path Traversal";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/22.html";
+        }
+        else if (description.Contains("CWE-125"))
+        {
+            mapping["id"] = "CWE-125";
+            mapping["name"] = "Out-of-bounds Read";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/125.html";
+        }
+        else if (description.Contains("CWE-434"))
+        {
+            mapping["id"] = "CWE-434";
+            mapping["name"] = "Unrestricted Upload of File with Dangerous Type";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/434.html";
+        }
+        else if (description.Contains("CWE-862"))
+        {
+            mapping["id"] = "CWE-862";
+            mapping["name"] = "Missing Authorization";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/862.html";
+        }
+        else if (description.Contains("CWE-476"))
+        {
+            mapping["id"] = "CWE-476";
+            mapping["name"] = "NULL Pointer Dereference";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/476.html";
+        }
+        else if (description.Contains("CWE-787"))
+        {
+            mapping["id"] = "CWE-787";
+            mapping["name"] = "Out-of-bounds Write";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/787.html";
+        }
+        else if (description.Contains("CWE-94"))
+        {
+            mapping["id"] = "CWE-94";
+            mapping["name"] = "Code Injection";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/94.html";
+        }
+        else if (description.Contains("CWE-276"))
+        {
+            mapping["id"] = "CWE-276";
+            mapping["name"] = "Incorrect Default Permissions";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/276.html";
+        }
+        else if (description.Contains("CWE-200"))
+        {
+            mapping["id"] = "CWE-200";
+            mapping["name"] = "Information Exposure";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/200.html";
+        }
+        else if (description.Contains("CWE-522"))
+        {
+            mapping["id"] = "CWE-522";
+            mapping["name"] = "Insufficiently Protected Credentials";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/522.html";
+        }
+        else if (description.Contains("CWE-732"))
+        {
+            mapping["id"] = "CWE-732";
+            mapping["name"] = "Incorrect Permission Assignment for Critical Resource";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/732.html";
+        }
+        else if (description.Contains("CWE-611"))
+        {
+            mapping["id"] = "CWE-611";
+            mapping["name"] = "Improper Restriction of XML External Entity Reference";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/611.html";
+        }
+        else if (description.Contains("CWE-77"))
+        {
+            mapping["id"] = "CWE-77";
+            mapping["name"] = "Command Injection";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/77.html";
+        }
+        else if (description.Contains("CWE-306"))
+        {
+            mapping["id"] = "CWE-306";
+            mapping["name"] = "Missing Authentication for Critical Function";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/306.html";
+        }
+        else if (description.Contains("CWE-502"))
+        {
+            mapping["id"] = "CWE-502";
+            mapping["name"] = "Deserialization of Untrusted Data";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/502.html";
+        }
+        else if (description.Contains("CWE-269"))
+        {
+            mapping["id"] = "CWE-269";
+            mapping["name"] = "Improper Privilege Management";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/269.html";
+        }
+        else if (description.Contains("CWE-287"))
+        {
+            mapping["id"] = "CWE-287";
+            mapping["name"] = "Improper Authentication";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/287.html";
+        }
+        else if (description.Contains("CWE-209"))
+        {
+            mapping["id"] = "CWE-209";
+            mapping["name"] = "Information Exposure Through Error Messages";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/209.html";
+        }
+        else if (description.Contains("CWE-321"))
+        {
+            mapping["id"] = "CWE-321";
+            mapping["name"] = "Use of Hard-coded Cryptographic Key";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/321.html";
+        }
+        else if (description.Contains("CWE-327"))
+        {
+            mapping["id"] = "CWE-327";
+            mapping["name"] = "Use of a Broken or Risky Cryptographic Algorithm";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/327.html";
+        }
+        else if (description.Contains("CWE-338"))
+        {
+            mapping["id"] = "CWE-338";
+            mapping["name"] = "Use of Cryptographically Weak Pseudo-Random Number Generator";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/338.html";
+        }
+        else if (description.Contains("CWE-521"))
+        {
+            mapping["id"] = "CWE-521";
+            mapping["name"] = "Weak Password Requirements";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/521.html";
+        }
+        else if (description.Contains("CWE-798"))
+        {
+            mapping["id"] = "CWE-798";
+            mapping["name"] = "Use of Hard-coded Credentials";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/798.html";
+        }
+        else if (description.Contains("CWE-918"))
+        {
+            mapping["id"] = "CWE-918";
+            mapping["name"] = "Server-Side Request Forgery (SSRF)";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/918.html";
+        }
+        else if (description.Contains("CWE-942"))
+        {
+            mapping["id"] = "CWE-942";
+            mapping["name"] = "Overly Permissive Cross-domain Whitelist";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/942.html";
+        }
+        else if (description.Contains("CWE-208"))
+        {
+            mapping["id"] = "CWE-208";
+            mapping["name"] = "Information Exposure Through Timing Discrepancy";
+            mapping["url"] = "https://cwe.mitre.org/data/definitions/208.html";
+        }
+        else
+        {
+            mapping["id"] = "Multiple";
+            mapping["name"] = "Multiple CWE categories may apply";
+            mapping["url"] = "https://cwe.mitre.org/top25/archive/2024/2024_cwe_top25.html";
+        }
+        
+        return mapping;
+    }
+
+    private List<object> GetReferenceUrls(string description)
+    {
+        var urls = new List<object>();
+        
+        // Add CWE Top 25 2024 reference
+        urls.Add(new Dictionary<string, string>
+        {
+            { "name", "CWE Top 25 Most Dangerous Software Weaknesses 2024" },
+            { "url", "https://cwe.mitre.org/top25/archive/2024/2024_cwe_top25.html" }
+        });
+        
+        // Add OWASP Top 10 reference if applicable
+        if (description.Contains("OWASP"))
+        {
+            urls.Add(new Dictionary<string, string>
+            {
+                { "name", "OWASP Top 10 2021" },
+                { "url", "https://owasp.org/Top10/" }
+            });
+        }
+        
+        // Add specific CWE reference based on the vulnerability type
+        if (description.Contains("CWE-"))
+        {
+            var cweMatch = System.Text.RegularExpressions.Regex.Match(description, @"CWE-(\d+)");
+            if (cweMatch.Success)
+            {
+                var cweId = cweMatch.Groups[1].Value;
+                urls.Add(new Dictionary<string, string>
+                {
+                    { "name", $"CWE-{cweId} Details" },
+                    { "url", $"https://cwe.mitre.org/data/definitions/{cweId}.html" }
+                });
+            }
+        }
+        
+        // Add general security resources
+        urls.Add(new Dictionary<string, string>
+        {
+            { "name", "NIST Cybersecurity Framework" },
+            { "url", "https://www.nist.gov/cyberframework" }
+        });
+        
+        return urls;
     }
 
     private string GetOwaspMapping(string description)
