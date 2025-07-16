@@ -10,6 +10,7 @@ VERBOSE=""
 PATH_TO_VALIDATE="."
 REPORT_FILE=""
 SKIP_VALIDATIONS=""
+CTRF_REPORT=""
 
 # Help function
 show_help() {
@@ -20,18 +21,21 @@ show_help() {
     echo ""
     echo "Options:"
     echo "  -h, --help              Show this help message"
-    echo "  -v, --verbose           Enable verbose output"
+    echo "  -v, --verbose           Enable verbose output with detailed issue information"
     echo "  -p, --path PATH         Path to validate (default: current directory)"
-    echo "  -r, --report FILE       Generate JSON report to specified file"
+    echo "  -r, --report FILE       Generate comprehensive JSON report to specified file"
+    echo "  -c, --ctrf FILE         Generate CTRF (Common Test Report Format) JSON report"
     echo "  -s, --skip TYPES        Skip specific validation types (comma-separated)"
-    echo "                          Options: static,security,architecture"
+    echo "                          Available types: static,security,architecture"
     echo ""
     echo "Examples:"
-    echo "  $0                                    # Run all validations on current directory"
-    echo "  $0 --verbose                         # Run with detailed output"
-    echo "  $0 --path backend/src                # Validate specific path"
-    echo "  $0 --report validation-report.json   # Generate JSON report"
-    echo "  $0 --skip security,architecture      # Skip security and architecture checks"
+    echo "  $0                                        # Run all validations on current directory"
+    echo "  $0 --verbose                             # Run with detailed output and issue explanations"
+    echo "  $0 --path backend/src                    # Validate specific path"
+    echo "  $0 --report validation-report.json       # Generate comprehensive JSON report"
+    echo "  $0 --ctrf security-results.json          # Generate CTRF format report for CI/CD"
+    echo "  $0 --skip security,architecture          # Skip security and architecture checks"
+    echo "  $0 -v -r report.json -c ctrf.json        # Combine multiple output formats"
     echo ""
 }
 
@@ -52,6 +56,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         -r|--report)
             REPORT_FILE="--report $2"
+            shift 2
+            ;;
+        -c|--ctrf)
+            CTRF_REPORT="--ctrf $2"
             shift 2
             ;;
         -s|--skip)
@@ -99,7 +107,7 @@ echo "🤖 Running AI Code Validator..."
 echo "================================"
 
 # Construct the command
-CMD="dotnet run --project tools/DemoInventory.Tools.AICodeValidator --no-build -- --path \"$PATH_TO_VALIDATE\" $VERBOSE $REPORT_FILE $SKIP_VALIDATIONS"
+CMD="dotnet run --project tools/DemoInventory.Tools.AICodeValidator --no-build -- --path \"$PATH_TO_VALIDATE\" $VERBOSE $REPORT_FILE $CTRF_REPORT $SKIP_VALIDATIONS"
 
 # Execute the command
 eval $CMD
@@ -108,17 +116,55 @@ eval $CMD
 EXIT_CODE=$?
 
 echo ""
+echo "📋 Validation Summary"
+echo "==================="
+echo "🎯 Target: $PATH_TO_VALIDATE"
+echo "⏱️  Completed: $(date '+%Y-%m-%d %H:%M:%S')"
+if [[ -n "$VERBOSE" ]]; then
+    echo "📝 Output: Detailed (verbose mode enabled)"
+else
+    echo "📝 Output: Standard (use --verbose for more details)"
+fi
+
+# Show what validations were run
+VALIDATIONS_RUN=""
+if [[ ! "$SKIP_VALIDATIONS" =~ "static" ]]; then
+    VALIDATIONS_RUN="$VALIDATIONS_RUN Static Analysis,"
+fi
+if [[ ! "$SKIP_VALIDATIONS" =~ "security" ]]; then
+    VALIDATIONS_RUN="$VALIDATIONS_RUN Security Scan,"
+fi
+if [[ ! "$SKIP_VALIDATIONS" =~ "architecture" ]]; then
+    VALIDATIONS_RUN="$VALIDATIONS_RUN Architecture Validation,"
+fi
+VALIDATIONS_RUN=${VALIDATIONS_RUN%,}  # Remove trailing comma
+echo "🔍 Validations: ${VALIDATIONS_RUN:-"None (all skipped)"}"
+
+echo ""
 if [ $EXIT_CODE -eq 0 ]; then
     echo "✅ Validation completed successfully!"
+    echo "   └─ All checks passed - your code meets quality standards"
 else
     echo "❌ Validation completed with issues (exit code: $EXIT_CODE)"
+    echo "   └─ Review the detailed output above for specific recommendations"
+    echo "   └─ Use --verbose flag for additional context and guidance"
 fi
 
 # Show report location if generated
 if [[ -n "$REPORT_FILE" ]]; then
     REPORT_PATH=$(echo "$REPORT_FILE" | sed 's/--report //')
     if [[ -f "$REPORT_PATH" ]]; then
-        echo "📄 JSON report saved to: $REPORT_PATH"
+        echo "📄 Comprehensive JSON report saved to: $REPORT_PATH"
+        echo "   └─ Contains detailed metrics, recommendations, and implementation timelines"
+    fi
+fi
+
+# Show CTRF report location if generated
+if [[ -n "$CTRF_REPORT" ]]; then
+    CTRF_PATH=$(echo "$CTRF_REPORT" | sed 's/--ctrf //')
+    if [[ -f "$CTRF_PATH" ]]; then
+        echo "🔍 CTRF security report saved to: $CTRF_PATH"
+        echo "   └─ Industry-standard format for CI/CD pipeline integration"
     fi
 fi
 

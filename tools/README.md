@@ -19,11 +19,48 @@ The easiest way to run all validations is using the helper script:
 # Generate comprehensive JSON report with severity metrics
 ./tools/run-validation.sh --report validation-report.json
 
+# Generate CTRF format report for CI/CD integration
+./tools/run-validation.sh --ctrf security-results.json
+
 # Skip specific validations
 ./tools/run-validation.sh --skip security,architecture
+
+# Combine multiple output formats for comprehensive analysis
+./tools/run-validation.sh --verbose --report full-report.json --ctrf ci-report.json
 ```
 
 ## 🆕 Enhanced Features
+
+### New Command Line Options
+All validation tools now support enhanced command-line options for better integration:
+
+```bash
+# Basic options
+--path PATH          # Specify validation target (file or directory)
+--verbose           # Enable detailed output with issue explanations
+--help              # Show comprehensive help and usage examples
+
+# Report generation
+--report FILE       # Generate comprehensive JSON report with metrics
+--ctrf FILE         # Generate CTRF format report for CI/CD integration
+--skip TYPES        # Skip specific validation types (static,security,architecture)
+```
+
+### Enhanced Usage Examples
+
+```bash
+# Quick validation with enhanced output
+./tools/run-validation.sh --verbose
+
+# Generate multiple report formats for different use cases
+./tools/run-validation.sh --report analysis.json --ctrf ci-pipeline.json
+
+# Validate specific components with targeted output
+./tools/run-validation.sh --path backend/src --verbose --ctrf security-only.json --skip static,architecture
+
+# CI/CD integration with comprehensive reporting
+./tools/run-validation.sh --report quality-gate.json --ctrf security-gate.json --verbose
+```
 
 ### Severity-Specific Recommendations
 All validation tools now provide **targeted recommendations for each severity level**:
@@ -39,11 +76,14 @@ All validation tools now provide **targeted recommendations for each severity le
 - **Deployment impact** assessment for each issue type
 - **Testing requirements** based on severity
 
-### Enhanced Output
-- **Visual severity indicators** with color-coded emojis
+### Enhanced Output & Reporting
+
+- **Comprehensive validation summary** with execution timeline and target information
+- **Visual severity indicators** with color-coded emojis and detailed issue context
 - **Detailed category breakdown** (Documentation, Security, Architecture)
-- **Actionable guidance** specific to each issue type
-- **Comprehensive JSON reports** with structured metrics
+- **Actionable guidance** specific to each issue type with implementation timelines
+- **Multiple report formats** - JSON for comprehensive analysis, CTRF for CI/CD integration
+- **Enhanced console logging** with validation progress and detailed completion status
 
 ## Available Tools
 
@@ -90,18 +130,33 @@ All validation tools now provide **targeted recommendations for each severity le
 
 ### Severity-Focused Analysis
 ```bash
-# Get detailed severity breakdown for security issues
-dotnet run --project tools/DemoInventory.Tools.SecurityScan -- --path "backend/src" --verbose
+# Get detailed severity breakdown for security issues with CTRF output
+dotnet run --project tools/DemoInventory.Tools.SecurityScan -- --path "backend/src" --verbose --ctrf "security-report.json"
 
 # Analyze code quality with priority recommendations  
 dotnet run --project tools/DemoInventory.Tools.StaticAnalysis -- --path "backend/src" --verbose
 
-# Comprehensive analysis with implementation timeline
-dotnet run --project tools/DemoInventory.Tools.AICodeValidator -- --path "." --verbose --report "detailed-report.json"
+# Comprehensive analysis with implementation timeline and multiple report formats
+./tools/run-validation.sh --path "." --verbose --report "detailed-report.json" --ctrf "ci-integration.json"
 ```
 
 ### Sample Enhanced Output
 ```
+🤖 AI Code Validator
+====================
+Validating: backend/src
+Timestamp: 2025-07-16 09:54:10 UTC
+
+🔍 Running Static Analysis...
+🔒 Running Security Scan...
+🏛️  Running Architecture Validation...
+
+📊 Comprehensive Validation Summary
+===================================
+✅ Static Analysis - 2540ms
+   Files with issues: 4, Total issues: 9
+   Critical: 0, High: 0, Medium: 0, Low: 9
+
 🔴 CRITICAL Security Issues (IMMEDIATE ACTION REQUIRED):
   📂 SQL Injection (2 issues):
     • URGENT: Fix 2 SQL injection vulnerabilities NOW - these allow data breaches
@@ -114,21 +169,29 @@ dotnet run --project tools/DemoInventory.Tools.AICodeValidator -- --path "." --v
     • Use early returns to reduce nesting depth
     • Extract complex conditions into well-named boolean methods
 
-🟡 MEDIUM Priority Issues (Plan for Current Sprint):
-  📂 Documentation (25 issues):
-    • Add XML documentation to 25 public APIs for better maintainability
-    • Document public methods, classes, and properties
-    • Include parameter descriptions and return value information
+📋 Validation Summary
+===================
+🎯 Target: backend/src
+⏱️  Completed: 2025-07-16 09:54:18
+📝 Output: Detailed (verbose mode enabled)
+🔍 Validations: Static Analysis, Security Scan, Architecture Validation
+
+✅ Validation completed successfully!
+   └─ All checks passed - your code meets quality standards
+📄 Comprehensive JSON report saved to: validation-report.json
+   └─ Contains detailed metrics, recommendations, and implementation timelines
+🔍 CTRF security report saved to: security-results.json
+   └─ Industry-standard format for CI/CD pipeline integration
 ```
 
 ## Integration
 
 ### Enhanced CI/CD Pipeline
-Add to your GitHub Actions workflow with severity-aware reporting:
+Add to your GitHub Actions workflow with severity-aware reporting and CTRF integration:
 
 ```yaml
-- name: Run Code Validation with Severity Analysis
-  run: ./tools/run-validation.sh --report validation-report.json --verbose
+- name: Run Code Validation with Enhanced Reporting
+  run: ./tools/run-validation.sh --report validation-report.json --ctrf security-ctrf.json --verbose
 
 - name: Check Critical Issues
   run: |
@@ -136,49 +199,94 @@ Add to your GitHub Actions workflow with severity-aware reporting:
       echo "CRITICAL issues found - blocking deployment"
       exit 1
     fi
+
+- name: Upload CTRF Security Report
+  uses: actions/upload-artifact@v3
+  if: always()
+  with:
+    name: security-ctrf-report
+    path: security-ctrf.json
 ```
 
 ### Enhanced Pre-commit Hook
-Create `.git/hooks/pre-commit` with severity checking:
+Create `.git/hooks/pre-commit` with severity checking and enhanced output:
 
 ```bash
 #!/bin/sh
 ./tools/run-validation.sh --path "." --verbose
-if [ $? -ne 0 ]; then
-    echo "🔴 Critical or High severity issues found - commit blocked"
-    echo "Please address issues or use --skip for non-critical changes"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "🔴 Code quality issues found - commit blocked"
+    echo "   └─ Review the detailed output above for specific recommendations"
+    echo "   └─ Use --skip for non-critical changes or fix issues before committing"
+    echo "   └─ Generate reports with: ./tools/run-validation.sh --report analysis.json"
     exit 1
 fi
+
+echo "✅ Code quality validation passed - commit allowed"
 ```
 
 ## Enhanced JSON Report Format
 
-The JSON reports now include detailed severity metrics:
+The validation now generates two types of reports:
+
+### 1. Comprehensive JSON Report (`--report`)
+Detailed analysis with metrics and recommendations:
 
 ```json
 {
-  "timestamp": "2025-07-14T01:59:47Z",
+  "timestamp": "2025-07-16T09:54:10Z",
   "summary": {
     "totalTools": 3,
-    "passedTools": 2,
-    "failedTools": 1,
-    "totalDuration": 8420.5
+    "passedTools": 3,
+    "failedTools": 0,
+    "totalDuration": 7740.5
   },
   "results": [
     {
       "validationName": "Security Scan",
-      "success": false,
-      "duration": 2454.07,
+      "success": true,
+      "duration": 2739.07,
       "metrics": [
-        "Critical: 2",
-        "High: 0", 
-        "Medium: 15",
+        "Critical: 0",
+        "High: 11", 
+        "Medium: 18",
         "Low: 0",
-        "📂 SQL Injection (2 issues):",
-        "📂 Authorization (15 issues):"
+        "📂 Missing Authentication (6 issues):",
+        "📂 Authorization (6 issues):"
       ]
     }
   ]
+}
+```
+
+### 2. CTRF Security Report (`--ctrf`)
+Industry-standard format for CI/CD integration:
+
+```json
+{
+  "results": {
+    "tool": {
+      "name": "DemoInventory.Tools.SecurityScan",
+      "version": "1.0.0"
+    },
+    "summary": {
+      "tests": 29,
+      "passed": 0,
+      "failed": 29,
+      "pending": 0,
+      "skipped": 0
+    },
+    "tests": [
+      {
+        "name": "Security Misconfiguration: Overly permissive CORS configuration",
+        "status": "failed",
+        "duration": 0
+      }
+    ]
+  }
 }
 ```
 

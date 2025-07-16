@@ -29,19 +29,24 @@ public class Program
             description: "Skip specific validation types (static|security|architecture)")
         { AllowMultipleArgumentsPerToken = true };
 
+        var ctrfOption = new Option<string?>(
+            name: "--ctrf",
+            description: "Generate CTRF (Common Test Report Format) JSON report file for security scan");
+
         var rootCommand = new RootCommand("AI Code Validator - Comprehensive code quality validation")
         {
             pathOption,
             verboseOption,
             reportOption,
-            skipOption
+            skipOption,
+            ctrfOption
         };
 
-        rootCommand.SetHandler(async (path, verbose, report, skip) =>
+        rootCommand.SetHandler(async (path, verbose, report, skip, ctrf) =>
         {
             var validator = new AICodeValidator(verbose);
-            await validator.ValidateAsync(path, report, skip);
-        }, pathOption, verboseOption, reportOption, skipOption);
+            await validator.ValidateAsync(path, report, skip, ctrf);
+        }, pathOption, verboseOption, reportOption, skipOption, ctrfOption);
 
         return await rootCommand.InvokeAsync(args);
     }
@@ -60,7 +65,7 @@ public class AICodeValidator
         _verbose = verbose;
     }
 
-    public async Task ValidateAsync(string path, string? reportPath, string[] skipValidations)
+    public async Task ValidateAsync(string path, string? reportPath, string[] skipValidations, string? ctrfPath = null)
     {
         Console.WriteLine("🤖 AI Code Validator");
         Console.WriteLine("====================");
@@ -85,9 +90,10 @@ public class AICodeValidator
         if (!skipSet.Contains("security"))
         {
             Console.WriteLine("🔒 Running Security Scan...");
+            var ctrfArgs = !string.IsNullOrEmpty(ctrfPath) ? $"--ctrf \"{ctrfPath}\"" : "";
             var securityResult = await RunToolAsync(
                 Path.Combine(toolsPath, "DemoInventory.Tools.SecurityScan"),
-                $"--path \"{path}\" {(_verbose ? "--verbose" : "")}");
+                $"--path \"{path}\" {(_verbose ? "--verbose" : "")} {ctrfArgs}".Trim());
             _results.Add(new ValidationResult("Security Scan", securityResult));
         }
 
