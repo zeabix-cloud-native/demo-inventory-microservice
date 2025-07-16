@@ -106,6 +106,11 @@ echo ""
 echo "🤖 Running AI Code Validator..."
 echo "================================"
 
+# For security scanning, exclude the tools directory to prevent false positives from security pattern definitions
+if [[ "$SKIP_VALIDATIONS" != *"security"* ]]; then
+    echo "📋 Note: Excluding 'tools' directory from security scan to prevent false positives from pattern definitions"
+fi
+
 # Construct the command
 CMD="dotnet run --project tools/DemoInventory.Tools.AICodeValidator --no-build -- --path \"$PATH_TO_VALIDATE\" $VERBOSE $REPORT_FILE $CTRF_REPORT $SKIP_VALIDATIONS"
 
