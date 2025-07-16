@@ -85,11 +85,11 @@ public class CreateProductDto
     public decimal Price { get; set; }
     
     /// <summary>
-    /// Initial quantity to stock (must be non-negative)
+    /// Initial quantity to stock (must be non-negative, max 1,000,000)
     /// </summary>
     /// <example>100</example>
     [Required]
-    [Range(0, int.MaxValue, ErrorMessage = "Quantity must be non-negative")]
+    [Range(0, 1000000, ErrorMessage = "Quantity must be between 0 and 1,000,000")]
     public int QuantityInStock { get; set; }
 }
 
@@ -122,11 +122,11 @@ public class UpdateProductDto
     public decimal Price { get; set; }
     
     /// <summary>
-    /// Updated quantity in stock (must be non-negative)
+    /// Updated quantity in stock (must be non-negative, max 1,000,000)
     /// </summary>
     /// <example>150</example>
     [Required]
-    [Range(0, int.MaxValue, ErrorMessage = "Quantity must be non-negative")]
+    [Range(0, 1000000, ErrorMessage = "Quantity must be between 0 and 1,000,000")]
     public int QuantityInStock { get; set; }
 }
 
