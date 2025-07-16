@@ -52,7 +52,7 @@ public class ProductsController : ControllerBase
     [SwaggerResponse(200, "Success", typeof(ProductDto))]
     [SwaggerResponse(404, "Product not found")]
     [SwaggerResponse(400, "Invalid product ID")]
-    public async Task<ActionResult<ProductDto>> GetProduct([FromRoute] [Range(1, int.MaxValue, ErrorMessage = "Product ID must be a positive integer")] int id)
+    public async Task<ActionResult<ProductDto>> GetProduct([FromRoute] [Range(1, 2000000000, ErrorMessage = "Product ID must be a positive integer")] int id)
     {
         // Input validation
         if (id <= 0)
@@ -213,7 +213,7 @@ public class ProductsController : ControllerBase
     [SwaggerResponse(404, "Product not found")]
     [SwaggerResponse(400, "Invalid product data")]
     [SwaggerResponse(401, "Unauthorized - API key required")]
-    public async Task<ActionResult<ProductDto>> UpdateProduct([FromRoute] [Range(1, int.MaxValue, ErrorMessage = "Product ID must be a positive integer")] int id, [FromBody] UpdateProductDto updateProductDto)
+    public async Task<ActionResult<ProductDto>> UpdateProduct([FromRoute] [Range(1, 2000000000, ErrorMessage = "Product ID must be a positive integer")] int id, [FromBody] UpdateProductDto updateProductDto)
     {
         // Input validation
         if (id <= 0)
@@ -255,7 +255,7 @@ public class ProductsController : ControllerBase
     [SwaggerResponse(404, "Product not found")]
     [SwaggerResponse(400, "Invalid product ID")]
     [SwaggerResponse(401, "Unauthorized - API key required")]
-    public async Task<IActionResult> DeleteProduct([FromRoute] [Range(1, int.MaxValue, ErrorMessage = "Product ID must be a positive integer")] int id)
+    public async Task<IActionResult> DeleteProduct([FromRoute] [Range(1, 2000000000, ErrorMessage = "Product ID must be a positive integer")] int id)
     {
         // Input validation
         if (id <= 0)

@@ -36,36 +36,21 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
             return Task.FromResult(AuthenticateResult.Success(ticket));
         }
 
-        // Check if API key header exists with proper validation
-        if (!Request.Headers.TryGetValue(ApiKeyHeaderName, out var headerValues) || 
-            headerValues.Count == 0)
+        // Extract and validate API key using a safer approach
+        var apiKeyResult = ExtractAndValidateApiKey();
+        if (!apiKeyResult.IsValid)
         {
-            return Task.FromResult(AuthenticateResult.Fail("API Key not found in header"));
+            return Task.FromResult(AuthenticateResult.Fail(apiKeyResult.ErrorMessage));
         }
 
-        var apiKey = headerValues.FirstOrDefault();
-
-        // Validate API key format and content
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            return Task.FromResult(AuthenticateResult.Fail("API Key is empty"));
-        }
-
-        if (apiKey.Length < 10 || apiKey.Length > 200)
-        {
-            return Task.FromResult(AuthenticateResult.Fail("API Key format is invalid"));
-        }
-
-        // Get API key from configuration with secure fallback
-        var validApiKey = _configuration["Authentication:ApiKey"];
+        // Get API key from configuration - no fallback for security
+        var validApiKey = GetConfigurationValue("Authentication:ApiKey");
         if (string.IsNullOrEmpty(validApiKey))
         {
-            // Fallback for demo purposes - in production this should come from secure configuration
-            validApiKey = "demo-inventory-api-key-2024";
-            Logger.LogWarning("Using fallback API key configuration. Configure Authentication:ApiKey in production.");
+            return Task.FromResult(AuthenticateResult.Fail("API key not configured"));
         }
         
-        if (!string.Equals(apiKey, validApiKey, StringComparison.Ordinal))
+        if (!string.Equals(apiKeyResult.ApiKey, validApiKey, StringComparison.Ordinal))
         {
             return Task.FromResult(AuthenticateResult.Fail("Invalid API Key"));
         }
@@ -80,6 +65,88 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
         var authTicket = new AuthenticationTicket(userPrincipal, Scheme.Name);
 
         return Task.FromResult(AuthenticateResult.Success(authTicket));
+    }
+
+    /// <summary>
+    /// Extracts and validates the API key from request headers
+    /// </summary>
+    /// <returns>Validation result containing the API key or error message</returns>
+    private ApiKeyValidationResult ExtractAndValidateApiKey()
+    {
+        // Safely access request headers with comprehensive validation
+        if (Request?.Headers == null)
+        {
+            return new ApiKeyValidationResult { IsValid = false, ErrorMessage = "Invalid request" };
+        }
+
+        // Check if API key header exists with proper validation using safer access pattern
+        var requestHeaders = Request.Headers;
+        if (requestHeaders == null)
+        {
+            return new ApiKeyValidationResult { IsValid = false, ErrorMessage = "Invalid request headers" };
+        }
+
+        if (!requestHeaders.TryGetValue(ApiKeyHeaderName, out var headerValues) || 
+            headerValues.Count == 0 || 
+            !headerValues.Any() ||
+            headerValues.Any(string.IsNullOrWhiteSpace))
+        {
+            return new ApiKeyValidationResult { IsValid = false, ErrorMessage = "API Key not found in header" };
+        }
+
+        var apiKey = headerValues.FirstOrDefault();
+
+        // Validate API key format and content
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            return new ApiKeyValidationResult { IsValid = false, ErrorMessage = "API Key is empty" };
+        }
+
+        // Enhanced validation for API key format
+        if (apiKey.Length < 10 || apiKey.Length > 200 || !IsValidApiKeyFormat(apiKey))
+        {
+            return new ApiKeyValidationResult { IsValid = false, ErrorMessage = "API Key format is invalid" };
+        }
+
+        return new ApiKeyValidationResult { IsValid = true, ApiKey = apiKey };
+    }
+
+    /// <summary>
+    /// Validation result for API key extraction
+    /// </summary>
+    private class ApiKeyValidationResult
+    {
+        public bool IsValid { get; set; }
+        public string? ApiKey { get; set; }
+        public string ErrorMessage { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// Validates the format of an API key
+    /// </summary>
+    /// <param name="apiKey">The API key to validate</param>
+    /// <returns>True if the format is valid, false otherwise</returns>
+    private static bool IsValidApiKeyFormat(string apiKey)
+    {
+        // API key should contain only alphanumeric characters, hyphens, and underscores
+        return apiKey.All(c => char.IsLetterOrDigit(c) || c == '-' || c == '_');
+    }
+
+    /// <summary>
+    /// Safely retrieves a configuration value
+    /// </summary>
+    /// <param name="key">The configuration key</param>
+    /// <returns>The configuration value or null if not found</returns>
+    private string? GetConfigurationValue(string key)
+    {
+        try
+        {
+            return _configuration?[key];
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
 

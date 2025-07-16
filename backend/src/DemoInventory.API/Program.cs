@@ -36,19 +36,36 @@ builder.Services.AddAntiforgery(options =>
 // Add CORS with security-focused configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigins", policy =>
+    if (builder.Environment.IsDevelopment())
     {
-        // Restrict to specific origins and remove dangerous wildcards
-        policy.WithOrigins(
-                "http://localhost:5173",  // Vite default port
-                "http://localhost:3000",  // Create React App port  
-                "http://localhost:5126",  // API port
-                "http://localhost:8080"   // Swagger UI port
-               )
-              .WithHeaders("Content-Type", "Authorization", "Accept", "X-Requested-With")
-              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-              .AllowCredentials(); // More secure than AllowAnyHeader/AllowAnyMethod
-    });
+        options.AddPolicy("AllowSpecificOrigins", policy =>
+        {
+            // Development: Allow specific localhost origins
+            policy.WithOrigins(
+                    "http://localhost:5173",  // Vite default port
+                    "http://localhost:3000",  // Create React App port  
+                    "http://localhost:5126",  // API port
+                    "http://localhost:8080"   // Swagger UI port
+                   )
+                  .WithHeaders("Content-Type", "Authorization", "Accept", "X-Requested-With")
+                  .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                  .AllowCredentials();
+        });
+    }
+    else
+    {
+        options.AddPolicy("AllowSpecificOrigins", policy =>
+        {
+            // Production: Use environment-specific origins
+            var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() 
+                                ?? new[] { "https://your-production-domain.com" };
+            
+            policy.WithOrigins(allowedOrigins)
+                  .WithHeaders("Content-Type", "Authorization", "Accept")
+                  .WithMethods("GET", "POST", "PUT", "DELETE")
+                  .AllowCredentials();
+        });
+    }
 });
 
 // Add DbContext
