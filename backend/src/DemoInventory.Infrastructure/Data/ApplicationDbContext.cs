@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DemoInventory.Infrastructure.Data;
 
+/// <summary>
+/// Entity Framework DbContext for the Demo Inventory application
+/// </summary>
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

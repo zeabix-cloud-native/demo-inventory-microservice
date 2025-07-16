@@ -130,8 +130,18 @@ public class UpdateProductDto
     public int QuantityInStock { get; set; }
 }
 
+/// <summary>
+/// Data transfer object for price range queries
+/// </summary>
 public class PriceRangeDto
 {
+    /// <summary>
+    /// The minimum price (inclusive)
+    /// </summary>
     public decimal MinPrice { get; set; }
+    
+    /// <summary>
+    /// The maximum price (inclusive)
+    /// </summary>
     public decimal MaxPrice { get; set; }
 }

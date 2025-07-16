@@ -5,6 +5,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace DemoInventory.API.Controllers;
 
+/// <summary>
+/// API controller for managing product operations
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [SwaggerTag("Products management operations")]

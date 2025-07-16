@@ -1,5 +1,8 @@
 namespace DemoInventory.Domain.Entities;
 
+/// <summary>
+/// Represents a user in the system
+/// </summary>
 public class User
 {
     private string _username = string.Empty;
@@ -75,6 +78,10 @@ public class User
 
     public string FullName => $"{FirstName} {LastName}";
 
+    /// <summary>
+    /// Validates all user properties by triggering their setters
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when any property validation fails</exception>
     public void Validate()
     {
         // Trigger validation for all properties
