@@ -138,10 +138,14 @@ public class PriceRangeDto
     /// <summary>
     /// The minimum price (inclusive)
     /// </summary>
+    [Required]
+    [Range(0, double.MaxValue, ErrorMessage = "Minimum price must be non-negative")]
     public decimal MinPrice { get; set; }
     
     /// <summary>
     /// The maximum price (inclusive)
     /// </summary>
+    [Required]
+    [Range(0, double.MaxValue, ErrorMessage = "Maximum price must be non-negative")]
     public decimal MaxPrice { get; set; }
 }

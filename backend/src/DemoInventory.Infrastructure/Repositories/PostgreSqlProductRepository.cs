@@ -128,8 +128,10 @@ public class PostgreSqlProductRepository : IProductRepository
     /// <returns>A collection of products whose names contain the search term</returns>
     public async Task<IEnumerable<Product>> SearchByNameAsync(string name)
     {
+        // Use parameterized query with EF.Functions for secure search
+        var searchPattern = $"%{name.Replace("%", "\\%").Replace("_", "\\_")}%";
         return await _context.Products
-            .Where(p => p.Name.Contains(name))
+            .Where(p => EF.Functions.ILike(p.Name, searchPattern))
             .ToListAsync();
     }
 }

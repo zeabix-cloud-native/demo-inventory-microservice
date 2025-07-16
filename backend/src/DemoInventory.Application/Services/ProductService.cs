@@ -109,7 +109,18 @@ public class ProductService : IProductService
     /// <returns>The product DTO if found, otherwise null</returns>
     public async Task<ProductDto?> GetProductBySkuAsync(string sku)
     {
-        var product = await _productRepository.GetBySkuAsync(sku);
+        // Input validation
+        if (string.IsNullOrWhiteSpace(sku))
+        {
+            throw new ArgumentException("SKU cannot be null or empty.", nameof(sku));
+        }
+
+        if (sku.Length > 50)
+        {
+            throw new ArgumentException("SKU cannot exceed 50 characters.", nameof(sku));
+        }
+
+        var product = await _productRepository.GetBySkuAsync(sku.Trim());
         return product == null ? null : MapToDto(product);
     }
 
@@ -120,7 +131,18 @@ public class ProductService : IProductService
     /// <returns>The product DTO if found, otherwise null</returns>
     public async Task<ProductDto?> GetProductByNameAsync(string name)
     {
-        var product = await _productRepository.GetByNameAsync(name);
+        // Input validation
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentException("Product name cannot be null or empty.", nameof(name));
+        }
+
+        if (name.Length > 200)
+        {
+            throw new ArgumentException("Product name cannot exceed 200 characters.", nameof(name));
+        }
+
+        var product = await _productRepository.GetByNameAsync(name.Trim());
         return product == null ? null : MapToDto(product);
     }
 
@@ -131,7 +153,19 @@ public class ProductService : IProductService
     /// <returns>A collection of product DTOs whose names contain the search term</returns>
     public async Task<IEnumerable<ProductDto>> SearchProductsAsync(string searchTerm)
     {
-        var products = await _productRepository.SearchByNameAsync(searchTerm);
+        // Input validation and sanitization
+        if (string.IsNullOrEmpty(searchTerm))
+        {
+            return await GetAllProductsAsync();
+        }
+
+        // Limit search term length for security
+        if (searchTerm.Length > 200)
+        {
+            throw new ArgumentException("Search term cannot exceed 200 characters.", nameof(searchTerm));
+        }
+
+        var products = await _productRepository.SearchByNameAsync(searchTerm.Trim());
         return products.Select(MapToDto);
     }
 
@@ -142,6 +176,27 @@ public class ProductService : IProductService
     /// <returns>A collection of product DTOs within the specified price range</returns>
     public async Task<IEnumerable<ProductDto>> GetProductsByPriceRangeAsync(PriceRangeDto priceRange)
     {
+        // Input validation
+        if (priceRange == null)
+        {
+            throw new ArgumentNullException(nameof(priceRange), "Price range cannot be null.");
+        }
+
+        if (priceRange.MinPrice < 0)
+        {
+            throw new ArgumentException("Minimum price cannot be negative.", nameof(priceRange.MinPrice));
+        }
+
+        if (priceRange.MaxPrice < 0)
+        {
+            throw new ArgumentException("Maximum price cannot be negative.", nameof(priceRange.MaxPrice));
+        }
+
+        if (priceRange.MinPrice > priceRange.MaxPrice)
+        {
+            throw new ArgumentException("Minimum price cannot be greater than maximum price.", nameof(priceRange));
+        }
+
         var products = await _productRepository.GetByPriceRangeAsync(priceRange.MinPrice, priceRange.MaxPrice);
         return products.Select(MapToDto);
     }
