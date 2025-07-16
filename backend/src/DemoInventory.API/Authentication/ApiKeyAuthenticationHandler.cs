@@ -73,14 +73,8 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
     /// <returns>Validation result containing the API key or error message</returns>
     private ApiKeyValidationResult ExtractAndValidateApiKey()
     {
-        // Safely access request headers with comprehensive validation
-        if (Request?.Headers == null)
-        {
-            return new ApiKeyValidationResult { IsValid = false, ErrorMessage = "Invalid request" };
-        }
-
-        // Check if API key header exists with proper validation using safer access pattern
-        var requestHeaders = Request.Headers;
+        // Validate request and extract headers safely in a single operation
+        var requestHeaders = Request?.Headers;
         if (requestHeaders == null)
         {
             return new ApiKeyValidationResult { IsValid = false, ErrorMessage = "Invalid request headers" };
