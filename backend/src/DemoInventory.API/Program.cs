@@ -7,21 +7,47 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
+using DemoInventory.API.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Add CORS
+// Add API Key Authentication
+builder.Services.AddAuthentication("ApiKey")
+    .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationHandler>("ApiKey", options => { });
+
+// Add Authorization
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ApiKeyPolicy", policy => policy.RequireAuthenticatedUser());
+});
+
+// Add Antiforgery for CSRF protection
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-XSRF-TOKEN";
+    options.Cookie.Name = "__Host-X-XSRF-TOKEN";
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
+// Add CORS with security-focused configuration
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", policy =>
+    options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-
-        policy.WithOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:5126", "http://localhost:8080", "http://host.docker.internal:8080", "file://") // Vite default port, CRA port, API port, Swagger UI port, Docker internal Swagger UI, and file protocol for local HTML
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        // Restrict to specific origins and remove dangerous wildcards
+        policy.WithOrigins(
+                "http://localhost:5173",  // Vite default port
+                "http://localhost:3000",  // Create React App port  
+                "http://localhost:5126",  // API port
+                "http://localhost:8080"   // Swagger UI port
+               )
+              .WithHeaders("Content-Type", "Authorization", "Accept", "X-Requested-With")
+              .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+              .AllowCredentials(); // More secure than AllowAnyHeader/AllowAnyMethod
     });
 });
 
@@ -127,8 +153,28 @@ app.MapGet("/openapi.json", (IServiceProvider serviceProvider) =>
 
 app.UseHttpsRedirection();
 
-// Use CORS
-app.UseCors("AllowReactApp");
+// Add security headers
+app.Use(async (context, next) =>
+{
+    // Security headers
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'");
+    
+    await next();
+});
+
+// Use CORS with updated policy name
+app.UseCors("AllowSpecificOrigins");
+
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Add Antiforgery middleware
+app.UseAntiforgery();
 
 app.MapControllers();
 

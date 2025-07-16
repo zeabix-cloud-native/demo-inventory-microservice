@@ -1,5 +1,8 @@
 namespace DemoInventory.Domain.Entities;
 
+/// <summary>
+/// Represents a product in the inventory system
+/// </summary>
 public class Product
 {
     private string _name = string.Empty;
@@ -69,12 +72,20 @@ public class Product
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    /// <summary>
+    /// Validates the product's description length
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when description exceeds maximum length</exception>
     public void ValidateDescription()
     {
         if (Description.Length > 1000)
             throw new ArgumentException("Description cannot exceed 1000 characters.", nameof(Description));
     }
 
+    /// <summary>
+    /// Validates all product properties by triggering their setters
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown when any property validation fails</exception>
     public void Validate()
     {
         // Trigger validation for all properties
