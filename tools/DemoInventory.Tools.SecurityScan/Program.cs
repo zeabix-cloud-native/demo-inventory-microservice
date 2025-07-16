@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.CommandLine;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 
 namespace DemoInventory.Tools.SecurityScan;
 
@@ -22,17 +23,22 @@ public class Program
             name: "--verbose",
             description: "Enable verbose output");
 
+        var ctrfOption = new Option<string?>(
+            name: "--ctrf",
+            description: "Generate CTRF (Common Test Report Format) JSON report file");
+
         var rootCommand = new RootCommand("Security Scanner for Code Vulnerability Detection")
         {
             pathOption,
-            verboseOption
+            verboseOption,
+            ctrfOption
         };
 
-        rootCommand.SetHandler(async (path, verbose) =>
+        rootCommand.SetHandler(async (path, verbose, ctrf) =>
         {
             var scanner = new SecurityScanner(verbose);
-            await scanner.ScanAsync(path);
-        }, pathOption, verboseOption);
+            await scanner.ScanAsync(path, ctrf);
+        }, pathOption, verboseOption, ctrfOption);
 
         return await rootCommand.InvokeAsync(args);
     }
@@ -46,18 +52,52 @@ public class SecurityScanner
     private readonly bool _verbose;
     private readonly List<SecurityFinding> _findings = new();
 
-    // Security patterns to detect
+    // Security patterns to detect (OWASP Top 10 & CWE Top 25)
     private readonly Dictionary<string, string> _securityPatterns = new()
     {
-        { @"password\s*[=:]\s*[""'][^""']+[""']", "Hardcoded password detected" },
-        { @"api[_-]?key\s*[=:]\s*[""'][^""']+[""']", "Hardcoded API key detected" },
-        { @"secret\s*[=:]\s*[""'][^""']+[""']", "Hardcoded secret detected" },
-        { @"token\s*[=:]\s*[""'][^""']+[""']", "Hardcoded token detected" },
-        { @"connectionstring\s*[=:]\s*[""'][^""']+[""']", "Hardcoded connection string detected" },
-        { @"SELECT\s+\*\s+FROM\s+\w+\s+WHERE\s+.*\+", "Potential SQL injection via string concatenation" },
-        { @"exec\s*\(\s*[""'][^""']*\+", "Potential code injection via dynamic execution" },
-        { @"Process\.Start\s*\([^)]*\+", "Potential command injection via Process.Start" },
-        { @"HttpClient\s*\(\s*\)\s*\.", "HttpClient without proper disposal pattern" }
+        // OWASP A02:2021 - Cryptographic Failures / CWE-798: Hardcoded Credentials
+        { @"password\s*[=:]\s*[""'][^""']+[""']", "Hardcoded password detected (OWASP A02, CWE-798)" },
+        { @"api[_-]?key\s*[=:]\s*[""'][^""']+[""']", "Hardcoded API key detected (OWASP A02, CWE-798)" },
+        { @"secret\s*[=:]\s*[""'][^""']+[""']", "Hardcoded secret detected (OWASP A02, CWE-798)" },
+        { @"token\s*[=:]\s*[""'][^""']+[""']", "Hardcoded token detected (OWASP A02, CWE-798)" },
+        { @"connectionstring\s*[=:]\s*[""'][^""']+[""']", "Hardcoded connection string detected (OWASP A02, CWE-798)" },
+        
+        // OWASP A03:2021 - Injection / CWE-89: SQL Injection
+        { @"SELECT\s+\*\s+FROM\s+\w+\s+WHERE\s+.*\+", "Potential SQL injection via string concatenation (OWASP A03, CWE-89)" },
+        
+        // CWE-94: Code Injection
+        { @"exec\s*\(\s*[""'][^""']*\+", "Potential code injection via dynamic execution (CWE-94)" },
+        
+        // CWE-78: OS Command Injection
+        { @"Process\.Start\s*\([^)]*\+", "Potential command injection via Process.Start (OWASP A03, CWE-78)" },
+        { @"cmd\.exe|powershell\.exe|bash|sh\s", "Direct OS command execution detected (CWE-78)" },
+        
+        // OWASP A06:2021 - Vulnerable Components
+        { @"HttpClient\s*\(\s*\)\s*\.", "HttpClient without proper disposal pattern (OWASP A06)" },
+        
+        // CWE-22: Path Traversal  
+        { @"\.\.[\\/]|\.\.\\", "Potential path traversal pattern detected (CWE-22)" },
+        { @"File\.ReadAllText\s*\([^)]*\+", "Potential path traversal in file operations (CWE-22)" },
+        
+        // CWE-79: Cross-site Scripting
+        { @"innerHTML|outerHTML", "Potential XSS via DOM manipulation (CWE-79)" },
+        { @"document\.write\s*\(", "Potential XSS via document.write (CWE-79)" },
+        
+        // OWASP A08:2021 - Software and Data Integrity Failures
+        { @"MD5|SHA1(?!256|384|512)", "Weak cryptographic hash algorithm (OWASP A08, CWE-327)" },
+        
+        // CWE-190: Integer Overflow
+        { @"int\.MaxValue|long\.MaxValue", "Potential integer overflow risk (CWE-190)" },
+        
+        // OWASP A10:2021 - Server-Side Request Forgery
+        { @"HttpClient.*\.GetAsync\s*\([^)]*\+", "Potential SSRF via dynamic URL construction (OWASP A10, CWE-918)" },
+        
+        // CWE-434: Unrestricted File Upload
+        { @"\.Save\s*\([^)]*\.FileName", "Potential unrestricted file upload (CWE-434)" },
+        
+        // Additional security patterns
+        { @"Random\s*\(\s*\)", "Weak random number generation (CWE-338)" },
+        { @"Thread\.Sleep\s*\(\s*0\s*\)", "Potential timing attack vulnerability (CWE-208)" }
     };
 
     public SecurityScanner(bool verbose = false)
@@ -65,7 +105,7 @@ public class SecurityScanner
         _verbose = verbose;
     }
 
-    public async Task ScanAsync(string path)
+    public async Task ScanAsync(string path, string? ctrfReportPath = null)
     {
         Console.WriteLine($"🔒 Starting security scan on: {path}");
         Console.WriteLine();
@@ -85,6 +125,12 @@ public class SecurityScanner
         }
 
         PrintSummary();
+
+        // Generate CTRF report if requested
+        if (!string.IsNullOrEmpty(ctrfReportPath))
+        {
+            await GenerateCtrfReport(ctrfReportPath);
+        }
     }
 
     private async Task ScanDirectoryAsync(string directoryPath)
@@ -119,6 +165,9 @@ public class SecurityScanner
 
         // Check for specific security anti-patterns
         await CheckSecurityAntiPatterns(filePath, root);
+
+        // Check for OWASP Top 10 and CWE Top 25 patterns
+        await CheckOwaspAndCwePatterns(filePath, root);
     }
 
     private async Task ScanForHardcodedSecrets(string filePath, string content)
@@ -396,6 +445,258 @@ public class SecurityScanner
                 access.ToString(),
                 "Best Practices"
             ));
+        }
+    }
+
+    private async Task CheckOwaspAndCwePatterns(string filePath, SyntaxNode root)
+    {
+        // CWE-352: Cross-Site Request Forgery - Check for missing anti-forgery tokens
+        await CheckCsrfProtection(filePath, root);
+
+        // CWE-327: Weak Cryptography
+        await CheckWeakCryptography(filePath, root);
+
+        // OWASP A05:2021 - Security Misconfiguration
+        await CheckSecurityMisconfiguration(filePath, root);
+
+        // CWE-209: Information Exposure Through Error Messages
+        await CheckInformationExposure(filePath, root);
+
+        // OWASP A07:2021 - Identification and Authentication Failures
+        await CheckAuthenticationFailures(filePath, root);
+
+        // CWE-200: Information Exposure
+        await CheckDataExposure(filePath, root);
+
+        // CWE-434: Unrestricted File Upload
+        await CheckFileUploadSecurity(filePath, root);
+    }
+
+    private async Task CheckCsrfProtection(string filePath, SyntaxNode root)
+    {
+        // Check for HTTP POST actions without CSRF protection
+        var postMethods = root.DescendantNodes().OfType<MethodDeclarationSyntax>()
+            .Where(m => m.AttributeLists.SelectMany(al => al.Attributes)
+                .Any(attr => attr.Name.ToString().Contains("HttpPost")));
+
+        foreach (var method in postMethods)
+        {
+            var hasAntiForgeryCsrf = method.AttributeLists
+                .SelectMany(list => list.Attributes)
+                .Any(attr => attr.Name.ToString().Contains("ValidateAntiForgeryToken") || 
+                           attr.Name.ToString().Contains("AutoValidateAntiforgeryToken"));
+
+            if (!hasAntiForgeryCsrf)
+            {
+                var lineNumber = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    $"POST method '{method.Identifier.ValueText}' lacks CSRF protection (CWE-352)",
+                    method.Identifier.ValueText,
+                    "CSRF Protection"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckWeakCryptography(string filePath, SyntaxNode root)
+    {
+        // Check for weak hash algorithms
+        var memberAccess = root.DescendantNodes().OfType<MemberAccessExpressionSyntax>();
+
+        foreach (var access in memberAccess)
+        {
+            var accessString = access.ToString();
+            if (accessString.Contains("MD5") || accessString.Contains("SHA1.Create"))
+            {
+                var lineNumber = access.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    $"Weak cryptographic algorithm detected: {accessString} (OWASP A02, CWE-327)",
+                    accessString,
+                    "Weak Cryptography"
+                ));
+            }
+        }
+
+        // Check for hardcoded encryption keys
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>()
+            .Where(inv => inv.Expression.ToString().Contains("Encrypt") || 
+                         inv.Expression.ToString().Contains("Decrypt"));
+
+        foreach (var invocation in invocations)
+        {
+            var arguments = invocation.ArgumentList.Arguments;
+            foreach (var arg in arguments)
+            {
+                if (arg.Expression is LiteralExpressionSyntax literal && 
+                    literal.Token.IsKind(SyntaxKind.StringLiteralToken))
+                {
+                    var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                    _findings.Add(new SecurityFinding(
+                        filePath,
+                        lineNumber,
+                        SecurityLevel.Critical,
+                        "Hardcoded encryption key detected (OWASP A02, CWE-321)",
+                        invocation.ToString(),
+                        "Hardcoded Secrets"
+                    ));
+                }
+            }
+        }
+    }
+
+    private async Task CheckSecurityMisconfiguration(string filePath, SyntaxNode root)
+    {
+        // Check for debug mode in production-like code
+        var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+        foreach (var invocation in invocations)
+        {
+            var invText = invocation.ToString().ToLower();
+            if (invText.Contains("adddeveloperexceptionpage") || 
+                invText.Contains("usedeveloperexceptionpage"))
+            {
+                var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.Medium,
+                    "Developer exception page enabled - potential information disclosure (OWASP A05)",
+                    invocation.ToString(),
+                    "Security Misconfiguration"
+                ));
+            }
+
+            if (invText.Contains("allowanyorigin") || invText.Contains("allowanyheader"))
+            {
+                var lineNumber = invocation.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "Overly permissive CORS configuration detected (OWASP A05, CWE-942)",
+                    invocation.ToString(),
+                    "Security Misconfiguration"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckInformationExposure(string filePath, SyntaxNode root)
+    {
+        // Check for sensitive information in ToString() methods
+        var toStringMethods = root.DescendantNodes().OfType<MethodDeclarationSyntax>()
+            .Where(m => m.Identifier.ValueText == "ToString");
+
+        foreach (var method in toStringMethods)
+        {
+            var methodText = method.ToString().ToLower();
+            if (methodText.Contains("password") || methodText.Contains("secret") || 
+                methodText.Contains("token") || methodText.Contains("key"))
+            {
+                var lineNumber = method.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.High,
+                    "Sensitive information exposed in ToString method (CWE-200)",
+                    method.Identifier.ValueText,
+                    "Information Exposure"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckAuthenticationFailures(string filePath, SyntaxNode root)
+    {
+        // Check for weak password validation
+        var methodCalls = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+        foreach (var call in methodCalls)
+        {
+            var callString = call.ToString().ToLower();
+            if (callString.Contains("createuser") || callString.Contains("register"))
+            {
+                // Check if password strength validation is missing
+                var containingMethod = call.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+                if (containingMethod != null)
+                {
+                    var methodText = containingMethod.ToString().ToLower();
+                    if (!methodText.Contains("password") || 
+                        (!methodText.Contains("length") && !methodText.Contains("complexity")))
+                    {
+                        var lineNumber = call.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                        _findings.Add(new SecurityFinding(
+                            filePath,
+                            lineNumber,
+                            SecurityLevel.Medium,
+                            "Weak password validation detected (OWASP A07, CWE-521)",
+                            call.ToString(),
+                            "Authentication Failures"
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task CheckDataExposure(string filePath, SyntaxNode root)
+    {
+        // Check for potential data exposure in API responses
+        var returnStatements = root.DescendantNodes().OfType<ReturnStatementSyntax>();
+
+        foreach (var returnStmt in returnStatements)
+        {
+            var returnText = returnStmt.ToString().ToLower();
+            if (returnText.Contains("user") && (returnText.Contains("password") || 
+                returnText.Contains("passwordhash") || returnText.Contains("salt")))
+            {
+                var lineNumber = returnStmt.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                _findings.Add(new SecurityFinding(
+                    filePath,
+                    lineNumber,
+                    SecurityLevel.Critical,
+                    "Sensitive user data exposed in API response (CWE-200)",
+                    returnStmt.ToString(),
+                    "Data Exposure"
+                ));
+            }
+        }
+    }
+
+    private async Task CheckFileUploadSecurity(string filePath, SyntaxNode root)
+    {
+        // Check for file upload without validation
+        var methodCalls = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
+
+        foreach (var call in methodCalls)
+        {
+            var callString = call.ToString();
+            if (callString.Contains("SaveAs") || callString.Contains("CopyTo"))
+            {
+                var containingMethod = call.Ancestors().OfType<MethodDeclarationSyntax>().FirstOrDefault();
+                if (containingMethod != null)
+                {
+                    var methodText = containingMethod.ToString().ToLower();
+                    if (!methodText.Contains("contenttype") && !methodText.Contains("extension"))
+                    {
+                        var lineNumber = call.GetLocation().GetLineSpan().StartLinePosition.Line + 1;
+                        _findings.Add(new SecurityFinding(
+                            filePath,
+                            lineNumber,
+                            SecurityLevel.High,
+                            "File upload without proper validation (CWE-434)",
+                            call.ToString(),
+                            "File Upload Security"
+                        ));
+                    }
+                }
+            }
         }
     }
 
@@ -713,6 +1014,143 @@ public class SecurityScanner
                 });
                 break;
 
+            case "csrf protection":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH PRIORITY: Add CSRF protection to {count} POST endpoints",
+                        "Use [ValidateAntiForgeryToken] attribute on POST actions",
+                        "Implement anti-forgery tokens in forms",
+                        "Review all state-changing operations for CSRF protection"
+                    },
+                    SecurityLevel.Medium => new[]
+                    {
+                        $"Add CSRF protection to {count} POST methods",
+                        "Consider using [AutoValidateAntiforgeryToken] globally"
+                    },
+                    _ => new[]
+                    {
+                        $"Review CSRF protection for {count} endpoints"
+                    }
+                });
+                break;
+
+            case "weak cryptography":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Critical => new[]
+                    {
+                        $"CRITICAL: Replace {count} weak cryptographic implementations immediately",
+                        "Remove all hardcoded encryption keys - use secure key management",
+                        "Rotate any compromised cryptographic keys",
+                        "Conduct security audit of all cryptographic implementations"
+                    },
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH PRIORITY: Replace {count} weak cryptographic algorithms",
+                        "Use SHA-256 or SHA-512 instead of MD5/SHA-1",
+                        "Implement proper key management practices",
+                        "Use cryptographically secure random number generators"
+                    },
+                    _ => new[]
+                    {
+                        $"Update {count} cryptographic implementations to use stronger algorithms"
+                    }
+                });
+                break;
+
+            case "security misconfiguration":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH PRIORITY: Fix {count} security misconfigurations",
+                        "Remove overly permissive CORS policies",
+                        "Disable debug features in production",
+                        "Implement proper security headers and configurations"
+                    },
+                    SecurityLevel.Medium => new[]
+                    {
+                        $"Review {count} configuration issues for security impact",
+                        "Implement secure defaults and configuration management"
+                    },
+                    _ => new[]
+                    {
+                        $"Address {count} configuration security issues"
+                    }
+                });
+                break;
+
+            case "information exposure":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH PRIORITY: Prevent {count} information exposure vulnerabilities",
+                        "Remove sensitive data from ToString() methods",
+                        "Sanitize error messages to prevent information disclosure",
+                        "Review all public-facing methods for data exposure"
+                    },
+                    _ => new[]
+                    {
+                        $"Review {count} potential information exposure points"
+                    }
+                });
+                break;
+
+            case "authentication failures":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Medium => new[]
+                    {
+                        $"Strengthen authentication for {count} identified issues",
+                        "Implement strong password requirements",
+                        "Add password complexity validation",
+                        "Consider multi-factor authentication for sensitive operations"
+                    },
+                    _ => new[]
+                    {
+                        $"Review authentication patterns in {count} locations"
+                    }
+                });
+                break;
+
+            case "data exposure":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.Critical => new[]
+                    {
+                        $"CRITICAL: {count} potential data exposure vulnerabilities found",
+                        "Never return sensitive user data in API responses",
+                        "Implement proper data filtering and DTOs",
+                        "Conduct immediate audit of all API endpoints"
+                    },
+                    _ => new[]
+                    {
+                        $"Review data exposure risks in {count} locations"
+                    }
+                });
+                break;
+
+            case "file upload security":
+                recommendations.AddRange(level switch
+                {
+                    SecurityLevel.High => new[]
+                    {
+                        $"HIGH PRIORITY: Secure {count} file upload operations",
+                        "Validate file types and extensions",
+                        "Implement file size limits",
+                        "Scan uploaded files for malware",
+                        "Store uploaded files outside web root"
+                    },
+                    _ => new[]
+                    {
+                        $"Review file upload security for {count} operations"
+                    }
+                });
+                break;
+
             default:
                 recommendations.Add($"Address {count} {category.ToLower()} security issues based on severity level");
                 break;
@@ -731,6 +1169,107 @@ public class SecurityScanner
         Console.WriteLine("  • Keep dependencies updated");
         Console.WriteLine("  • Follow OWASP Top 10 guidelines");
         Console.WriteLine();
+    }
+
+    private async Task GenerateCtrfReport(string reportPath)
+    {
+        try
+        {
+            var criticalFindings = _findings.Count(f => f.Level == SecurityLevel.Critical);
+            var highFindings = _findings.Count(f => f.Level == SecurityLevel.High);
+            var mediumFindings = _findings.Count(f => f.Level == SecurityLevel.Medium);
+            var lowFindings = _findings.Count(f => f.Level == SecurityLevel.Low);
+
+            var ctrfReport = new CtrfReport
+            {
+                Results = new CtrfResults
+                {
+                    Tool = new CtrfTool
+                    {
+                        Name = "DemoInventory.Tools.SecurityScan",
+                        Version = "1.0.0"
+                    },
+                    Summary = new CtrfSummary
+                    {
+                        Tests = _findings.Count,
+                        Passed = 0, // Security findings are failures by definition
+                        Failed = _findings.Count,
+                        Pending = 0,
+                        Skipped = 0,
+                        Other = 0,
+                        Start = DateTime.UtcNow.AddMinutes(-1).Ticks, // Approximate start time
+                        Stop = DateTime.UtcNow.Ticks
+                    },
+                    Tests = _findings.Select(finding => new CtrfTest
+                    {
+                        Name = $"{finding.Category}: {finding.Description}",
+                        Status = "failed",
+                        Duration = 0,
+                        Message = $"Security issue found in {Path.GetFileName(finding.FilePath)}:{finding.LineNumber}",
+                        Trace = finding.CodeSnippet,
+                        RawStatus = finding.Level.ToString(),
+                        ExtraData = new Dictionary<string, object>
+                        {
+                            { "severity", finding.Level.ToString() },
+                            { "category", finding.Category },
+                            { "filePath", finding.FilePath },
+                            { "lineNumber", finding.LineNumber },
+                            { "owaspMapping", GetOwaspMapping(finding.Description) },
+                            { "cweMapping", GetCweMapping(finding.Description) }
+                        }
+                    }).ToList()
+                }
+            };
+
+            var json = JsonSerializer.Serialize(ctrfReport, new JsonSerializerOptions 
+            { 
+                WriteIndented = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            await File.WriteAllTextAsync(reportPath, json);
+            Console.WriteLine($"📄 CTRF report generated: {reportPath}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Failed to generate CTRF report: {ex.Message}");
+        }
+    }
+
+    private string GetOwaspMapping(string description)
+    {
+        if (description.Contains("OWASP A01")) return "A01:2021 - Broken Access Control";
+        if (description.Contains("OWASP A02")) return "A02:2021 - Cryptographic Failures";
+        if (description.Contains("OWASP A03")) return "A03:2021 - Injection";
+        if (description.Contains("OWASP A05")) return "A05:2021 - Security Misconfiguration";
+        if (description.Contains("OWASP A06")) return "A06:2021 - Vulnerable and Outdated Components";
+        if (description.Contains("OWASP A07")) return "A07:2021 - Identification and Authentication Failures";
+        if (description.Contains("OWASP A08")) return "A08:2021 - Software and Data Integrity Failures";
+        if (description.Contains("OWASP A09")) return "A09:2021 - Security Logging and Monitoring Failures";
+        if (description.Contains("OWASP A10")) return "A10:2021 - Server-Side Request Forgery";
+        return "Multiple OWASP categories may apply";
+    }
+
+    private string GetCweMapping(string description)
+    {
+        if (description.Contains("CWE-79")) return "CWE-79: Cross-site Scripting";
+        if (description.Contains("CWE-89")) return "CWE-89: SQL Injection";
+        if (description.Contains("CWE-78")) return "CWE-78: OS Command Injection";
+        if (description.Contains("CWE-22")) return "CWE-22: Path Traversal";
+        if (description.Contains("CWE-352")) return "CWE-352: Cross-Site Request Forgery";
+        if (description.Contains("CWE-434")) return "CWE-434: Unrestricted Upload of File with Dangerous Type";
+        if (description.Contains("CWE-94")) return "CWE-94: Code Injection";
+        if (description.Contains("CWE-190")) return "CWE-190: Integer Overflow";
+        if (description.Contains("CWE-200")) return "CWE-200: Information Exposure";
+        if (description.Contains("CWE-209")) return "CWE-209: Information Exposure Through Error Messages";
+        if (description.Contains("CWE-321")) return "CWE-321: Use of Hard-coded Cryptographic Key";
+        if (description.Contains("CWE-327")) return "CWE-327: Use of a Broken or Risky Cryptographic Algorithm";
+        if (description.Contains("CWE-338")) return "CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator";
+        if (description.Contains("CWE-521")) return "CWE-521: Weak Password Requirements";
+        if (description.Contains("CWE-798")) return "CWE-798: Use of Hard-coded Credentials";
+        if (description.Contains("CWE-918")) return "CWE-918: Server-Side Request Forgery";
+        if (description.Contains("CWE-942")) return "CWE-942: Overly Permissive Cross-domain Whitelist";
+        return "Multiple CWE categories may apply";
     }
 }
 
@@ -755,4 +1294,48 @@ public enum SecurityLevel
     Medium,
     High,
     Critical
+}
+
+/// <summary>
+/// CTRF (Common Test Report Format) classes for standardized security reporting
+/// </summary>
+public class CtrfReport
+{
+    public CtrfResults Results { get; set; } = new();
+}
+
+public class CtrfResults
+{
+    public CtrfTool Tool { get; set; } = new();
+    public CtrfSummary Summary { get; set; } = new();
+    public List<CtrfTest> Tests { get; set; } = new();
+}
+
+public class CtrfTool
+{
+    public string Name { get; set; } = string.Empty;
+    public string Version { get; set; } = string.Empty;
+}
+
+public class CtrfSummary
+{
+    public int Tests { get; set; }
+    public int Passed { get; set; }
+    public int Failed { get; set; }
+    public int Pending { get; set; }
+    public int Skipped { get; set; }
+    public int Other { get; set; }
+    public long Start { get; set; }
+    public long Stop { get; set; }
+}
+
+public class CtrfTest
+{
+    public string Name { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public long Duration { get; set; }
+    public string Message { get; set; } = string.Empty;
+    public string Trace { get; set; } = string.Empty;
+    public string RawStatus { get; set; } = string.Empty;
+    public Dictionary<string, object> ExtraData { get; set; } = new();
 }
