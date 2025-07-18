@@ -13,11 +13,4 @@
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\backend\src\DemoInventory.Domain\DemoInventory.Domain.csproj" />
-    <ProjectReference Include="..\..\backend\src\DemoInventory.Application\DemoInventory.Application.csproj" />
-    <ProjectReference Include="..\..\backend\src\DemoInventory.Infrastructure\DemoInventory.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\backend\src\DemoInventory.API\DemoInventory.API.csproj" />
-  </ItemGroup>
-
 </Project>

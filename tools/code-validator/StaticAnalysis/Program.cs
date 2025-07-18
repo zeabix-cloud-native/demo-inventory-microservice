@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.CommandLine;
 
-namespace DemoInventory.Tools.StaticAnalysis;
+namespace CodeValidator.StaticAnalysis;
 
 /// <summary>
 /// Static analysis tool for validating code quality based on the code-verification.md guidelines

@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace DemoInventory.Tools.AICodeValidator;
+namespace CodeValidator.AICodeValidator;
 
 /// <summary>
 /// Main AI Code Validator that orchestrates all validation tools
@@ -81,7 +81,7 @@ public class AICodeValidator
         {
             Console.WriteLine("🔍 Running Static Analysis...");
             var staticResult = await RunToolAsync(
-                Path.Combine(toolsPath, "DemoInventory.Tools.StaticAnalysis"),
+                Path.Combine(toolsPath, "StaticAnalysis"),
                 $"--path \"{path}\" {(_verbose ? "--verbose" : "")}");
             _results.Add(new ValidationResult("Static Analysis", staticResult));
         }
@@ -101,7 +101,7 @@ public class AICodeValidator
             
             var ctrfArgs = !string.IsNullOrEmpty(ctrfPath) ? $"--ctrf \"{ctrfPath}\"" : "";
             var securityResult = await RunToolAsync(
-                Path.Combine(toolsPath, "DemoInventory.Tools.SecurityScan"),
+                Path.Combine(toolsPath, "SecurityScan"),
                 $"--path \"{securityPath}\" {(_verbose ? "--verbose" : "")} {ctrfArgs}".Trim());
             _results.Add(new ValidationResult("Security Scan", securityResult));
         }
@@ -117,7 +117,7 @@ public class AICodeValidator
             }
             
             var archResult = await RunToolAsync(
-                Path.Combine(toolsPath, "DemoInventory.Tools.ArchitectureValidation"),
+                Path.Combine(toolsPath, "ArchitectureValidation"),
                 $"--path \"{backendPath}\" {(_verbose ? "--verbose" : "")}");
             _results.Add(new ValidationResult("Architecture Validation", archResult));
         }
@@ -583,13 +583,30 @@ public class AICodeValidator
     {
         var currentDir = Directory.GetCurrentDirectory();
         
-        // Try to find tools directory
+        // Check if we're already in the code-validator directory
+        if (Path.GetFileName(currentDir) == "code-validator")
+            return currentDir;
+            
+        // Try to find tools/code-validator directory
+        var codeValidatorPath = Path.Combine(currentDir, "tools", "code-validator");
+        if (Directory.Exists(codeValidatorPath))
+            return codeValidatorPath;
+            
+        // Try parent directory
+        var parent = Directory.GetParent(currentDir);
+        if (parent != null)
+        {
+            codeValidatorPath = Path.Combine(parent.FullName, "tools", "code-validator");
+            if (Directory.Exists(codeValidatorPath))
+                return codeValidatorPath;
+        }
+
+        // Try to find tools directory (backward compatibility)
         var toolsPath = Path.Combine(currentDir, "tools");
         if (Directory.Exists(toolsPath))
             return toolsPath;
             
-        // Try parent directory
-        var parent = Directory.GetParent(currentDir);
+        // Try parent directory for tools
         if (parent != null)
         {
             toolsPath = Path.Combine(parent.FullName, "tools");

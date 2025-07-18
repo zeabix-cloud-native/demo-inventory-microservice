@@ -19,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DemoInventory.Tools.StaticAnalysis\DemoInventory.Tools.StaticAnalysis.csproj" />
-    <ProjectReference Include="..\DemoInventory.Tools.SecurityScan\DemoInventory.Tools.SecurityScan.csproj" />
-    <ProjectReference Include="..\DemoInventory.Tools.ArchitectureValidation\DemoInventory.Tools.ArchitectureValidation.csproj" />
+    <ProjectReference Include="..\StaticAnalysis\StaticAnalysis.csproj" />
+    <ProjectReference Include="..\SecurityScan\SecurityScan.csproj" />
+    <ProjectReference Include="..\ArchitectureValidation\ArchitectureValidation.csproj" />
   </ItemGroup>
 
 </Project>

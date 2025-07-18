@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.CommandLine;
 
-namespace DemoInventory.Tools.ArchitectureValidation;
+namespace CodeValidator.ArchitectureValidation;
 
 /// <summary>
 /// Architecture validation tool for Clean Architecture compliance

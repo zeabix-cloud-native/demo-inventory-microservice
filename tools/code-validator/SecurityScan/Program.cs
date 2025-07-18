@@ -5,7 +5,7 @@ using System.CommandLine;
 using System.Text.RegularExpressions;
 using System.Text.Json;
 
-namespace DemoInventory.Tools.SecurityScan;
+namespace CodeValidator.SecurityScan;
 
 /// <summary>
 /// Security scanning tool for identifying potential security vulnerabilities
