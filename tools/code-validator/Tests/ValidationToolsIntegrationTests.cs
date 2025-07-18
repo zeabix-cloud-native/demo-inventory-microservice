@@ -20,7 +20,7 @@ public class ValidationToolsIntegrationTests
     public async Task StaticAnalysis_ShouldExecuteSuccessfully()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.StaticAnalysis");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator", "StaticAnalysis");
         var testPath = Path.Combine(_projectRoot, "backend", "src", "DemoInventory.Domain");
 
         // Act
@@ -36,7 +36,7 @@ public class ValidationToolsIntegrationTests
     public async Task SecurityScan_ShouldExecuteSuccessfully()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.SecurityScan");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator", "SecurityScan");
         var testPath = Path.Combine(_projectRoot, "backend", "src", "DemoInventory.API");
 
         // Act
@@ -52,7 +52,7 @@ public class ValidationToolsIntegrationTests
     public async Task ArchitectureValidation_ShouldExecuteSuccessfully()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.ArchitectureValidation");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator", "ArchitectureValidation");
         var testPath = Path.Combine(_projectRoot, "backend", "src");
 
         // Act
@@ -68,7 +68,7 @@ public class ValidationToolsIntegrationTests
     public async Task AICodeValidator_ShouldOrchestrateAllTools()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.AICodeValidator");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator/AICodeValidator");
         var testPath = Path.Combine(_projectRoot, "backend", "src", "DemoInventory.Domain");
 
         // Act
@@ -87,7 +87,7 @@ public class ValidationToolsIntegrationTests
     public async Task Tools_ShouldHandleInvalidPath()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.StaticAnalysis");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator/StaticAnalysis");
         var invalidPath = "/nonexistent/path";
 
         // Act
@@ -102,7 +102,7 @@ public class ValidationToolsIntegrationTests
     public async Task Tools_ShouldSupportVerboseMode()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.StaticAnalysis");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator/StaticAnalysis");
         var testPath = Path.Combine(_projectRoot, "backend", "src", "DemoInventory.Domain");
 
         // Act
@@ -117,7 +117,7 @@ public class ValidationToolsIntegrationTests
     public async Task SecurityScan_ShouldDetectOwaspAndCweIssues()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.SecurityScan");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator/SecurityScan");
         var testPath = Path.Combine(_projectRoot, "backend", "src", "DemoInventory.API");
 
         // Act
@@ -135,7 +135,7 @@ public class ValidationToolsIntegrationTests
     public async Task SecurityScan_ShouldGenerateCtrfReport()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.SecurityScan");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator/SecurityScan");
         var testPath = Path.Combine(_projectRoot, "backend", "src", "DemoInventory.API");
         var reportPath = Path.Combine(Path.GetTempPath(), $"test-ctrf-{Guid.NewGuid()}.json");
 
@@ -172,7 +172,7 @@ public class ValidationToolsIntegrationTests
     public async Task SecurityScan_ShouldProvideComprehensiveRecommendations()
     {
         // Arrange
-        var toolPath = Path.Combine(_projectRoot, "tools", "DemoInventory.Tools.SecurityScan");
+        var toolPath = Path.Combine(_projectRoot, "tools", "code-validator/SecurityScan");
         var testPath = Path.Combine(_projectRoot, "backend", "src");
 
         // Act
