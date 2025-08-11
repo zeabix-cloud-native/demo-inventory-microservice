@@ -10,9 +10,9 @@ info:
     url: https://github.com/zeabix-cloud-native/demo-inventory-microservice
     email: support@example.com
 servers:
-  - url: http://localhost:5126/api
+  - url: http://localhost:5000/api
     description: Local development server
-  - url: https://your-domain.com/api
+  - url:  https://6b1890b5978b.ngrok-free.app
     description: Production server
 
 tags:
@@ -20,7 +20,7 @@ tags:
     description: Products management operations
 
 paths:
-  /products:
+  /api/products:
     get:
       tags: [Products]
       summary: Get all products
@@ -61,7 +61,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '401':
           description: Unauthorized - API key required
-  /products/{id}:
+  /api/products/{id}:
     get:
       tags: [Products]
       summary: Get product by ID
@@ -164,7 +164,7 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
         '401':
           description: Unauthorized - API key required
-  /products/sku/{sku}:
+  /api/products/sku/{sku}:
     get:
       tags: [Products]
       summary: Get product by SKU
@@ -198,7 +198,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /products/name/{name}:
+  /api/products/name/{name}:
     get:
       tags: [Products]
       summary: Get product by name
@@ -232,7 +232,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /products/search:
+  /api/products/search:
     get:
       tags: [Products]
       summary: Search products
@@ -261,7 +261,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
-  /products/simulate-error:
+  /api/products/simulate-error:
     get:
       tags: [Products]
       summary: Simulate server error
