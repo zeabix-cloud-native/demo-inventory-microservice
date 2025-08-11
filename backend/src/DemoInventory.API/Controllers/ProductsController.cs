@@ -162,6 +162,24 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>
+    /// Simulate a server error for testing purposes
+    /// </summary>
+    /// <returns>Always returns a 500 Internal Server Error</returns>
+    /// <response code="500">Internal server error (simulated)</response>
+    [HttpGet("simulate-error")]
+    [AllowAnonymous] // Public endpoint for testing error scenarios
+    [SwaggerOperation(Summary = "Simulate server error", Description = "Simulates a 500 Internal Server Error for testing error handling")]
+    [SwaggerResponse(500, "Internal server error (simulated)")]
+    public async Task<ActionResult> SimulateServerError()
+    {
+        // Simulate some async work
+        await Task.Delay(100);
+        
+        // Throw an exception to simulate a server error
+        throw new InvalidOperationException("This is a simulated server error for testing purposes.");
+    }
+
+    /// <summary>
     /// Create a new product
     /// </summary>
     /// <param name="createProductDto">The product information to create</param>
