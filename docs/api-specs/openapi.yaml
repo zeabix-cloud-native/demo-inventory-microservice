@@ -1,0 +1,396 @@
+openapi: 3.0.3
+info:
+  title: Demo Inventory API
+  version: 1.0.0
+  description: |
+    OpenAPI 3.0.3 specification for the Demo Inventory Microservice.
+    This specification describes the Products API endpoints for managing product inventory.
+  contact:
+    name: Demo Inventory Team
+    url: https://github.com/zeabix-cloud-native/demo-inventory-microservice
+    email: support@example.com
+servers:
+  - url: http://localhost:5126/api
+    description: Local development server
+  - url: https://your-domain.com/api
+    description: Production server
+
+tags:
+  - name: Products
+    description: Products management operations
+
+paths:
+  /products:
+    get:
+      tags: [Products]
+      summary: Get all products
+      description: Retrieves all products from the inventory
+      operationId: getProducts
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      tags: [Products]
+      summary: Create product
+      description: Creates a new product in the inventory
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid product data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized - API key required
+  /products/{id}:
+    get:
+      tags: [Products]
+      summary: Get product by ID
+      description: Retrieves a specific product by its ID
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The ID of the product to retrieve
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid product ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+    put:
+      tags: [Products]
+      summary: Update product
+      description: Updates an existing product in the inventory
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The ID of the product to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid product data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized - API key required
+    delete:
+      tags: [Products]
+      summary: Delete product
+      description: Deletes a product from the inventory
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The ID of the product to delete
+      responses:
+        '204':
+          description: Product deleted successfully
+        '400':
+          description: Invalid product ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '401':
+          description: Unauthorized - API key required
+  /products/sku/{sku}:
+    get:
+      tags: [Products]
+      summary: Get product by SKU
+      description: Retrieves a specific product by its SKU
+      operationId: getProductBySku
+      parameters:
+        - name: sku
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 50
+          description: The SKU of the product to retrieve
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid SKU format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /products/name/{name}:
+    get:
+      tags: [Products]
+      summary: Get product by name
+      description: Retrieves a specific product by its exact name
+      operationId: getProductByName
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 200
+          description: The name of the product to retrieve
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid name format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /products/search:
+    get:
+      tags: [Products]
+      summary: Search products
+      description: Search for products by name using a search term
+      operationId: searchProducts
+      parameters:
+        - name: searchTerm
+          in: query
+          required: false
+          schema:
+            type: string
+            maxLength: 200
+          description: The search term to filter products by name
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid search parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /products/simulate-error:
+    get:
+      tags: [Products]
+      summary: Simulate server error
+      description: Simulates a 500 Internal Server Error for testing error handling
+      operationId: simulateServerError
+      responses:
+        '500':
+          description: Internal server error (simulated)
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the product
+          example: 1
+        name:
+          type: string
+          description: Name of the product
+          example: Laptop Computer
+        description:
+          type: string
+          description: Detailed description of the product
+          example: High-performance laptop with 16GB RAM and 512GB SSD
+        sku:
+          type: string
+          description: Stock Keeping Unit - unique product identifier
+          example: LAP001
+        price:
+          type: number
+          format: decimal
+          description: Price of the product
+          example: 999.99
+        quantityInStock:
+          type: integer
+          description: Current quantity available in stock
+          example: 15
+        createdAt:
+          type: string
+          format: date-time
+          description: Date and time when the product was created
+          example: 2024-01-15T10:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date and time when the product was last updated
+          example: 2024-01-15T10:30:00Z
+      required: [id, name, sku, price, quantityInStock, createdAt, updatedAt]
+    CreateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: New Product
+        description:
+          type: string
+          maxLength: 1000
+          example: This is a sample product description
+        sku:
+          type: string
+          minLength: 3
+          maxLength: 50
+          example: SKU-001
+        price:
+          type: number
+          format: decimal
+          minimum: 0.01
+          example: 19.99
+        quantityInStock:
+          type: integer
+          minimum: 0
+          maximum: 1000000
+          example: 100
+      required: [name, sku, price, quantityInStock]
+    UpdateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+          example: Updated Product Name
+        description:
+          type: string
+          maxLength: 1000
+          example: This is an updated product description
+        price:
+          type: number
+          format: decimal
+          minimum: 0.01
+          example: 24.99
+        quantityInStock:
+          type: integer
+          minimum: 0
+          maximum: 1000000
+          example: 150
+      required: [name, price, quantityInStock]
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          description: A URI reference that identifies the problem type
+          example: https://tools.ietf.org/html/rfc7231#section-6.5.4
+        title:
+          type: string
+          description: A short, human-readable summary of the problem type
+          example: Not Found
+        status:
+          type: integer
+          description: The HTTP status code generated by the origin server
+          example: 404
+        detail:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem
+          example: Product with ID 999 not found.
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of the problem
+      additionalProperties: true
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security: []
